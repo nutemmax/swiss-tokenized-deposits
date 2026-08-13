@@ -126,7 +126,6 @@ function person(x, y, name, amount, selected, side = 'left', dormant = false) {
       <path d="M28 40c0-48 58-48 58-2l-2 80-22-15V48c-13-3-22-12-29-24-1 14-3 27-5 38Z" fill="#171717"></path>
       <circle class="actor-accent" cx="55" cy="37" r="25" fill="#e1b394" stroke="#151515" stroke-width="2"></circle>
       <path d="M30 73c15-12 35-12 50 0l22 86H8Z" fill="#d52f3a" stroke="#151515" stroke-width="2"></path>
-      <path d="M42 74h27l16 67H24Z" fill="#fff"></path>
       <path d="M28 158 23 208M82 158l7 50" stroke="#151515" stroke-width="5"></path>
       <path d="M12 214h24M77 214h24" stroke="#151515" stroke-width="7" stroke-linecap="round"></path>` : `
       <circle class="actor-accent" cx="55" cy="37" r="27" fill="#e1b394" stroke="#151515" stroke-width="2"></circle>
@@ -170,11 +169,11 @@ function bank(x, y, name, balance, active, selected, dormant = false) {
 function dlt(x, y, supply, active, model) {
   const label = 'DLT LEDGER';
   return `<g class="actor-hit ${active ? 'dlt-active' : ''}" data-actor="dlt" role="button" tabindex="0" aria-label="Inspect ${label}" transform="translate(${x} ${y})">
-    <path class="dlt-line" d="M24 50 83 16l62 39-61 42Z M24 50l61 43M83 16l1 81M145 55 84 41M84 97l67 56M229 96l-78 57"></path>
-    <circle class="dlt-node actor-accent" cx="24" cy="50" r="18"></circle><circle class="dlt-node" cx="83" cy="16" r="18"></circle><circle class="dlt-node" cx="145" cy="55" r="18"></circle><circle class="dlt-node" cx="84" cy="97" r="18"></circle><circle class="dlt-node" cx="229" cy="96" r="18"></circle><circle class="dlt-node" cx="151" cy="153" r="18"></circle>
-    <rect x="48" y="176" width="166" height="55" rx="5" fill="#fff" stroke="#151515" stroke-width="2"></rect>
-    <text x="131" y="199" text-anchor="middle" class="infra-title">${label}</text>
-    <text x="131" y="217" text-anchor="middle" class="actor-amount">SUPPLY · ${supply ? esc(money(supply)) : '—'}</text>
+    <path class="dlt-line" d="M25 48 82 16l55 39-52 40Z M25 48l60 47M82 16l3 79M137 55l55 45M85 95l107 5"></path>
+    <circle class="dlt-node actor-accent" cx="25" cy="48" r="16"></circle><circle class="dlt-node" cx="82" cy="16" r="16"></circle><circle class="dlt-node" cx="137" cy="55" r="16"></circle><circle class="dlt-node" cx="85" cy="95" r="16"></circle><circle class="dlt-node" cx="192" cy="100" r="16"></circle>
+    <rect x="38" y="129" width="150" height="50" rx="5" fill="#fff" stroke="#151515" stroke-width="2"></rect>
+    <text x="113" y="151" text-anchor="middle" class="infra-title">${label}</text>
+    <text x="113" y="168" text-anchor="middle" class="actor-amount">SUPPLY · ${supply ? esc(money(supply)) : '—'}</text>
   </g>`;
 }
 
@@ -230,26 +229,26 @@ function specialInfrastructure(s) {
 }
 
 const FLOW_POINTS = {
-  mint: [[145,110],[210,110],[320,75],[665,95],[665,315],[145,110],[145,110]],
-  redeem: [[145,110],[665,315],[665,95],[665,315],[320,75],[210,110],[145,110]],
-  same: [[145,110],[210,110],[320,75],[665,95],[455,365],[960,110],[960,110]],
-  interbank: [[145,110],[210,110],[320,75],[665,95],[590,518],[800,75],[960,110]],
-  netting: [[320,75],[800,75],[500,518],[590,518],[700,518],[800,75],[800,75]],
-  correspondent: [[145,110],[210,110],[470,520],[530,520],[650,520],[866,110],[960,110]],
-  pvp: [[145,110],[210,110],[470,520],[530,520],[650,520],[866,110],[960,110]],
-  cbdc: [[145,110],[210,110],[665,95],[700,520],[760,520],[866,110],[960,110]],
-  bridge: [[145,110],[210,110],[458,520],[530,520],[650,520],[866,110],[960,110]],
-  mismatch: [[145,110],[210,110],[665,95],[665,315],[680,365],[665,315],[145,110]]
+  mint: [[145,110],[320,130],[405,230],[618,182],[618,182],[145,110],[145,110]],
+  redeem: [[145,110],[618,182],[618,182],[618,182],[405,230],[320,130],[145,110]],
+  same: [[145,110],[320,130],[405,230],[618,182],[405,230],[960,110],[960,110]],
+  interbank: [[145,110],[320,130],[405,230],[618,182],[590,530],[850,230],[960,110]],
+  netting: [[320,130],[800,130],[330,530],[530,530],[790,530],[800,130],[800,130]],
+  correspondent: [[145,110],[320,130],[478,387],[478,387],[571,387],[800,130],[960,110]],
+  pvp: [[145,110],[320,130],[478,390],[530,390],[580,390],[800,130],[960,110]],
+  cbdc: [[145,110],[320,130],[531,395],[531,395],[531,395],[800,130],[960,110]],
+  bridge: [[145,110],[320,130],[430,396],[530,396],[640,396],[800,130],[960,110]],
+  mismatch: [[145,110],[320,130],[618,182],[618,182],[618,182],[405,230],[145,110]]
 };
 
 function routePath(from, to) {
   const [x1, y1] = from; const [x2, y2] = to;
-  if (y1 >= 280 && y2 <= 120 && x2 < 300) return `M${x1} ${y1}C${x1 + 35} 220,${x1 + 30} 75,${x1 - 35} 75H${x2 + 45}Q${x2} 75,${x2} ${y2}`;
-  if (y1 >= 280 && y2 <= 120 && x2 > 700) return `M${x1} ${y1}C${x1 + 105} 410,690 260,690 130Q690 75,745 75H${x2 - 45}Q${x2} 75,${x2} ${y2}`;
-  if (y1 >= 440 && y2 <= 120 && x2 > 700) return `M${x1} ${y1}C690 430,680 180,735 82H${x2 - 45}Q${x2} 82,${x2} ${y2}`;
-  if (y1 <= 120 && y2 >= 440 && x1 < 300) return `M${x1} ${y1}C185 230,185 430,275 500Q330 ${y2},${x2} ${y2}`;
-  if (y1 <= 120 && y2 >= 440 && x1 > 700) return `M${x1} ${y1}H735Q690 82,690 135V400Q690 ${y2},${x2} ${y2}`;
-  if (y1 <= 120 && y2 >= 440) return `M${x1} ${y1}C${x1 + 15} 220,680 360,${x2} ${y2}`;
+  if (y1 >= 280 && y2 <= 260 && x2 < 300) return `M${x1} ${y1}C${x1 + 35} 220,${x1 + 30} 75,${x1 - 35} 75H${x2 + 45}Q${x2} 75,${x2} ${y2}`;
+  if (y1 >= 280 && y2 <= 260 && x2 > 700) return `M${x1} ${y1}C${x1 + 105} 410,690 260,690 130Q690 75,745 75H${x2 - 45}Q${x2} 75,${x2} ${y2}`;
+  if (y1 >= 440 && y2 <= 260 && x2 > 700) return `M${x1} ${y1}C690 430,680 180,735 82H${x2 - 45}Q${x2} 82,${x2} ${y2}`;
+  if (y1 <= 260 && y2 >= 440 && x1 < 500) return `M${x1} ${y1}C185 300,185 430,275 500Q330 ${y2},${x2} ${y2}`;
+  if (y1 <= 260 && y2 >= 440 && x1 > 700) return `M${x1} ${y1}H735Q690 82,690 135V400Q690 ${y2},${x2} ${y2}`;
+  if (y1 <= 260 && y2 >= 440) return `M${x1} ${y1}C${x1 + 15} 300,680 360,${x2} ${y2}`;
   const bend = Math.max(26, Math.abs(x2 - x1) * .25);
   return `M${x1} ${y1}C${x1 + (x2 >= x1 ? bend : -bend)} ${y1},${x2 - (x2 >= x1 ? bend : -bend)} ${y2},${x2} ${y2}`;
 }
@@ -275,7 +274,7 @@ function fundMarkup() {
       ? `<circle class="fund-shape" r="30"></circle><circle r="20" fill="none" stroke="#fff" stroke-width="2"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT))}</text>`
       : `<path class="fund-shape" d="M0-34 30-17l-8 35L0 38l-22-20-8-35Z"></path><path d="M0-34 11-11 0 24-11-11Z" fill="#f06a72"></path><path d="m-30-17 19 6L0-34-22 18m52-35-19 6L0-34l22 52" fill="#a71824"></path><text x="0" y="8" text-anchor="middle">${esc(money(AMOUNT))}</text>`;
   let result = `<g class="fund-object fund-object--${form}" data-fund="chf" style="transform:translate(${x}px,${y}px)"><circle class="fund-halo" r="46"></circle>${shape}</g>`;
-  if (state.scenario === 'pvp') { const reverse = [[960,110],[866,110],[650,520],[530,520],[470,520],[210,110],[145,110]][state.step]; result += `<g class="fund-object" data-fund="eur" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="30"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT, 'EUR'))}</text></g>`; }
+  if (state.scenario === 'pvp') { const reverse = [[960,110],[800,130],[580,390],[530,390],[478,390],[320,130],[145,110]][state.step]; result += `<g class="fund-object" data-fund="eur" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="30"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT, 'EUR'))}</text></g>`; }
   return result;
 }
 
