@@ -1,6 +1,6 @@
 # Archived starter note
 
-> This file is retained for research history. The current, expanded documentation is in [the deep dive](swiss-tokenized-deposits-deep-dive.md), [the legal/regulatory framework](legal-regulatory-framework.md), [the booking/accounting note](booking-accounting-prudential.md), [the CBS/operations note](cbs-operations-and-vendor-assessment.md), and [the executive summary](executive-summary.md).
+> This file is retained for research history. The current, expanded documentation is in [the deep dive](01-swiss-tokenized-deposits-deep-dive.md), [the legal/regulatory framework](02-legal-regulatory-framework.md), [the booking/accounting note](03-booking-accounting-prudential.md), [the CBS/operations note](04-cbs-operations-and-vendor-assessment.md), and [the executive summary](00-executive-summary.md).
 
 # Tokenized deposits in a Swiss bank
 

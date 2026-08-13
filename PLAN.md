@@ -46,8 +46,8 @@ Define and validate a Swiss-bank tokenized-deposit model that can be implemented
 
 ## Immediate next actions
 
-1. Create the legal/product decision record using the conclusions and open items in the [deep dive](docs/swiss-tokenized-deposits-deep-dive.md).
-2. Turn the templates in the [booking/accounting note](docs/booking-accounting-prudential.md) into an auditor-reviewed accounting-policy paper.
-3. Ask the CBS vendor for evidence against the capability checklist in the [CBS/operations note](docs/cbs-operations-and-vendor-assessment.md).
+1. Create the legal/product decision record using the conclusions and open items in the [deep dive](docs/01-swiss-tokenized-deposits-deep-dive.md).
+2. Turn the templates in the [booking/accounting note](docs/03-booking-accounting-prudential.md) into an auditor-reviewed accounting-policy paper.
+3. Ask the CBS vendor for evidence against the capability checklist in the [CBS/operations note](docs/04-cbs-operations-and-vendor-assessment.md).
 4. Send the legal terms, flow diagrams and control model to Swiss counsel, the external auditor and FINMA for preliminary feedback.
 5. Build a small same-bank mint/burn simulation only after steps 1–4.

@@ -8,10 +8,10 @@ Research-first. The initial goal is to agree the legal and accounting model befo
 
 ## Start here
 
-1. Read the [executive summary](docs/executive-summary.md).
-2. Read the [Swiss tokenized-deposits deep dive](docs/swiss-tokenized-deposits-deep-dive.md).
-3. Use the focused [legal/regulatory](docs/legal-regulatory-framework.md), [booking/accounting/prudential](docs/booking-accounting-prudential.md), and [CBS/operations](docs/cbs-operations-and-vendor-assessment.md) notes.
-4. Follow [the project plan](PLAN.md) and maintain the [research register](docs/research-register.md).
+1. Read the [executive summary](docs/00-executive-summary.md).
+2. Read the [Swiss tokenized-deposits deep dive](docs/01-swiss-tokenized-deposits-deep-dive.md).
+3. Use the focused [legal/regulatory](docs/02-legal-regulatory-framework.md), [booking/accounting/prudential](docs/03-booking-accounting-prudential.md), and [CBS/operations](docs/04-cbs-operations-and-vendor-assessment.md) notes.
+4. Follow [the project plan](PLAN.md) and maintain the [research register](docs/05-research-register.md).
 
 ## Initial structure
 
