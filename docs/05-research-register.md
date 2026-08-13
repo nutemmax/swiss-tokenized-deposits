@@ -1,4 +1,4 @@
-# Research register and evidence notes
+# 05 — Research register and evidence notes
 
 **Cut-off:** 13 August 2026  
 **Use:** source map for the project; verify the official German/French text and current reporting instructions before relying on a rule.
@@ -24,8 +24,12 @@
 | [SBA PoC report](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf) | Mirror accounts, mint/burn, SIC flow, payment-instruction legal model, open accounting work | Industry report; conclusions are expressly not binding |
 | [SNB SIC disclosure](https://www.snb.ch/public/asset/en/www-snb-ch/publications/sicsystem-disclosure/sicsystem-disclosure-all/sicsystem_disclosure_2023/publications0_en/sicsystem_disclosure_2023.en.pdf) | RTGS finality on debit; central-bank-money settlement; 24/7 instant payments | Describes SIC, not a private DLT scheme |
 | [SNB Helvetia](https://www.snb.ch/en/the-snb/mandates-goals/payment-transactions/projekt_helvetia) | Wholesale CBDC and DLT/RTGS-link settlement context | Wholesale SNB liability, not commercial-bank deposit |
+| [SIX ISO 20022 standards](https://www.six-group.com/en/products-services/banking-services/payment-standardization/standards/iso-20022.html) | Swiss interbank message standards and SIC implementation guidance | Message standards do not determine legal finality or token classification |
 | [BIS SCO60](https://www.bis.org/basel_framework/chapter/SCO/60.htm?inforce=20260101) | Tokenized bank-claim eligibility, own-issued unsecured funding, LCR/NSFR treatment | International Basel standard; map to Swiss implementation |
 | [BIS Annual Report 2025](https://www.bis.org/publ/arpdf/ar2025e3.htm) | Burn/issue and central-bank-reserve settlement model; singleness of money | Conceptual/international analysis |
+| [BIS Project Agorá](https://www.bis.org/publ/othp110.htm) | Experimental multi-currency tokenized deposit and central-bank-reserve settlement | Prototype, not a Swiss licence or production approval |
+| [BIS Project Rialto](https://www.bis.org/publ/othp91.htm) | Cross-border instant payments, FX and tokenized wholesale central-bank settlement | Proof of concept; jurisdiction-specific rules remain |
+| [FATF virtual-asset guidance](https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Guidance-rba-virtual-assets-2021.html) | International AML/CFT and Travel Rule baseline | Switzerland-specific AMLA/AMLO-FINMA rules prevail |
 | [SIF consultation](https://www.sif.admin.ch/en/newnsb/x4TMWQ1SWofNoFx7XyHhY) | Pending stablecoin/payment-instrument legislative direction | Consultation proposal, not enacted law as of cut-off |
 
 ## Deliberate uncertainties
