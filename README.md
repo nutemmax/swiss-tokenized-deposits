@@ -13,11 +13,16 @@ Research-first. The initial goal is to agree the legal and accounting model befo
 3. Use the focused [legal/regulatory](docs/02-legal-regulatory-framework.md), [booking/accounting/prudential](docs/03-booking-accounting-prudential.md), and [CBS/operations](docs/04-cbs-operations-and-vendor-assessment.md) notes.
 4. Follow [the project plan](PLAN.md) and maintain the [research register](docs/05-research-register.md).
 
+## Interactive demo
+
+Open [the tokenized-deposit explainer](demo/index.html) locally in a browser. It is a dependency-free HTML/CSS/JavaScript simulation with model switching, animated mint/burn and transfer flows, SIC/FX/PvP comparisons, reconciliation, netting and failure states. The [presenter script](docs/06-demo-presenter-script.md) provides a suggested walkthrough.
+
 ## Initial structure
 
 ```text
 docs/       Research notes and source-backed analysis
 research/   Working papers and extracted source material
+demo/       Dependency-free interactive explainer
 src/        Prototype integration or accounting logic, added later
 tests/      Small executable checks for prototype logic
 ```

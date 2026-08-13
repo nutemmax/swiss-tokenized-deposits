@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interactive explainer for tokenized deposit product models and settlement paths.">
+    <title>Tokenized deposits — interactive explainer</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="intro">
+        <div>
+          <p class="eyebrow">Swiss bank · illustrative simulation</p>
+          <h1>What does the token actually represent?</h1>
+          <p class="lede">Compare four product models and watch the claim, ledger and settlement path change.</p>
+        </div>
+        <div class="legend" aria-label="Visual legend">
+          <span><i class="legend-dot legend-dot--value" aria-hidden="true"></i> value / active flow</span>
+          <span><i class="legend-dot legend-dot--system" aria-hidden="true"></i> system / record</span>
+          <span><i class="legend-dot legend-dot--warning" aria-hidden="true"></i> warning / lock</span>
+        </div>
+      </header>
+
+      <section class="context-strip" aria-labelledby="context-heading">
+        <div class="context-kicker">
+          <span class="context-live-dot" aria-hidden="true"></span>
+          <p>WHY THIS MATTERS</p>
+          <strong id="context-heading">A token is a representation — not a legal answer.</strong>
+        </div>
+        <p class="context-copy">A normal bank deposit is already a digital claim. Tokenisation adds a transferable representation, but the product still needs a clear debtor, a final ledger and a settlement path.</p>
+        <div class="context-points" aria-label="Three questions to ask">
+          <span><b>01</b> Who owes it?</span>
+          <span><b>02</b> Which record is final?</span>
+          <span><b>03</b> What settles?</span>
+        </div>
+      </section>
+
+      <section class="model-section" aria-labelledby="model-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 · choose a product model</p>
+            <h2 id="model-heading">Same amount. Different legal and technical meaning.</h2>
+          </div>
+          <p class="illustrative-note">All amounts and rates are illustrative.</p>
+        </div>
+        <div class="model-tabs" role="tablist" aria-label="Tokenized deposit models">
+          <button class="model-tab is-selected" type="button" role="tab" aria-selected="true" data-model="instruction">
+            <span class="tab-index">01</span>
+            <span><strong>Payment instruction</strong><small>Token tells the bank to pay</small></span>
+          </button>
+          <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="mirrored">
+            <span class="tab-index">02</span>
+            <span><strong>Mirrored deposit</strong><small>Token + CBS subaccount</small></span>
+          </button>
+          <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="native">
+            <span class="tab-index">03</span>
+            <span><strong>Native on-chain</strong><small>DLT is the master ledger</small></span>
+          </button>
+          <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="stablecoin">
+            <span class="tab-index">04</span>
+            <span><strong>Non-bank stablecoin</strong><small>Separate issuer / reserve</small></span>
+          </button>
+        </div>
+        <div class="model-facts" aria-live="polite">
+          <div><span>Customer claim</span><strong id="fact-claim">Payment instruction / ordinary account</strong></div>
+          <div><span>Authoritative record</span><strong id="fact-authority">CBS + ordinary account</strong></div>
+          <div><span>Transfer mechanism</span><strong id="fact-mechanism">Bank accepts instruction, then posts payment</strong></div>
+          <div><span>Main difficulty</span><strong id="fact-risk">Who owes the holder before acceptance?</strong></div>
+        </div>
+      </section>
+
+      <section class="workbench" aria-labelledby="scenario-heading">
+        <div class="workbench-topline">
+          <div>
+            <p class="eyebrow">02 · run a scenario</p>
+            <h2 id="scenario-heading">Trace the claim through the system</h2>
+          </div>
+        </div>
+
+        <div class="stage-wrap">
+          <div class="stage-toolbar">
+            <div class="scenario-description" id="scenario-description" aria-live="polite">Move an ordinary bank balance into the selected representation.</div>
+            <div class="stage-status" id="stage-status">Illustrative simulation</div>
+          </div>
+          <div class="stage-canvas" id="stage-canvas">
+            <svg id="stage-svg" viewBox="0 0 1280 500" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="stage-title stage-desc">
+              <title id="stage-title">Animated tokenized deposit flow</title>
+              <desc id="stage-desc">A diagram of customers, banks, ledgers and settlement rails. Use the controls to step through the selected scenario.</desc>
+              <defs>
+                <marker id="arrow-black" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#111111"></path>
+                </marker>
+                <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#d52f3a"></path>
+                </marker>
+                <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="8" stroke="#d52f3a" stroke-width="2" opacity=".32"></line>
+                </pattern>
+              </defs>
+              <g id="stage-grid" aria-hidden="true"></g>
+              <g id="stage-connections" aria-hidden="true"></g>
+              <g id="stage-actors"></g>
+              <g id="stage-fund-layer" aria-hidden="true">
+                <g id="moving-fund" class="moving-fund" transform="translate(100 280)">
+                  <circle class="fund-halo" r="25"></circle>
+                  <rect class="fund-pod" x="-31" y="-16" width="62" height="32" rx="16"></rect>
+                  <text class="fund-amount" x="0" y="4" text-anchor="middle">CHF 100</text>
+                </g>
+                <g id="moving-fund-b" class="moving-fund" transform="translate(1000 130)" hidden>
+                  <circle class="fund-halo" r="25"></circle>
+                  <rect class="fund-pod" x="-31" y="-16" width="62" height="32" rx="16"></rect>
+                  <text class="fund-amount" x="0" y="4" text-anchor="middle">EUR 100</text>
+                </g>
+              </g>
+              <g id="stage-overlay"></g>
+            </svg>
+          </div>
+          <div class="stage-caption" id="stage-caption" aria-live="polite">The token tells the bank to execute a payment; it is not automatically the bank deposit itself.</div>
+        </div>
+
+        <div class="controls" aria-label="Simulation controls">
+          <label class="scenario-picker control-group--scenario">
+            <span>Scenario</span>
+            <select id="scenario-select">
+              <optgroup label="Core paths">
+                <option value="mint">Convert / mint</option>
+                <option value="redeem">Redeem / burn</option>
+                <option value="same">Same-bank transfer</option>
+                <option value="interbank">Swiss interbank transfer</option>
+                <option value="netting">Gross settlement vs netting</option>
+              </optgroup>
+              <optgroup label="Advanced paths">
+                <option value="correspondent">Cross-border correspondent + FX</option>
+                <option value="pvp">Cross-border PvP</option>
+                <option value="cbdc">Wholesale-CBDC comparison</option>
+                <option value="bridge">Bridge / wrapped token</option>
+                <option value="mismatch">Reconciliation mismatch + recovery</option>
+              </optgroup>
+            </select>
+          </label>
+          <div class="control-group control-group--amount">
+            <label for="amount-range">Illustrative amount <output id="amount-output" for="amount-range">CHF 100</output></label>
+            <input id="amount-range" class="range" type="range" min="10" max="1000" step="10" value="100">
+          </div>
+          <div class="control-group control-group--speed">
+            <label for="speed-select">Playback speed</label>
+            <select id="speed-select">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </div>
+          <div class="button-row">
+            <button class="action-button action-button--primary" id="step-button" type="button">Step forward</button>
+            <button class="action-button" id="play-button" type="button">Play</button>
+            <button class="action-button" id="reset-button" type="button">Reset</button>
+          </div>
+        </div>
+
+        <div class="timeline" aria-label="Scenario progress">
+          <div class="timeline-track" id="timeline-track"></div>
+          <div class="timeline-caption"><span id="step-label">Requested</span><span id="step-count">1 / 7</span></div>
+        </div>
+
+        <div class="status-strip" aria-live="polite">
+          <div><span>Claim holder</span><strong id="status-holder">Alice</strong></div>
+          <div><span>Debtor</span><strong id="status-debtor">Bank A</strong></div>
+          <div><span>Authority</span><strong id="status-authority">CBS</strong></div>
+          <div><span>Finality</span><strong id="status-finality">Pending</strong></div>
+          <div><span>Reconciliation</span><strong id="status-reconciliation">Matched</strong></div>
+        </div>
+
+        <details class="risk-details">
+          <summary>Advanced risk mode</summary>
+          <div class="risk-controls">
+            <label for="failure-select">Inject one failure</label>
+            <select id="failure-select">
+              <option value="none">No failure</option>
+              <option value="aml">AML / sanctions rejection</option>
+              <option value="dlt">DLT unavailable</option>
+              <option value="sic">SIC unavailable</option>
+              <option value="receiver">Receiving bank rejects</option>
+              <option value="mismatch">Reconciliation mismatch</option>
+              <option value="key">Key or contract pause</option>
+            </select>
+            <button class="action-button" id="apply-failure-button" type="button">Apply and reset</button>
+          </div>
+          <p class="risk-note" id="risk-note">Failure paths are simulated and deterministic. They do not represent a legal conclusion.</p>
+        </details>
+      </section>
+
+      <section class="insight-section" aria-labelledby="insight-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">03 · keep the mental model</p>
+            <h2 id="insight-heading">The question that changes everything</h2>
+          </div>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <span class="insight-number">A</span>
+            <h3>Who owes the money?</h3>
+            <p id="insight-debtor">A payment-instruction token does not automatically make the holder a creditor of the token issuer.</p>
+          </article>
+          <article class="insight-card">
+            <span class="insight-number">B</span>
+            <h3>Which record is final?</h3>
+            <p id="insight-ledger">The first model keeps the CBS and GL authoritative, with the token ledger reconciled to them.</p>
+          </article>
+          <article class="insight-card">
+            <span class="insight-number">C</span>
+            <h3>What happens when a step fails?</h3>
+            <p id="insight-failure">A safe design keeps value pending, stops new movement and repairs through explicit, auditable compensating actions.</p>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer-note">
+        Research basis: FINMA · SBA Deposit Token PoC · SNB/SIC · BIS. See the project notes for full legal, accounting and operational context.
+      </footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
