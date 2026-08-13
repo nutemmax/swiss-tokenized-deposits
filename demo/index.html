@@ -31,10 +31,11 @@
               <g transform="translate(62 77)">
                 <ellipse cx="78" cy="292" rx="64" ry="10" fill="#d8d1ca"></ellipse>
                 <circle cx="80" cy="55" r="33" fill="#e5b999"></circle>
-                <path d="M49 52c3-38 62-49 67-2-11-8-18-14-27-20-8 14-23 22-40 22Z" fill="#171717"></path>
-                <path d="M52 98c20-17 54-17 73 0l17 111-29 5-8 86H82l-5-86-40-5Z" fill="#f9f5ef" stroke="#171717" stroke-width="3"></path>
-                <path d="M52 101 37 209h40l8-100" fill="#d52f3a"></path>
-                <path d="M82 300h23M47 300h29" stroke="#171717" stroke-width="8" stroke-linecap="round"></path>
+                <path d="M47 55c0-48 66-52 69-3l-4 78-20-15V61c-13-3-23-12-31-25-2 15-7 27-14 35Z" fill="#171717"></path>
+                <path d="M51 101c18-15 49-15 66 0l25 125H34Z" fill="#d52f3a" stroke="#171717" stroke-width="3"></path>
+                <path d="M62 101h44l18 102H45Z" fill="#f9f5ef"></path>
+                <path d="M60 225 52 296M116 225l9 71" stroke="#171717" stroke-width="6"></path>
+                <path d="M40 300h28M111 300h26" stroke="#171717" stroke-width="8" stroke-linecap="round"></path>
                 <rect x="103" y="128" width="28" height="50" rx="7" fill="#171717"></rect>
                 <circle cx="117" cy="168" r="2" fill="#fff"></circle>
                 <text x="80" y="337" text-anchor="middle" class="primer-name">ALICE</text>
@@ -62,13 +63,15 @@
               <rect x="192" y="96" width="160" height="40" rx="20" fill="#d52f3a"></rect>
               <text x="272" y="121" text-anchor="middle" class="primer-white primer-white--large">BANK A OWES ALICE</text>
 
-              <g transform="translate(688 82)">
-                <circle cx="92" cy="108" r="78" fill="#171717"></circle>
-                <path d="M53 109c16-39 62-61 102-35M52 112c24 37 72 50 109 20" fill="none" stroke="#fff" stroke-width="5" opacity=".75"></path>
-                <circle cx="58" cy="92" r="10" fill="#d52f3a"></circle><circle cx="145" cy="74" r="10" fill="#d52f3a"></circle><circle cx="151" cy="135" r="10" fill="#d52f3a"></circle>
-                <rect x="50" y="177" width="84" height="48" rx="12" fill="#fff" stroke="#d52f3a" stroke-width="3"></rect>
-                <text x="92" y="198" text-anchor="middle" class="primer-small-red">TOKEN</text>
-                <text x="92" y="214" text-anchor="middle" class="primer-role">representation</text>
+              <g transform="translate(688 82)" filter="url(#primer-shadow)">
+                <circle cx="92" cy="108" r="82" fill="#171717"></circle>
+                <path d="M92 43 150 78 133 145 92 176 51 145 34 78Z" fill="#d52f3a" stroke="#fff" stroke-width="3"></path>
+                <path d="m92 43 22 43-22 67-22-67Z" fill="#f06a72"></path>
+                <path d="m34 78 36 8 22-43-41 35m99 0-36 8-22-43 41 35M51 145l19-59 22 67-41-8m82 0-19-59-22 67 41-8" fill="#a71824"></path>
+                <path d="m65 68 20-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"></path>
+                <rect x="38" y="186" width="108" height="48" rx="8" fill="#fff" stroke="#d52f3a" stroke-width="3"></rect>
+                <text x="92" y="206" text-anchor="middle" class="primer-small-red">TOKEN</text>
+                <text x="92" y="222" text-anchor="middle" class="primer-role">digital representation</text>
                 <text x="92" y="276" text-anchor="middle" class="primer-name">TOKENISATION</text>
                 <text x="92" y="297" text-anchor="middle" class="primer-role">adds a new movement layer</text>
               </g>
@@ -148,7 +151,6 @@
           </div>
 
           <div class="play-console" aria-label="Simulation controls">
-            <div class="fixed-amount"><span>Illustrative amount</span><strong>CHF 100</strong></div>
             <div class="transport">
               <button class="control-button control-button--primary" id="step-button" type="button"><span aria-hidden="true">→</span> Step</button>
               <button class="control-button" id="play-button" type="button"><span aria-hidden="true">▶</span> Play</button>

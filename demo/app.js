@@ -119,17 +119,25 @@ function visibleCustomerBalance(ordinary, token) {
   return ordinary + (state.model === 'instruction' ? 0 : token);
 }
 
-function person(x, y, name, amount, selected, side = 'left') {
+function person(x, y, name, amount, selected, side = 'left', dormant = false) {
   const accent = selected ? ' actor-selected' : '';
   const flip = side === 'right' ? 'scale(-1 1) translate(-110 0)' : '';
-  return `<g class="actor-hit${accent}" data-actor="${name.toLowerCase()}" role="button" tabindex="0" aria-label="Inspect ${name}" transform="translate(${x} ${y})">
-    <g transform="${flip}" filter="url(#object-shadow)">
-      <ellipse cx="55" cy="208" rx="42" ry="7" fill="#c8bfb8"></ellipse>
+  const figure = name === 'Alice' ? `
+      <path d="M28 40c0-48 58-48 58-2l-2 80-22-15V48c-13-3-22-12-29-24-1 14-3 27-5 38Z" fill="#171717"></path>
+      <circle class="actor-accent" cx="55" cy="37" r="25" fill="#e1b394" stroke="#151515" stroke-width="2"></circle>
+      <path d="M30 73c15-12 35-12 50 0l22 86H8Z" fill="#d52f3a" stroke="#151515" stroke-width="2"></path>
+      <path d="M42 74h27l16 67H24Z" fill="#fff"></path>
+      <path d="M28 158 23 208M82 158l7 50" stroke="#151515" stroke-width="5"></path>
+      <path d="M12 214h24M77 214h24" stroke="#151515" stroke-width="7" stroke-linecap="round"></path>` : `
       <circle class="actor-accent" cx="55" cy="37" r="27" fill="#e1b394" stroke="#151515" stroke-width="2"></circle>
       <path d="M29 37c0-38 57-41 56 0-13-4-22-11-30-20-5 11-14 18-26 20Z" fill="#171717"></path>
       <path d="M31 74c15-12 34-12 49 0l13 80-22 5-5 55H48l-6-55-25-5Z" fill="#fff" stroke="#151515" stroke-width="2"></path>
       <path d="M31 76 17 154h26l7-72" fill="#d52f3a"></path>
-      <path d="M48 214h18M22 214h24" stroke="#151515" stroke-width="7" stroke-linecap="round"></path>
+      <path d="M48 214h18M22 214h24" stroke="#151515" stroke-width="7" stroke-linecap="round"></path>`;
+  return `<g class="actor-hit${accent}${dormant ? ' actor-dormant' : ''}" data-actor="${name.toLowerCase()}" role="button" tabindex="0" aria-label="Inspect ${name}" transform="translate(${x} ${y})">
+    <g transform="${flip}" filter="url(#object-shadow)">
+      <ellipse cx="55" cy="208" rx="42" ry="7" fill="#c8bfb8"></ellipse>
+      ${figure}
       <rect x="72" y="94" width="21" height="37" rx="5" fill="#151515"></rect>
       <circle cx="82" cy="122" r="1.5" fill="#fff"></circle>
     </g>
@@ -139,9 +147,9 @@ function person(x, y, name, amount, selected, side = 'left') {
   </g>`;
 }
 
-function bank(x, y, name, balance, active, selected) {
+function bank(x, y, name, balance, active, selected, dormant = false) {
   const cls = active ? ' bank-active' : '';
-  return `<g class="actor-hit${selected ? ' actor-selected' : ''}" data-actor="${name === 'BANK A' ? 'banka' : 'bankb'}" role="button" tabindex="0" aria-label="Inspect ${name}" transform="translate(${x} ${y})" filter="url(#object-shadow)">
+  return `<g class="actor-hit${selected ? ' actor-selected' : ''}${dormant ? ' actor-dormant' : ''}" data-actor="${name === 'BANK A' ? 'banka' : 'bankb'}" role="button" tabindex="0" aria-label="Inspect ${name}" transform="translate(${x} ${y})" filter="url(#object-shadow)">
     <g class="${cls}">
       <path class="bank-roof" d="M0 64 100 6l100 58Z"></path>
       <rect class="bank-body actor-accent" x="14" y="64" width="172" height="138" rx="3"></rect>
@@ -197,7 +205,6 @@ function issuerFacility(x, y, supply, reserve, active) {
 
 function settlementRail(s) {
   return `<g class="actor-hit" data-actor="sic" role="button" tabindex="0" aria-label="Inspect SIC and SNB settlement rail">
-    <rect x="0" y="440" width="1060" height="150" class="scene-floor"></rect>
     <text x="40" y="473" class="rail-label">SIC / SNB SETTLEMENT RAIL</text><text x="40" y="493" class="rail-sub">central-bank money between banks · not the customer token</text>
     <path class="rail-track actor-accent" d="M245 530H815"></path>
     ${Array.from({ length: 12 }, (_, i) => `<path class="rail-sleeper" d="M${270 + i * 47} 517v26"></path>`).join('')}
@@ -222,57 +229,76 @@ function specialInfrastructure(s) {
   return '';
 }
 
-function routes() {
-  const scenario = state.scenario;
-  const red = 'route-active';
-  const muted = 'route-muted';
-  if (scenario === 'mint' || scenario === 'redeem') return `<path class="${red}" d="M150 250C190 225 212 222 250 225"></path><path class="${state.model === 'instruction' ? muted : red}" d="M440 220C475 190 495 188 535 190"></path><path class="${muted}" d="M605 280C490 350 260 350 130 315"></path>`;
-  if (scenario === 'same') return `<path class="${red}" d="M150 245C190 220 215 220 250 220"></path><path class="${red}" d="M440 220C475 190 505 190 535 190"></path><path class="${red}" d="M730 250C790 300 870 300 930 250"></path>`;
-  if (scenario === 'interbank' || scenario === 'netting') return `<path class="${red}" d="M150 242H250"></path><path class="${muted}" d="M440 210H535"></path><path class="${muted}" d="M730 210H750"></path><path class="${red}" d="M440 270C470 370 515 435 530 510"></path><path class="${red}" d="M790 510C810 430 840 360 850 270"></path><path class="${red}" d="M950 242h-35"></path>`;
-  return `<path class="${red}" d="M150 242H250"></path><path class="${muted}" d="M440 205H535"></path><path class="${muted}" d="M730 205H750"></path><path class="${red}" d="M440 270C470 310 480 330 500 350"></path><path class="${red}" d="M650 350C700 330 720 300 750 270"></path><path class="${red}" d="M950 242h-35"></path>`;
+const FLOW_POINTS = {
+  mint: [[145,110],[210,110],[320,75],[665,95],[665,315],[145,110],[145,110]],
+  redeem: [[145,110],[665,315],[665,95],[665,315],[320,75],[210,110],[145,110]],
+  same: [[145,110],[210,110],[320,75],[665,95],[455,365],[960,110],[960,110]],
+  interbank: [[145,110],[210,110],[320,75],[665,95],[590,518],[800,75],[960,110]],
+  netting: [[320,75],[800,75],[500,518],[590,518],[700,518],[800,75],[800,75]],
+  correspondent: [[145,110],[210,110],[470,520],[530,520],[650,520],[866,110],[960,110]],
+  pvp: [[145,110],[210,110],[470,520],[530,520],[650,520],[866,110],[960,110]],
+  cbdc: [[145,110],[210,110],[665,95],[700,520],[760,520],[866,110],[960,110]],
+  bridge: [[145,110],[210,110],[458,520],[530,520],[650,520],[866,110],[960,110]],
+  mismatch: [[145,110],[210,110],[665,95],[665,315],[680,365],[665,315],[145,110]]
+};
+
+function routePath(from, to) {
+  const [x1, y1] = from; const [x2, y2] = to;
+  if (y1 >= 280 && y2 <= 120 && x2 < 300) return `M${x1} ${y1}C${x1 + 35} 220,${x1 + 30} 75,${x1 - 35} 75H${x2 + 45}Q${x2} 75,${x2} ${y2}`;
+  if (y1 >= 280 && y2 <= 120 && x2 > 700) return `M${x1} ${y1}C${x1 + 105} 410,690 260,690 130Q690 75,745 75H${x2 - 45}Q${x2} 75,${x2} ${y2}`;
+  if (y1 >= 440 && y2 <= 120 && x2 > 700) return `M${x1} ${y1}C690 430,680 180,735 82H${x2 - 45}Q${x2} 82,${x2} ${y2}`;
+  if (y1 <= 120 && y2 >= 440 && x1 < 300) return `M${x1} ${y1}C185 230,185 430,275 500Q330 ${y2},${x2} ${y2}`;
+  if (y1 <= 120 && y2 >= 440 && x1 > 700) return `M${x1} ${y1}H735Q690 82,690 135V400Q690 ${y2},${x2} ${y2}`;
+  if (y1 <= 120 && y2 >= 440) return `M${x1} ${y1}C${x1 + 15} 220,680 360,${x2} ${y2}`;
+  const bend = Math.max(26, Math.abs(x2 - x1) * .25);
+  return `M${x1} ${y1}C${x1 + (x2 >= x1 ? bend : -bend)} ${y1},${x2 - (x2 >= x1 ? bend : -bend)} ${y2},${x2} ${y2}`;
 }
 
-function fundPosition() {
-  const positions = {
-    mint: [[130,245],[260,220],[360,220],[570,190],[650,220],[150,275],[150,275]],
-    redeem: [[150,275],[570,190],[650,220],[360,220],[260,220],[130,245],[130,245]],
-    same: [[130,245],[260,220],[360,220],[610,190],[850,245],[950,245],[950,245]],
-    interbank: [[130,245],[300,220],[400,240],[610,190],[590,515],[850,220],[950,245]],
-    netting: [[350,220],[820,220],[590,515],[590,515],[740,515],[850,220],[850,220]],
-    correspondent: [[130,245],[330,220],[530,385],[580,385],[820,220],[950,245],[950,245]],
-    pvp: [[130,245],[330,220],[530,385],[580,385],[820,220],[950,245],[950,245]],
-    cbdc: [[130,245],[330,220],[610,190],[530,385],[820,220],[950,245],[950,245]],
-    bridge: [[130,245],[330,220],[470,390],[580,390],[650,390],[820,220],[950,245]],
-    mismatch: [[130,245],[330,220],[610,190],[610,190],[610,190],[610,190],[130,245]]
-  };
-  return positions[state.scenario][state.step];
+function routes() {
+  const points = FLOW_POINTS[state.scenario];
+  return points.slice(0, -1).map((point, index) => {
+    if (point[0] === points[index + 1][0] && point[1] === points[index + 1][1]) return '';
+    if (index > state.step) return '';
+    const cls = index < state.step ? 'route-complete' : 'route-active';
+    return `<path class="${cls}" d="${routePath(point, points[index + 1])}"></path>`;
+  }).join('');
 }
+
+function fundPosition() { return FLOW_POINTS[state.scenario][state.step]; }
 
 function fundMarkup() {
   const [x, y] = fundPosition();
   const form = MODELS[state.model].tokenForm;
-  const shape = form === 'ticket' ? `<rect class="fund-shape" x="-42" y="-20" width="84" height="40" rx="4"></rect><path d="M-31-6h20M-31 4h34" stroke="#fff" stroke-width="3"></path>` : form === 'issuer' ? `<circle class="fund-shape" r="29"></circle><circle r="18" fill="none" stroke="#fff" stroke-width="2"></circle>` : `<path class="fund-shape" d="M0-31 27-16v32L0 31l-27-15v-32Z"></path>`;
-  let result = `<g class="fund-object fund-object--${form}" style="transform:translate(${x}px,${y}px)"><circle class="fund-halo" r="42"></circle>${shape}<text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT))}</text></g>`;
-  if (state.scenario === 'pvp') { const reverse = [[950,245],[850,220],[620,385],[580,385],[330,220],[130,245],[130,245]][state.step]; result += `<g class="fund-object" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="29"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT, 'EUR'))}</text></g>`; }
+  const shape = form === 'ticket'
+    ? `<rect class="fund-shape" x="-55" y="-23" width="110" height="46" rx="5"></rect><rect x="-55" y="-23" width="27" height="46" rx="5" fill="#151515"></rect><path d="m-48 0 6 6 9-13" fill="none" stroke="#fff" stroke-width="3"></path><text x="13" y="4" text-anchor="middle">${esc(money(AMOUNT))}</text>`
+    : form === 'issuer'
+      ? `<circle class="fund-shape" r="30"></circle><circle r="20" fill="none" stroke="#fff" stroke-width="2"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT))}</text>`
+      : `<path class="fund-shape" d="M0-34 30-17l-8 35L0 38l-22-20-8-35Z"></path><path d="M0-34 11-11 0 24-11-11Z" fill="#f06a72"></path><path d="m-30-17 19 6L0-34-22 18m52-35-19 6L0-34l22 52" fill="#a71824"></path><text x="0" y="8" text-anchor="middle">${esc(money(AMOUNT))}</text>`;
+  let result = `<g class="fund-object fund-object--${form}" data-fund="chf" style="transform:translate(${x}px,${y}px)"><circle class="fund-halo" r="46"></circle>${shape}</g>`;
+  if (state.scenario === 'pvp') { const reverse = [[960,110],[866,110],[650,520],[530,520],[470,520],[210,110],[145,110]][state.step]; result += `<g class="fund-object" data-fund="eur" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="30"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT, 'EUR'))}</text></g>`; }
   return result;
 }
 
 function annotation(s) {
   if (activeFailure()) return `<g class="scene-chip scene-chip--red" transform="translate(362 18)"><rect width="336" height="43" rx="5"></rect><text x="168" y="26" text-anchor="middle">${esc(activeFailure().label.toUpperCase())} · VALUE HELD</text></g>`;
-  if (state.scenario === 'same') return `<g class="scene-chip" transform="translate(390 18)"><rect width="280" height="43" rx="5"></rect><text x="140" y="26" text-anchor="middle">BANK A TOTAL LIABILITY UNCHANGED</text></g>`;
+  if (state.scenario === 'same') return `<g class="scene-chip" transform="translate(370 18)"><rect width="320" height="43" rx="5"></rect><text x="160" y="26" text-anchor="middle">NO SIC · BANK A LIABILITY UNCHANGED</text></g>`;
   if (state.scenario === 'netting') return `<g class="scene-chip" transform="translate(380 18)"><rect width="300" height="43" rx="5"></rect><text x="150" y="26" text-anchor="middle">GROSS ${esc(money(s.grossA + s.grossB))} · NET ${esc(money(s.net))}</text></g>`;
   if (state.scenario === 'mismatch') return `<g class="scene-chip ${s.reconciliation === 'Mismatch' ? 'scene-chip--red' : ''}" transform="translate(375 18)"><rect width="310" height="43" rx="5"></rect><text x="155" y="26" text-anchor="middle">${s.reconciliation === 'Mismatch' ? 'MISMATCH · PAUSE AND REPAIR' : 'DLT = SUBLEDGER = GL'}</text></g>`;
   return `<g class="scene-chip" transform="translate(408 18)"><rect width="244" height="43" rx="5"></rect><text x="122" y="26" text-anchor="middle">${esc(MODELS[state.model].label.toUpperCase())}</text></g>`;
 }
 
 function renderScene(s) {
-  refs.stageBackground.innerHTML = `<rect width="1060" height="590" class="scene-bg"></rect><rect width="1060" height="440" class="scene-dot-field"></rect>`;
+  const railFloor = state.scenario === 'interbank' || state.scenario === 'netting' ? '<rect x="0" y="440" width="1060" height="150" class="scene-floor"></rect>' : '';
+  refs.stageBackground.innerHTML = `<rect width="1060" height="590" class="scene-bg"></rect><rect width="1060" height="440" class="scene-dot-field"></rect>${railFloor}`;
   refs.stageRoutes.innerHTML = routes();
   const authorityObject = state.model === 'stablecoin'
     ? issuerFacility(422, 70, s.tokenSupply, s.issuerReserve, at(3))
     : dlt(414, 82, s.tokenSupply, state.model === 'native' || at(3), state.model);
   refs.stageInfrastructure.innerHTML = `${(state.scenario === 'interbank' || state.scenario === 'netting') ? settlementRail(s) : ''}${specialInfrastructure(s)}${authorityObject}`;
-  refs.stageActors.innerHTML = `${person(22, 155, 'Alice', money(visibleCustomerBalance(s.aliceOrdinary, s.aliceToken)), state.selectedActor === 'alice')}${bank(220, 124, 'BANK A', money(s.bankASnb), state.selectedActor === 'banka', state.selectedActor === 'banka')}${bank(700, 124, 'BANK B', money(s.bankBSnb), s.holder.startsWith('Luca'), state.selectedActor === 'bankb')}${person(912, 155, 'Luca', money(visibleCustomerBalance(s.lucaOrdinary, s.lucaToken)), state.selectedActor === 'luca', 'right')}`;
+  const bankBDormant = ['mint','redeem','same','mismatch'].includes(state.scenario);
+  const lucaDormant = ['mint','redeem','netting','mismatch'].includes(state.scenario);
+  const aliceDormant = state.scenario === 'netting';
+  refs.stageActors.innerHTML = `${person(22, 155, 'Alice', money(visibleCustomerBalance(s.aliceOrdinary, s.aliceToken)), state.selectedActor === 'alice', 'left', aliceDormant)}${bank(220, 124, 'BANK A', money(s.bankASnb), state.selectedActor === 'banka', state.selectedActor === 'banka')}${bank(700, 124, 'BANK B', money(s.bankBSnb), s.holder.startsWith('Luca'), state.selectedActor === 'bankb', bankBDormant)}${person(912, 155, 'Luca', money(visibleCustomerBalance(s.lucaOrdinary, s.lucaToken)), state.selectedActor === 'luca', 'right', lucaDormant)}`;
   refs.stageFunds.innerHTML = fundMarkup();
   refs.stageAnnotations.innerHTML = annotation(s);
 }
