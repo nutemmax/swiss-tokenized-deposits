@@ -241,6 +241,12 @@ const FLOW_POINTS = {
   mismatch: [[145,110],[320,130],[618,182],[618,182],[618,182],[405,230],[145,110]]
 };
 
+function flowPoints() {
+  const points = FLOW_POINTS[state.scenario];
+  if (state.model !== 'stablecoin') return points;
+  return points.map(([x, y]) => x === 618 && y === 182 ? [420,105] : [x, y]);
+}
+
 function routePath(from, to) {
   const [x1, y1] = from; const [x2, y2] = to;
   if (y1 >= 280 && y2 <= 260 && x2 < 300) return `M${x1} ${y1}C${x1 + 35} 220,${x1 + 30} 75,${x1 - 35} 75H${x2 + 45}Q${x2} 75,${x2} ${y2}`;
@@ -254,16 +260,13 @@ function routePath(from, to) {
 }
 
 function routes() {
-  const points = FLOW_POINTS[state.scenario];
-  return points.slice(0, -1).map((point, index) => {
-    if (point[0] === points[index + 1][0] && point[1] === points[index + 1][1]) return '';
-    if (index > state.step) return '';
-    const cls = index < state.step ? 'route-complete' : 'route-active';
-    return `<path class="${cls}" d="${routePath(point, points[index + 1])}"></path>`;
-  }).join('');
+  const points = flowPoints();
+  const from = points[state.step]; const to = points[state.step + 1];
+  if (!to || (from[0] === to[0] && from[1] === to[1])) return '';
+  return `<path class="route-active" d="${routePath(from, to)}"></path>`;
 }
 
-function fundPosition() { return FLOW_POINTS[state.scenario][state.step]; }
+function fundPosition() { return flowPoints()[state.step]; }
 
 function fundMarkup() {
   const [x, y] = fundPosition();

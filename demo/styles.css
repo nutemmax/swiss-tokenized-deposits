@@ -179,9 +179,7 @@ select { appearance: none; border: 1px solid var(--ink); border-radius: 0; backg
 .issuer-caption { fill: #fff; font-size: 8px; font-weight: 800; letter-spacing: .06em; }
 .issuer-active .issuer-roof { fill: var(--ink); stroke: var(--red); }
 .issuer-active .issuer-body { stroke: var(--red); stroke-width: 4; }
-.route-muted { fill: none; stroke: #a69e97; stroke-width: 3; stroke-dasharray: 7 8; marker-end: url(#arrow-muted); }
-.route-complete { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; opacity: .18; }
-.route-active { fill: none; stroke: var(--red); stroke-width: 3.4; stroke-linecap: round; marker-end: url(#arrow-red); }
+.route-active { fill: none; stroke: var(--red); stroke-width: 2.2; stroke-linecap: round; marker-end: url(#arrow-red); }
 .claim-line { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 4 7; }
 .rail-track { fill: none; stroke: #fff; stroke-width: 4; }
 .rail-sleeper { stroke: #6b6b6b; stroke-width: 2; }
