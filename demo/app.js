@@ -1,4 +1,5 @@
 const BASE = 1000;
+const AMOUNT = 100;
 
 const MODELS = {
   instruction: {
@@ -42,7 +43,7 @@ const FAILURES = {
   key: { trigger: 3, label: 'Key / contract pause', text: 'An administrator pauses token movement after a control alert.' }
 };
 
-const state = { model: 'instruction', scenario: 'mint', amount: 100, step: 0, speed: 1, playing: false, failure: 'none', selectedActor: 'alice', timer: null };
+const state = { model: 'instruction', scenario: 'mint', step: 0, speed: 1, playing: false, failure: 'none', selectedActor: 'alice', timer: null };
 const refs = {};
 const $ = (id) => document.getElementById(id);
 const money = (value, currency = 'CHF') => `${currency} ${Math.round(value).toLocaleString('en-CH')}`;
@@ -57,7 +58,7 @@ const activeFailure = () => {
 const isFinal = () => state.step >= finalStep() && !activeFailure();
 
 function snapshot() {
-  const amount = state.amount;
+  const amount = AMOUNT;
   const model = state.model;
   const scenario = state.scenario;
   const s = {
@@ -251,8 +252,8 @@ function fundMarkup() {
   const [x, y] = fundPosition();
   const form = MODELS[state.model].tokenForm;
   const shape = form === 'ticket' ? `<rect class="fund-shape" x="-42" y="-20" width="84" height="40" rx="4"></rect><path d="M-31-6h20M-31 4h34" stroke="#fff" stroke-width="3"></path>` : form === 'issuer' ? `<circle class="fund-shape" r="29"></circle><circle r="18" fill="none" stroke="#fff" stroke-width="2"></circle>` : `<path class="fund-shape" d="M0-31 27-16v32L0 31l-27-15v-32Z"></path>`;
-  let result = `<g class="fund-object fund-object--${form}" style="transform:translate(${x}px,${y}px)"><circle class="fund-halo" r="42"></circle>${shape}<text x="0" y="4" text-anchor="middle">${esc(money(state.amount))}</text></g>`;
-  if (state.scenario === 'pvp') { const reverse = [[950,245],[850,220],[620,385],[580,385],[330,220],[130,245],[130,245]][state.step]; result += `<g class="fund-object" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="29"></circle><text x="0" y="4" text-anchor="middle">${esc(money(state.amount, 'EUR'))}</text></g>`; }
+  let result = `<g class="fund-object fund-object--${form}" style="transform:translate(${x}px,${y}px)"><circle class="fund-halo" r="42"></circle>${shape}<text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT))}</text></g>`;
+  if (state.scenario === 'pvp') { const reverse = [[950,245],[850,220],[620,385],[580,385],[330,220],[130,245],[130,245]][state.step]; result += `<g class="fund-object" style="transform:translate(${reverse[0]}px,${reverse[1]}px)"><circle class="fund-halo" r="42"></circle><circle class="fund-shape" r="29"></circle><text x="0" y="4" text-anchor="middle">${esc(money(AMOUNT, 'EUR'))}</text></g>`; }
   return result;
 }
 
@@ -287,8 +288,8 @@ function actorData(s) {
     dlt: { title: 'DLT ledger', mark: '◇', summary: state.model === 'native' ? 'The DLT is the authoritative holder record.' : 'The DLT is a controlled representation reconciled to banking records.', rows: [['Token supply', money(s.tokenSupply)], ['Authority', state.model === 'native' ? 'Master record' : 'Representation'], ['Access', 'Permissioned / allow-listed'], ['Reconciliation', s.reconciliation]] },
     issuer: { title: 'Stablecoin issuer', mark: '◎', summary: 'The issuer—not the accepting bank—owes the stablecoin holder under the issuer terms.', rows: [['Token supply', money(s.tokenSupply)], ['Reserve / guarantee', money(s.issuerReserve)], ['Legal debtor', 'Issuer / guarantor'], ['Bank deposit protection', 'Not automatic']] },
     sic: { title: 'SIC / SNB rail', mark: '≋', summary: 'This rail moves central-bank money between participating banks. Alice’s retail token does not enter the SNB.', rows: [['Settlement asset', 'SNB sight deposits'], ['Bank A balance', money(s.bankASnb)], ['Bank B balance', money(s.bankBSnb)], ['Finality', s.finality]] },
-    bridge: { title: 'Cross-ledger bridge', mark: '⌒', summary: 'The bridge locks value on one ledger and authorizes a wrapped representation on another.', rows: [['Source state', s.locked ? 'Locked' : 'Available'], ['Wrapped state', s.wrapped ? money(state.amount) : 'None'], ['Additional dependency', 'Bridge keys / contract'], ['Finality', s.finality]] },
-    pvp: { title: 'PvP mechanism', mark: '⇄', summary: 'Payment-versus-payment coordinates two currency legs so principal does not settle one-sided.', rows: [['CHF leg', money(state.amount)], ['EUR leg', money(state.amount, 'EUR')], ['Release rule', 'Both or neither'], ['Finality', s.finality]] },
+    bridge: { title: 'Cross-ledger bridge', mark: '⌒', summary: 'The bridge locks value on one ledger and authorizes a wrapped representation on another.', rows: [['Source state', s.locked ? 'Locked' : 'Available'], ['Wrapped state', s.wrapped ? money(AMOUNT) : 'None'], ['Additional dependency', 'Bridge keys / contract'], ['Finality', s.finality]] },
+    pvp: { title: 'PvP mechanism', mark: '⇄', summary: 'Payment-versus-payment coordinates two currency legs so principal does not settle one-sided.', rows: [['CHF leg', money(AMOUNT)], ['EUR leg', money(AMOUNT, 'EUR')], ['Release rule', 'Both or neither'], ['Finality', s.finality]] },
     fx: { title: 'FX / correspondent', mark: '↔', summary: 'Cross-border settlement adds conversion, correspondent balances and foreign payment-system rules.', rows: [['Illustrative rate', '1 CHF = 1 EUR'], ['Market data', 'No · illustrative'], ['Origin leg', 'CHF'], ['Destination leg', 'EUR']] },
     wcbdc: { title: 'Wholesale CBDC', mark: '◉', summary: 'Wholesale CBDC is a central-bank liability used for institutional settlement—not a retail customer deposit.', rows: [['Issuer', 'Central bank'], ['Eligible holders', 'Participating institutions'], ['Customer claim', 'Still commercial-bank money'], ['Status', 'Conceptual comparison']] }
   };
@@ -332,7 +333,6 @@ function updateTimeline() {
 function render() {
   const s = snapshot();
   updateModelFacts(); updateFlowControls(); renderScene(s); renderDrawer(s); updateTimeline();
-  refs.amountOutput.textContent = money(state.amount);
   refs.statusHolder.textContent = s.holder; refs.statusDebtor.textContent = s.debtor; refs.statusFinality.textContent = s.finality; refs.statusReconciliation.textContent = s.reconciliation;
   refs.statusFinality.classList.toggle('is-warning', s.finality === 'Blocked' || s.finality === 'Pending'); refs.statusReconciliation.classList.toggle('is-warning', s.reconciliation === 'Mismatch');
   refs.playButton.innerHTML = state.playing ? '<span aria-hidden="true">Ⅱ</span> Pause' : '<span aria-hidden="true">▶</span> Play';
@@ -351,7 +351,6 @@ function bind() {
   document.querySelectorAll('.model-tab').forEach((button) => button.addEventListener('click', () => { stop(); state.model = button.dataset.model; state.step = 0; state.selectedActor = state.model === 'stablecoin' ? 'issuer' : 'alice'; render(); }));
   document.querySelectorAll('.flow-button').forEach((button) => button.addEventListener('click', () => chooseScenario(button.dataset.scenario)));
   refs.scenarioSelect.addEventListener('change', (event) => { if (event.target.value) chooseScenario(event.target.value); });
-  refs.amountRange.addEventListener('input', (event) => { state.amount = Number(event.target.value); render(); });
   refs.speedSelect.addEventListener('change', (event) => { state.speed = Number(event.target.value); if (state.playing) { clearTimeout(state.timer); schedule(); } });
   refs.stepButton.addEventListener('click', () => { stop(); advance(); }); refs.playButton.addEventListener('click', play); refs.resetButton.addEventListener('click', reset);
   refs.applyFailureButton.addEventListener('click', () => { stop(); state.failure = refs.failureSelect.value; state.step = 0; refs.riskNote.textContent = state.failure === 'none' ? 'Failure paths are simulated and deterministic. They do not represent a legal conclusion.' : `${FAILURES[state.failure].label}: advance until the affected control stops the flow.`; render(); });
@@ -361,7 +360,7 @@ function bind() {
 }
 
 function init() {
-  ['stage-background','stage-routes','stage-infrastructure','stage-actors','stage-funds','stage-annotations','stage-svg','scenario-select','scenario-kicker','scenario-description','stage-status','amount-range','amount-output','speed-select','step-button','play-button','reset-button','timeline-track','step-label','step-count','status-holder','status-debtor','status-finality','status-reconciliation','fact-claim','fact-authority','fact-mechanism','fact-risk','drawer-title','drawer-visual','drawer-summary','drawer-details','insight-debtor','insight-ledger','insight-failure','failure-select','apply-failure-button','risk-note'].forEach((id) => { refs[id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = $(id); });
+  ['stage-background','stage-routes','stage-infrastructure','stage-actors','stage-funds','stage-annotations','stage-svg','scenario-select','scenario-kicker','scenario-description','stage-status','speed-select','step-button','play-button','reset-button','timeline-track','step-label','step-count','status-holder','status-debtor','status-finality','status-reconciliation','fact-claim','fact-authority','fact-mechanism','fact-risk','drawer-title','drawer-visual','drawer-summary','drawer-details','insight-debtor','insight-ledger','insight-failure','failure-select','apply-failure-button','risk-note'].forEach((id) => { refs[id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = $(id); });
   bind(); render();
 }
 
