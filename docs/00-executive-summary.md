@@ -25,7 +25,7 @@ This is commonly called a **CBS-authoritative mirrored model**. It gives the ban
 
 ### A deposit is a claim, not a stored pile of cash
 
-When Emma deposits CHF 100 with Bank A, Bank A records a liability of CHF 100 to Emma. Emma owns the right to claim CHF 100 from Bank A, subject to the account terms and applicable law. Bank A may use its assets and liquidity for banking business; it does not put Emma's particular notes in a labelled box.
+When Alice deposits CHF 100 with Bank A, Bank A records a liability of CHF 100 to Alice. Alice owns the right to claim CHF 100 from Bank A, subject to the account terms and applicable law. Bank A may use its assets and liquidity for banking business; it does not put Alice's particular notes in a labelled box.
 
 There are several kinds of money in this picture:
 
@@ -70,25 +70,25 @@ The SBA's 2025 Deposit Token PoC deliberately used a conservative form: deposits
 
 “Mirrored” does not mean that the bank has two separate CHF 100 balances or that the customer receives CHF 200 of value. It means that the bank keeps a normal customer-liability record in the CBS and creates a linked **mirror account/subledger** for the tokenized portion.
 
-Suppose Emma has CHF 1,000 in an ordinary account at Bank A and converts CHF 100:
+Suppose Alice has CHF 1,000 in an ordinary account at Bank A and converts CHF 100:
 
 1. The CBS checks identity, available balance, AML/sanctions status and any account restrictions.
 2. The CBS moves CHF 100 from the ordinary-deposit category to a tokenized-deposit subcategory (or records an equivalent reserved mirror balance).
-3. The GL still shows one CHF 1,000 total liability to Emma; it is merely classified as CHF 900 ordinary plus CHF 100 tokenized.
-4. The token service mints exactly 100 CHF tokens to Emma's verified wallet.
+3. The GL still shows one CHF 1,000 total liability to Alice; it is merely classified as CHF 900 ordinary plus CHF 100 tokenized.
+4. The token service mints exactly 100 CHF tokens to Alice's verified wallet.
 5. Reconciliation confirms that token supply, mirror balances and the GL agree.
 
-If Emma redeems the tokens, the sequence is reversed: the bank first disables or burns the 100 tokens, verifies the final burn evidence, then releases or reclassifies CHF 100 back to the ordinary deposit balance. If minting fails, no tokenized balance is made spendable. If burning fails, the ordinary balance remains locked or pending until the discrepancy is repaired.
+If Alice redeems the tokens, the sequence is reversed: the bank first disables or burns the 100 tokens, verifies the final burn evidence, then releases or reclassifies CHF 100 back to the ordinary deposit balance. If minting fails, no tokenized balance is made spendable. If burning fails, the ordinary balance remains locked or pending until the discrepancy is repaired.
 
 The mirror account is therefore a control mechanism, not a second source of money. It supports wallet-level balances, pending transfers, freezes and event histories while the CBS remains the bank's authoritative customer and liability record.
 
 ## Transfers inside one bank
 
-Assume Emma and Luca both bank with Bank A. Emma sends Luca CHF 25.
+Assume Alice and Luca both bank with Bank A. Alice sends Luca CHF 25.
 
-1. Bank A verifies that Emma's wallet is approved and that she has CHF 25 available.
-2. The bank screens the transaction and places a reservation so Emma cannot spend the same CHF 25 twice.
-3. The bank debits Emma's tokenized-deposit subledger by CHF 25 and credits Luca's by CHF 25.
+1. Bank A verifies that Alice's wallet is approved and that she has CHF 25 available.
+2. The bank screens the transaction and places a reservation so Alice cannot spend the same CHF 25 twice.
+3. The bank debits Alice's tokenized-deposit subledger by CHF 25 and credits Luca's by CHF 25.
 4. The token ledger records the transfer, or records a burn-and-mint event if the contract uses that pattern.
 5. The bank commits the customer-level posting and token event through one durable orchestration process.
 
@@ -98,25 +98,25 @@ Bank A's total liability does not change: it still owes CHF 25 more to one custo
 
 The sentence “A cross-bank transfer burns the sending bank's claim, settles the interbank amount in central-bank money (normally SIC/SNB sight deposits), and lets the receiving bank create its own customer claim” compresses several separate legal and accounting events. It describes the recommended **two-bank liability model**, not every possible token architecture.
 
-Take a CHF 100 transfer from Emma at Bank A to Luca at Bank B:
+Take a CHF 100 transfer from Alice at Bank A to Luca at Bank B:
 
 ### 1. Before the transfer
 
-Bank A owes Emma CHF 100. That is Bank A's customer-deposit liability. Bank B owes Luca nothing for this payment yet. Emma's token is a representation or payment instrument linked to Bank A; it is not automatically a claim on Bank B.
+Bank A owes Alice CHF 100. That is Bank A's customer-deposit liability. Bank B owes Luca nothing for this payment yet. Alice's token is a representation or payment instrument linked to Bank A; it is not automatically a claim on Bank B.
 
-### 2. Bank A locks and consumes Emma's value
+### 2. Bank A locks and consumes Alice's value
 
-Bank A verifies both customers and wallets, performs sanctions/AML checks, and reserves Emma's CHF 100. The token is then burned, invalidated or marked as consumed according to the scheme rules. Bank A reduces or extinguishes the corresponding liability to Emma. “Burns the sending bank's claim” means precisely this: Bank A cannot leave Emma's CHF 100 claim active and also treat the same CHF 100 as fully paid to Bank B.
+Bank A verifies both customers and wallets, performs sanctions/AML checks, and reserves Alice's CHF 100. The token is then burned, invalidated or marked as consumed according to the scheme rules. Bank A reduces or extinguishes the corresponding liability to Alice. “Burns the sending bank's claim” means precisely this: Bank A cannot leave Alice's CHF 100 claim active and also treat the same CHF 100 as fully paid to Bank B.
 
 “Burn” is a technical word here. It does not mean that CHF 100 of economic value is destroyed. It means that the Bank-A token representation is removed or made unusable, while the bank books the corresponding liability reduction or pending settlement entry. If the legal design burns before SIC settlement, the customer must receive a clearly defined interim claim (for example, a settlement payable); otherwise the design could leave the customer with neither a deposit claim nor a properly documented settlement claim during the gap.
 
-If the scheme uses a payment-instruction token, the legal effect may instead be “Bank A accepts and executes Emma's instruction.” The contract must state the exact point at which Emma's claim is debited and whether any interim claim exists.
+If the scheme uses a payment-instruction token, the legal effect may instead be “Bank A accepts and executes Alice's instruction.” The contract must state the exact point at which Alice's claim is debited and whether any interim claim exists.
 
 ### 3. Bank A settles with Bank B
 
 Bank A owes Bank B the interbank amount. The banks settle that obligation in central-bank money through SIC: Bank A's sight-deposit balance at the SNB decreases by CHF 100 and Bank B's increases by CHF 100. SIC is an RTGS system: the payment is individually irrevocable and final when the relevant settlement account is debited. [SNB SIC System Disclosure](https://www.snb.ch/public/asset/en/www-snb-ch/publications/sicsystem-disclosure/sicsystem-disclosure-all/sicsystem_disclosure_2023/publications0_en/sicsystem_disclosure_2023.en.pdf)
 
-This is not a movement of Emma's retail token directly into the SNB. It is a separate interbank settlement step that gives Bank B the central-bank-money value needed to support the payment.
+This is not a movement of Alice's retail token directly into the SNB. It is a separate interbank settlement step that gives Bank B the central-bank-money value needed to support the payment.
 
 ### 4. Bank B accepts and creates Luca's claim
 
@@ -124,7 +124,7 @@ After receiving the SIC settlement and passing its own controls, Bank B credits 
 
 ### 5. The final economic result
 
-- Emma no longer has the CHF 100 claim on Bank A for this transfer.
+- Alice no longer has the CHF 100 claim on Bank A for this transfer.
 - Luca now has a CHF 100 claim on Bank B.
 - Bank A's SNB settlement balance is CHF 100 lower.
 - Bank B's SNB settlement balance is CHF 100 higher.
