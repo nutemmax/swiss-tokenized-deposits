@@ -1,221 +1,196 @@
-# 00 — Tokenized deposits in a Swiss bank: expanded executive summary
+# Executive Summary: Swiss Tokenized Deposits
 
-**Research date:** 13 August 2026  
-**Audience:** people who understand ordinary banking, but may not know blockchain, payment systems or Swiss banking regulation
-**Status:** an accessible research summary, not legal advice, an accounting opinion or FINMA approval
+**Research cut-off:** 24 August 2026<br>
+**Audience:** banking, product, legal, risk, operations, and technology readers<br>
+**Status:** research summary; not legal, accounting, audit, or tax advice
 
 ## The short version
 
-A customer deposit is already digital money. When a customer has CHF 1,000 in a Swiss bank account, the customer does not own a specific pile of francs. The customer has a legal claim against the bank: the bank owes the customer CHF 1,000 and promises to pay it when the customer makes a permitted withdrawal or payment. The bank records that obligation in its core banking system (CBS) and general ledger (GL).
+A tokenized deposit is still a claim on a commercial bank. Token technology can change how that claim is represented, transferred, and connected to programmable workflows, but it does not by itself change the debtor, the economics of the deposit, or the need for the bank's books to be correct.
 
-A **tokenized deposit** adds a controlled digital representation or payment mechanism to that existing bank claim. A token is not automatically a new kind of money, a cryptocurrency, a security, or a deposit-insurance entitlement. Its legal meaning comes from the contract, the bank's records, the transfer rules and the applicable law. FINMA repeatedly applies substance over labels: a fixed-CHF, redeemable claim may be a deposit, while a token structured only as a payment instruction may be a different legal object. [FINMA Guidance 06/2024](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20240726-finma-aufsichtsmitteilung-06-2024.pdf)
+For a first Swiss implementation, this research recommends a **CBS-authoritative mirrored deposit**:
 
-For a first Swiss-bank implementation, the safest design is:
+- the core banking system (CBS) and general ledger remain the bank's authoritative books;
+- a controlled token platform represents an eligible portion of a customer's deposit;
+- every token event is authorized through bank controls and reconciled with the customer subledger and general ledger;
+- cross-bank transfers settle through an agreed interbank mechanism, normally involving central-bank money in SIC;
+- legal, accounting, prudential, depositor-protection, and settlement conclusions are approved before production.
 
-1. Keep the CBS and GL as the bank's authoritative records of customers, legal balances, holds, interest, fees, accounting and reporting.
-2. Use a permissioned token network as a controlled payment and programmability layer, not as an uncontrolled public bearer-asset system.
-3. Allow token creation only after the CBS has reserved and booked the corresponding amount.
-4. Allow redemption only after the token has been disabled or burned and the bank has evidence of the final state.
-5. Reconcile the token ledger, the customer token subledger and the GL continuously.
-6. Define legal debtor, finality, AML, deposit-protection, insolvency and recovery rules before selecting a blockchain or vendor.
+This is a design recommendation, not a statement that Swiss law requires one particular ledger architecture.
 
-This is commonly called a **CBS-authoritative mirrored model**. It gives the bank a useful programmable payment rail without silently making an untested blockchain ledger the legal source of customer balances.
+### Proposed first-pilot decision record
 
-## The ordinary banking concepts underneath the technology
+The recommendation is deliberately narrow. It is a **bank-issued CHF deposit**, owed by the issuing bank to an identified customer, with the CBS/customer subledger and GL remaining authoritative. The token is a controlled representation of the selected balance, not an additional asset and not a public stablecoin reserve claim. The first stage is limited to verified customers, bank-managed recoverable wallets, low limits, same-bank transfer, and one objective conditional-payment workflow.
 
-### A deposit is a claim, not a stored pile of cash
+| Decision | First-pilot position | What would reopen it |
+|---|---|---|
+| Debtor and issuer | The issuing Swiss bank | Shared issuer, foreign branch/subsidiary, or non-bank issuer |
+| Authoritative record | CBS/customer subledger and GL | Proposal to make a DLT or platform the legally constitutive record |
+| Token role | Controlled mirror of an eligible deposit balance | Payment-instruction-only, bearer-like, or native-liability model |
+| Holder and access | Identified customer using a bank-managed recoverable wallet | External/self-custody wallet or unrestricted secondary transfer |
+| First settlement scope | Same-bank; interbank only after a documented SIC and liability model | Second bank, new settlement asset, or cross-border corridor |
+| Out of scope | Retail CBDC, public stablecoin issuance, anonymous use, native platform authority, cross-border production | A separate product, legal, accounting, and governance decision |
 
-When Alice deposits CHF 100 with Bank A, Bank A records a liability of CHF 100 to Alice. Alice owns the right to claim CHF 100 from Bank A, subject to the account terms and applicable law. Bank A may use its assets and liquidity for banking business; it does not put Alice's particular notes in a labelled box.
+The bank should approve or reject this decision record before technical procurement. A later shared-ledger or platform-authoritative model remains possible, but it is a new product decision rather than a technology upgrade.
 
-There are several kinds of money in this picture:
+The central idea is that one economic claim may appear in several technical records without becoming several liabilities. A customer's balance may be displayed in an app, represented on a token ledger, recorded in a CBS subaccount, and controlled through the general ledger. These records must agree, but they do not all have the same legal or accounting function. The design must name which record controls each fact and how discrepancies are corrected.
 
-- **Cash:** notes and coins issued by the Swiss National Bank (SNB).
-- **Central-bank money:** a bank's sight-deposit balance at the SNB. Banks use these balances to settle with one another in Swiss Interbank Clearing (SIC).
-- **Commercial-bank money:** a customer's deposit claim against a commercial bank. A tokenized deposit is normally still this kind of bank liability unless its legal design says otherwise.
+## The forms of money are different
 
-Central-bank money is not the same as a customer's deposit. In an interbank payment, the SNB balance moves between banks while one bank's customer liability is extinguished and another bank's customer liability may be created.
+The issuer matters because it identifies the debtor and the balance sheet on which the money sits. It also affects the applicable insolvency regime, the method of settlement, and the protection available to the holder. Denomination alone is insufficient: two instruments labelled “CHF” can expose their holders to different institutions and different legal arrangements.
 
-### The CBS and general ledger
+| Form | Issuer or debtor | What the holder has | Typical settlement role |
+|---|---|---|---|
+| Banknotes | Swiss National Bank | Central-bank money | Cash payment |
+| Coins | Swiss Confederation; distributed through the SNB | Statutory coin | Cash payment |
+| Sight deposits at the SNB | Swiss National Bank | Central-bank account balance | Interbank settlement |
+| Ordinary bank deposit | Commercial bank | Contractual claim on that bank | Retail and wholesale payment |
+| Tokenized bank deposit | Commercial bank | Bank deposit claim represented or operated using token technology | Programmable retail or wholesale payment |
+| Stablecoin | Depends on the structure | Claim, redemption right, property interest, or other arrangement | Crypto-market payment or settlement |
+| Wholesale CBDC | Central bank | Tokenized central-bank liability | Wholesale settlement on DLT platforms |
 
-The **core banking system (CBS)** is the bank's operational system for customer accounts, balances, payment instructions, holds, interest, fees and statements. The **general ledger (GL)** is the accounting record that aggregates those customer-level postings into the bank's financial statements and regulatory reporting.
+The SNB describes banknotes as its responsibility and explains separately that coins are issued by the Confederation and put into circulation through the SNB ([SNB banknotes](https://www.snb.ch/en/services-events/digital-services/faq-overview/qas_noten), [SNB coins](https://www.snb.ch/en/the-snb/mandates-goals/cash/coins)).
 
-The CBS should answer questions such as “How much does this verified customer have available?”, “Is the account frozen?”, and “Which customer is entitled to the balance?” The GL should answer “What liability does the bank owe in total, and where is it presented in the accounts?”
+In an ordinary transfer from a Bank A customer to a Bank B customer, the payer uses a commercial-bank deposit, the two banks may settle between themselves in central-bank money, and the recipient normally receives a new claim against Bank B. Tokenization can coordinate these steps, but it does not make the two commercial-bank liabilities or the central-bank settlement asset interchangeable.
 
-The token ledger is a third record. It can show wallet balances and transfer events, but in the recommended first model it must remain linked to, and constrained by, the CBS/GL. The same CHF 100 must not appear as both an ordinary spendable deposit and a tokenized balance.
+## The Swiss payment baseline and current landscape
 
-### A token, wallet and ledger
+Tokenized deposits must prove a benefit beyond an already capable Swiss payments system. SIC5 supports instant account-to-account payments in less than ten seconds, 24/7. Since August 2024, more than 100 institutions representing more than 95% of Swiss customer-payment volume have been able to receive them; the remaining relevant institutions are due to follow by the end of 2026 ([SIX Instant Payments](https://www.six-group.com/en/products-services/banking-services/billing-and-payments/instant-payments.html)). A tokenized-deposit use case is therefore not justified merely by speed or continuous availability.
 
-A **token** is a digital record that follows rules for ownership, transfer, creation and destruction. A **wallet** is the software or custody arrangement that controls the cryptographic keys used to authorize token operations. A **ledger** is the record of who has what balance and which events changed it.
+It must instead demonstrate a measurable advantage in programmable shared state, conditional reservation/release, synchronized cash-and-asset or FX exchange, cross-border path coordination, or reduction of a specific reconciliation problem that SIC, an account API, card authorization, or ordinary escrow cannot address as well.
 
-“Blockchain” or **distributed ledger technology (DLT)** describes a way of keeping and synchronizing such records. A **permissioned** network admits only approved institutions, wallets or operators. A public network may allow anyone to hold and transfer a token. A supervised Swiss bank normally has stronger identity, sanctions, privacy, recovery and operational-control requirements than an anonymous bearer network provides.
+| Initiative | What it is testing or operating | What it does **not** prove for this project |
+|---|---|---|
+| SIC / SIC Instant Payments | Existing Swiss central-bank-money settlement and 24/7 customer instant-payment baseline | A customer's tokenized deposit or a DLT cash leg |
+| SBA Deposit Token work | Industry models; 2025 PoC of on-chain payment instructions triggering off-chain bank-account payments | A native on-chain deposit liability or production multi-bank scheme |
+| UBS Digital Cash / UBS–Ant | Multi-currency corporate payment, treasury, and tokenized-deposit exploration | A public Swiss multi-bank deposit-token service |
+| Project Helvetia / BX Digital | wCBDC and synchronized SIC settlement for tokenized securities; BX Digital's RTGS link in production infrastructure | A retail CBDC or approval of a commercial-bank tokenized deposit |
+| SNB digital repos | Feasibility of DLT repo settlement with wCBDC and the resulting fragmentation/collateral challenges | A general production readiness conclusion |
+| Project Agorá | Controlled, multi-currency wholesale cross-border workflows with tokenized deposits and reserves | Swiss production rulebook, resilience, or bank-specific legal approval |
+| CHF stablecoin sandbox | An adjacent issuer/reserve model being tested by Swiss banks and Swiss Stablecoin AG | A deposit-token model; holders may face a different debtor and protection structure |
 
-The cryptographic token record is not, by itself, proof that the holder has a bank deposit. The contract must say whether it is:
+The SBA's 2025 PoC, UBS Digital Cash, the CHF stablecoin sandbox, Helvetia, BX Digital, and Agorá should be compared as distinct initiatives, not treated as one Swiss tokenized-money product. The dedicated [Agorá chapter](08-project-agora-and-cross-border-tokenized-deposits.md) contains the current cross-border analysis.
 
-- an instruction telling a bank to make a payment;
-- a controlled representation of a bank's liability; or
-- the authoritative record of a native on-chain bank liability.
+## What is actually tokenized?
 
-## The main product models
+The word “token” can refer to several different designs:
 
-| Model | What the customer has | Where the legal balance is authoritative | Main strength | Main difficulty |
-|---|---|---|---|---|
-| Payment-instruction token | An instruction or claim to have a bank execute a payment | CBS and ordinary account | Smallest change; closest to the 2025 Swiss Bankers Association (SBA) proof of concept | A token holder may not yet have a direct deposit claim until the paying/receiving bank accepts the instruction |
-| Mirrored tokenized deposit | A bank claim represented by a token plus a CBS subaccount | CBS/GL, reconciled to the token ledger | Retains banking controls while adding programmability | The contract must precisely define the token's legal effect and transfer moment |
-| Native on-chain deposit | A claim whose authoritative balance is on the DLT | DLT integrated with CBS, GL and resolution systems | Most composable and potentially fastest | Finality, insolvency, correction, reporting, privacy, key recovery and depositor protection become much harder |
-| Non-bank stablecoin backed or guaranteed by a bank | A claim on a separate issuer | Issuer's ledger and reserve/guarantee arrangements | Can distribute outside the bank's account system | Different licence, reserve, guarantee, AML, run-risk and deposit-protection analysis |
+- **A controlled representation of an existing deposit:** the CBS remains authoritative and the token mirrors an earmarked or recorded balance.
+- **A platform-authoritative deposit:** the platform is the authoritative record for the tokenized portion, while the bank reconciles its internal books to it.
+- **A bearer-like or freely circulating instrument:** the holder controls value through possession of a key or token, potentially changing legal, custody, AML, and insolvency questions.
 
-The SBA's 2025 Deposit Token PoC deliberately used a conservative form: deposits and mirror-account movements remained in bank systems, while the token acted as a payment instruction. The report is a valuable flow and control reference, but it does not settle the treatment of every native on-chain design. [SBA Deposit Token PoC report](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf)
+These designs must not be treated as interchangeable. The first one is the recommended starting point because it preserves familiar bank-book controls while allowing programmable transfer experiments.
 
-## Mirrored deposits explained from the beginning
+### A simple example
 
-“Mirrored” does not mean that the bank has two separate CHF 100 balances or that the customer receives CHF 200 of value. It means that the bank keeps a normal customer-liability record in the CBS and creates a linked **mirror account/subledger** for the tokenized portion.
+Alice has CHF 1,000 in an ordinary account at Bank A and converts it into tokenized form.
 
-Suppose Alice has CHF 1,000 in an ordinary account at Bank A and converts CHF 100:
+1. Bank A moves or earmarks CHF 1,000 in Alice's CBS account as a token-enabled deposit balance.
+2. After the bank's controls succeed, its authorized service creates 1,000 Bank A CHF units in Alice's verified wallet.
+3. The units and the CBS token-enabled balance represent the same bank liability. Alice does not now own CHF 2,000.
+4. If Alice pays Bob at Bank A, the bank reallocates its liability from Alice to Bob; its total liabilities remain unchanged.
+5. If Bob banks at Bank B, the banks need an agreed interbank model. Bank A's claim cannot silently become Bank B's claim merely because an address received a token.
 
-1. The CBS checks identity, available balance, AML/sanctions status and any account restrictions.
-2. The CBS moves CHF 100 from the ordinary-deposit category to a tokenized-deposit subcategory (or records an equivalent reserved mirror balance).
-3. The GL still shows one CHF 1,000 total liability to Alice; it is merely classified as CHF 900 ordinary plus CHF 100 tokenized.
-4. The token service mints exactly 100 CHF tokens to Alice's verified wallet.
-5. Reconciliation confirms that token supply, mirror balances and the GL agree.
+This example is why the phrase “backed one-for-one” is not precise enough on its own. The design must say whether the token mirrors an existing liability, is itself the authoritative liability record, or is backed by a separate reserve pool.
 
-If Alice redeems the tokens, the sequence is reversed: the bank first disables or burns the 100 tokens, verifies the final burn evidence, then releases or reclassifies CHF 100 back to the ordinary deposit balance. If minting fails, no tokenized balance is made spendable. If burning fails, the ordinary balance remains locked or pending until the discrepancy is repaired.
+The diagram follows the same claim through authorization, bank booking, token execution, and reconciliation. The arrows do not mean that every system becomes authoritative at the same moment. They show the controlled dependencies that must be completed and evidenced before the bank tells the customer that the transaction has reached its defined final state.
 
-The mirror account is therefore a control mechanism, not a second source of money. It supports wallet-level balances, pending transfers, freezes and event histories while the CBS remains the bank's authoritative customer and liability record.
+```mermaid
+flowchart LR
+    C["Customer instruction"] --> P["Bank policy and compliance checks"]
+    P --> CBS["CBS and customer subledger"]
+    CBS --> O["Controlled orchestration"]
+    O --> T["Token platform state"]
+    T --> R["Three-way reconciliation"]
+    CBS --> R
+    GL["General ledger"] --> R
+    O --> S["SIC or other settlement rail"]
+```
 
-## Transfers inside one bank
+In this recommended model, tokenization changes how the customer can use the deposit and how several systems coordinate its movement. It does not create a second CHF 1,000 asset for Alice, remove Bank A as debtor, or prove that an interbank obligation has legally settled. Those conclusions come from the account terms, approved books, settlement-system rules, and applicable law.
 
-Assume Alice and Luca both bank with Bank A. Alice sends Luca CHF 25.
+### What tokenization changes - and what it does not
 
-1. Bank A verifies that Alice's wallet is approved and that she has CHF 25 available.
-2. The bank screens the transaction and places a reservation so Alice cannot spend the same CHF 25 twice.
-3. The bank debits Alice's tokenized-deposit subledger by CHF 25 and credits Luca's by CHF 25.
-4. The token ledger records the transfer, or records a burn-and-mint event if the contract uses that pattern.
-5. The bank commits the customer-level posting and token event through one durable orchestration process.
+Tokenization can add:
 
-Bank A's total liability does not change: it still owes CHF 25 more to one customer and CHF 25 less to the other. There is no reason to move money through SIC because both legal claims are against the same bank. The bank still needs AML, sanctions, limits, audit and failure handling. A DLT confirmation alone should not make the transfer spendable if the CBS posting has failed.
+- shared, machine-readable workflow state across several parties;
+- conditional locking and release;
+- programmable delivery-versus-payment or payment-versus-payment;
+- a common audit trail and fewer reconciliation hand-offs.
 
-## The quoted cross-bank sentence, step by step
+It does not automatically:
 
-The sentence “A cross-bank transfer burns the sending bank's claim, settles the interbank amount in central-bank money (normally SIC/SNB sight deposits), and lets the receiving bank create its own customer claim” compresses several separate legal and accounting events. It describes the recommended **two-bank liability model**, not every possible token architecture.
+- turn commercial-bank money into central-bank money;
+- make different banks' CHF liabilities identical;
+- provide depositor protection;
+- complete AML and sanctions checks;
+- create legal finality;
+- make a system resilient or production-ready.
 
-Take a CHF 100 transfer from Alice at Bank A to Luca at Bank B:
+## Retail and wholesale uses
 
-### 1. Before the transfer
+Retail and wholesale products share the same need for a clear bank liability and reliable records, but their product requirements differ.
 
-Bank A owes Alice CHF 100. That is Bank A's customer-deposit liability. Bank B owes Luca nothing for this payment yet. Alice's token is a representation or payment instrument linked to Bank A; it is not automatically a claim on Bank B.
+| Dimension | Retail deposits | Wholesale and corporate deposits |
+|---|---|---|
+| Primary value | Always-available programmable payments, merchant settlement, escrow, embedded finance | Treasury automation, conditional payments, securities settlement, cross-border liquidity |
+| User protection | Plain terms, recoverable access, fraud handling, privacy, complaints, depositor-protection clarity | Participant rules, credit limits, settlement finality, liquidity, bilateral and network governance |
+| Identity | Natural-person onboarding and device/wallet recovery | Legal-entity ownership, signatory powers, role-based entitlements |
+| Likely pilot | Closed group with low limits and recoverable wallets | Named institutions or corporates with controlled nodes and transaction limits |
+| Main danger | Turning a deposit into a confusing or less recoverable customer product | Assuming technical atomicity resolves credit, liquidity, or legal-finality questions |
 
-### 2. Bank A locks and consumes Alice's value
+The strongest early use cases are those where programmability or shared workflow removes real reconciliation and coordination costs. A token is a poor solution when an ordinary account API or instant-payment instruction produces the same result more simply.
 
-Bank A verifies both customers and wallets, performs sanctions/AML checks, and reserves Alice's CHF 100. The token is then burned, invalidated or marked as consumed according to the scheme rules. Bank A reduces or extinguishes the corresponding liability to Alice. “Burns the sending bank's claim” means precisely this: Bank A cannot leave Alice's CHF 100 claim active and also treat the same CHF 100 as fully paid to Bank B.
+## Regulation: the main questions
 
-“Burn” is a technical word here. It does not mean that CHF 100 of economic value is destroyed. It means that the Bank-A token representation is removed or made unusable, while the bank books the corresponding liability reduction or pending settlement entry. If the legal design burns before SIC settlement, the customer must receive a clearly defined interim claim (for example, a settlement payable); otherwise the design could leave the customer with neither a deposit claim nor a properly documented settlement claim during the gap.
+There is no single “tokenized deposit regulation.” The bank must map the exact product and operating model across existing regimes:
 
-If the scheme uses a payment-instruction token, the legal effect may instead be “Bank A accepts and executes Alice's instruction.” The contract must state the exact point at which Alice's claim is debited and whether any interim claim exists.
+- banking and deposit-taking law;
+- contract terms and the identity of the debtor and creditor;
+- AML, sanctions, payment transparency, and onboarding;
+- financial-market-infrastructure rules where a system performs multilateral clearing, settlement, or DLT trading;
+- accounting, disclosure, capital, leverage, liquidity, and large exposures;
+- depositor protection, insolvency, recovery, and resolution;
+- operational resilience, outsourcing, cyber risk, data protection, and bank secrecy;
+- custody rules if the bank or a third party controls customer keys or third-party cryptoassets.
 
-### 3. Bank A settles with Bank B
+FINMA's current crypto-services index still lists Guidance 02/2019 for blockchain payments and adds newer guidance on stablecoins, annual-report disclosure, and custody ([FINMA crypto-services index](https://www.finma.ch/en/documentation/dossier/dossier-fintech/auf-einen-blick-aufstellung-der-krypto-dienstleistungen/)). Their relevance depends on the product: guidance about custody assets or guaranteed stablecoins cannot automatically determine the treatment of a bank's own deposit liability.
 
-Bank A owes Bank B the interbank amount. The banks settle that obligation in central-bank money through SIC: Bank A's sight-deposit balance at the SNB decreases by CHF 100 and Bank B's increases by CHF 100. SIC is an RTGS system: the payment is individually irrevocable and final when the relevant settlement account is debited. [SNB SIC System Disclosure](https://www.snb.ch/public/asset/en/www-snb-ch/publications/sicsystem-disclosure/sicsystem-disclosure-all/sicsystem_disclosure_2023/publications0_en/sicsystem_disclosure_2023.en.pdf)
+Several recent changes matter to the implementation horizon:
 
-This is not a movement of Alice's retail token directly into the SNB. It is a separate interbank settlement step that gives Bank B the central-bank-money value needed to support the payment.
+- revised AML legislation and the new beneficial-owner transparency regime enter into force on **1 October 2026** ([Federal Council, 12 June 2026](https://www.efd.admin.ch/en/newnsb/x3sKLxCJ6S3dQJtfvy0Tb));
+- FINMA's new risk-diversification and liquidity ordinances enter into force on **1 January 2027**, replacing specified circulars ([RDO-FINMA](https://www.finma.ch/en/news/2026/05/20260520-mm-rvv-finma/), [LiqO-FINMA](https://www.finma.ch/en/news/2026/07/20260707-mm-liqv-finma/));
+- proposed Swiss licences for payment-instrument and crypto institutions remained consultation proposals at the research cut-off and are not current law ([SIF consultation](https://www.sif.admin.ch/en/newnsb/x4TMWQ1SWofNoFx7XyHhY)).
 
-### 4. Bank B accepts and creates Luca's claim
+## Settlement and “atomicity”
 
-After receiving the SIC settlement and passing its own controls, Bank B credits Luca's tokenized-deposit balance. Bank B now owes Luca CHF 100. Bank B may mint a Bank B token or credit a shared scheme token, depending on the legal design. The important point is that Bank B becomes debtor only when its rules and contract make it responsible for the new claim.
+Three different concepts must stay separate:
 
-### 5. The final economic result
+- **Workflow atomicity:** all required steps commit, or the workflow cancels and releases reservations.
+- **Technical finality:** a ledger considers its state irreversible under its protocol and governance.
+- **Legal settlement finality:** applicable law and binding rules determine when obligations are discharged and what survives insolvency.
 
-- Alice no longer has the CHF 100 claim on Bank A for this transfer.
-- Luca now has a CHF 100 claim on Bank B.
-- Bank A's SNB settlement balance is CHF 100 lower.
-- Bank B's SNB settlement balance is CHF 100 higher.
-- The two banks have not created CHF 200. One customer liability was extinguished, one was created, and central-bank settlement moved between the banks.
+An interbank token transfer could use burn-settle-issue, a coordinated pending instruction, or continued circulation of the original issuing bank's claim. The correct model depends on customer terms, network rules, liquidity, insolvency treatment, and the legal meaning of each ledger event.
 
-If a step fails, the transfer is not simply “half final.” The system should show a pending or repair state, keep funds locked, and use a documented return or compensating payment. The legal terms must state whether Bank A remains liable during the pending period, who bears a failed-settlement risk, and when customer-facing finality occurs.
+## Project Agorá: useful evidence, not a production template
 
-## Transfers across countries
+The BIS Project Agorá prototype connects tokenized commercial-bank deposits on a unifying ledger with tokenized central-bank reserves on jurisdictional ledgers. It demonstrates coordinated validation, locking, and settlement workflows, privacy techniques, and cross-border path discovery.
 
-Cross-border transfers add another bank, currency, legal system, payment system and often a correspondent relationship. They are not just a larger version of a Swiss same-bank transfer.
+It also differs from this research's starting architecture: Agorá treats platform balances and transactions as the authoritative “golden source” for tokenized deposits. The report explicitly does not validate production cybersecurity, resilience, throughput, latency, failover, live CBS/RTGS integration, or a complete legal rulebook. See [the dedicated Agorá chapter](08-project-agora-and-cross-border-tokenized-deposits.md).
 
-### A Swiss customer pays a foreign customer
+## Practical conclusion
 
-If Bank A issues a CHF token and the recipient banks with Foreign Bank C, the parties must decide whether:
+A credible pilot should begin with a narrow product, named customers, low limits, a documented legal claim, CBS-authoritative records, deterministic recovery, and continuous reconciliation. It should not begin by choosing a blockchain vendor.
 
-- Foreign Bank C is an approved participant that accepts Bank A's token;
-- Bank A redeems the token and pays through a correspondent/nostro account;
-- the recipient receives a foreign-currency deposit after FX conversion; or
-- a separate foreign-bank token is issued after settlement.
+This deliberately conservative starting point isolates the value of shared state and programmability without simultaneously replacing the bank's customer ledger, reporting model, recovery procedures, and resolution data. A later platform-authoritative model remains possible, but it would require a fresh legal, accounting, operational, and governance decision.
 
-The Swiss leg may use SIC, but the foreign leg cannot normally be settled in SNB sight deposits. It may use the foreign central bank's payment system, a correspondent bank, a multi-currency settlement platform or a regulated scheme. FX pricing, cut-off/finality rules, capital and liquidity treatment, sanctions, data transfer, local licensing and insolvency law all need explicit treatment.
+The next decisions are:
 
-### A foreign customer pays a Swiss customer
+1. define the legal and accounting model;
+2. select one retail and one wholesale use case;
+3. agree the record of authority and settlement point;
+4. design controls and failure recovery;
+5. obtain counsel, auditor, and regulatory feedback;
+6. only then build a bounded pilot.
 
-The receiving Swiss bank must know whether it is receiving a foreign-bank liability, central-bank money, a regulated stablecoin or only a payment instruction. It should not automatically book an incoming foreign token as a CHF deposit. The foreign token may need to be redeemed, exchanged and settled before the Swiss bank creates a CHF customer claim.
-
-### Wallets, bridges and interoperability
-
-Connecting two token networks through a bridge can be atomic (both sides complete together) or sequential (one side completes before the other). Sequential bridges create an exposure during the gap; technical bugs, frozen contracts, validator compromise, duplicate messages and inconsistent identity rules can create losses or unbacked tokens. A first project should prefer direct regulated participants and ordinary settlement rails over an anonymous public-chain bridge.
-
-FINMA's blockchain-payment guidance requires AML controls and, where information exchange is not otherwise compliant, tightly controlled transfers to or from external wallets of identified customers. [FINMA Guidance 02/2019](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20190826-finma-aufsichtsmitteilung-02-2019.pdf)
-
-## Why a bank might want tokenized deposits
-
-- **Programmability:** a payment can be released when a verified delivery, collateral, invoice or other condition is met.
-- **Faster processing:** controlled networks can exchange instructions and confirmations continuously, including outside traditional business hours.
-- **Atomic or near-atomic workflows:** payment, delivery and settlement can be coordinated so that fewer parties carry an unsecured “waiting” exposure.
-- **Lower reconciliation effort:** a shared event history can reduce manual matching between banks, custodians and payment operators.
-- **New institutional services:** banks could support machine-to-machine payments, digital-asset settlement, collateral mobility and programmable corporate treasury.
-- **Better traceability:** every event can carry customer, contract, wallet, payment and accounting references, provided privacy is protected.
-
-These are potential benefits, not automatic outcomes. A token rail can also add a new system to reconcile and a new place for errors to occur.
-
-## The principal risks in plain language
-
-- **Run and liquidity risk:** a token can be transferred or redeemed very quickly, potentially 24/7. Many customers could withdraw or convert at once, including weekends when ordinary liquidity operations are less convenient.
-- **Legal uncertainty:** the token holder, the bank debtor, finality point and insolvency treatment depend on the contract and system rules. A technical confirmation is not automatically a legally protected payment.
-- **Identity and financial crime:** public addresses do not prove who controls a wallet. The bank needs customer identification, beneficial-owner records, sanctions screening, monitoring and transfer restrictions.
-- **Operational fragility:** the CBS, DLT, SIC, AML engine, cloud provider and key-management system may fail independently. A durable process must handle partial completion without creating or destroying money.
-- **Key loss or compromise:** losing a private key can block a legitimate customer; a compromised administrative key can mint, freeze or transfer value unlawfully. HSM/MPC, dual control and recovery procedures are essential.
-- **Privacy and bank secrecy:** wallet histories may reveal customer relationships. The bank must minimize on-chain personal data and control who can see it.
-- **Interoperability and FX:** cross-border or cross-network payments introduce bridge, currency, correspondent, sanctions and local-law risks.
-- **Customer confusion:** customers may assume every token is a deposit, legal tender, cash equivalent or separately insured. Product disclosures must explain the actual claim and redemption route.
-- **Third-party concentration:** DLT operators, node hosts, cloud providers, HSM vendors and smart-contract auditors may be material outsourced functions. FINMA's outsourcing and operational-risk requirements continue to apply.
-
-## The Swiss regulatory points that matter most
-
-1. **Classification:** FINMA looks at economic substance. A bank must document whether its product is a payment instruction, a bank liability, a security, a stablecoin or another arrangement.
-2. **Banking and deposit rules:** public deposit-taking and the bank's own liabilities remain subject to Swiss banking law. A token label does not avoid licensing, accounting or prudential obligations.
-3. **AML and Travel Rule:** blockchain does not reduce identification, beneficial-owner, sanctions or transaction-monitoring duties.
-4. **Payment-system perimeter:** a multi-bank clearing and settlement arrangement may be a payment system under the Financial Market Infrastructure Act (FinMIA). A bank-operated system may have a different authorisation position from a non-bank or systemic operator; obtain a FINMA/SNB perimeter view.
-5. **Finality and insolvency:** define irrevocability, settlement and acceptance events. Do not promise insolvency-proof finality from an internal DLT confirmation alone.
-6. **Depositor protection:** eligible deposits are protected up to CHF 100,000 per customer and bank. This is measured by the underlying qualifying bank claim, not by the number of wallets or token contracts. [FINMA depositor protection](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/)
-7. **Accounting and prudential reporting:** FINMA provides the bank accounting framework but no universal tokenized-deposit chart of accounts. Basel's cryptoasset framework treats qualifying own-issued tokenized bank claims as unsecured funding and requires liquidity treatment based on redemption terms and holder type; Swiss implementation must be mapped to current FINMA/SNB rules. [Basel Framework — tokenised traditional assets](https://www.bis.org/basel_framework/chapter/SCO/60.htm?inforce=20260101)
-8. **Operational resilience and outsourcing:** critical data, incident management, business continuity, cyber controls, provider oversight and audit access must cover the entire CBS–DLT–SIC chain. [FINMA Circular 2023/1](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/rundschreiben/finma-rs-2023-01-20221207.pdf)
-
-## What the bank should decide before building
-
-The project should produce one approved product/legal decision record containing:
-
-- the exact legal nature of the token;
-- the contractual debtor before, during and after each transfer;
-- the authoritative ledger and the reconciliation invariant;
-- the mint, burn, redemption and failure-state rules;
-- the finality event for same-bank, interbank and cross-border payments;
-- eligible customers, wallets, self-custody policy and Travel Rule data;
-- freeze, recovery, key-management and smart-contract upgrade powers;
-- depositor-protection aggregation and insolvency/resolution procedures;
-- financial-statement, LCR, NSFR, leverage, capital, reserve and tax mappings;
-- the FINMA/SNB perimeter and material-change correspondence; and
-- the CBS, DLT, SIC, cloud and outsourcing responsibilities.
-
-Only after these decisions should the bank choose a token standard, network, custody model or CBS vendor. A vendor's generic “digital asset” feature is not evidence that it can book, reconcile or resolve a regulated Swiss tokenized deposit.
-
-## Sources for further reading
-
-- [FINMA Guidance 06/2024 — stablecoins](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20240726-finma-aufsichtsmitteilung-06-2024.pdf)
-- [FINMA Guidance 02/2019 — payments on blockchain](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/4dokumentation/finma-aufsichtsmitteilungen/20190826-finma-aufsichtsmitteilung-02-2019.pdf)
-- [SBA Deposit Token PoC report (2025)](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf)
-- [SNB SIC system disclosure](https://www.snb.ch/public/asset/en/www-snb-ch/publications/sicsystem-disclosure/sicsystem-disclosure-all/sicsystem_disclosure_2023/publications0_en/sicsystem_disclosure_2023.en.pdf)
-- [FINMA depositor protection](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/)
-- [Basel Framework — cryptoasset standard](https://www.bis.org/basel_framework/chapter/SCO/60.htm?inforce=20260101)
-- [BIS Project Agorá](https://www.bis.org/publ/othp110.htm)
-- [FINMA Circular 2023/1 — operational risks and resilience](https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/rundschreiben/finma-rs-2023-01-20221207.pdf)
+Continue with [01 - Tokenized bank deposits: foundations and product types](01-tokenized-bank-deposits-foundations-and-product-types.md).

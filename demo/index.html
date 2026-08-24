@@ -136,12 +136,18 @@
               </svg>
             </div>
 
-            <aside class="inspect-drawer" aria-live="polite">
-              <div class="drawer-head"><span>INSPECT</span><strong id="drawer-title">Alice</strong></div>
-              <div class="drawer-visual" id="drawer-visual" aria-hidden="true"></div>
-              <p id="drawer-summary">Alice owns the starting claim and initiates the selected flow.</p>
-              <dl id="drawer-details"></dl>
-              <p class="drawer-hint">Select a person, bank or system in the scene.</p>
+            <aside class="inspect-drawer">
+              <section class="actor-inspector" aria-label="Selected actor">
+                <div class="drawer-head"><span>INSPECT</span><strong id="drawer-title">Alice</strong></div>
+                <p id="drawer-summary">Alice owns the starting claim and initiates the selected flow.</p>
+                <dl id="drawer-details"></dl>
+              </section>
+              <section class="step-explainer" aria-labelledby="step-explainer-title" aria-live="polite">
+                <div class="step-explainer-head"><span id="step-position">CURRENT STEP · 1 / 7</span><strong id="step-explainer-title">REQUESTED</strong></div>
+                <span class="step-context" id="step-context">Payment instruction · Convert / mint</span>
+                <p id="step-explanation">Alice asks Bank A to create the selected representation; no balance or legal claim has changed yet.</p>
+                <div class="step-risk" id="step-risk" hidden><strong id="step-risk-title">⚠ Risk armed</strong><p id="step-risk-copy"></p></div>
+              </section>
             </aside>
           </div>
 
