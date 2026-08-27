@@ -198,6 +198,8 @@ Retention also differs by object. A wallet binding can be revoked while its hist
 
 A trust boundary identifies where a party stops relying on its own controls and begins relying on another system, participant, or attestation. The diagram separates information that stays inside the bank from the minimum state participants need to coordinate a transaction.
 
+This section translates the legal and secrecy decisions in [chapter 03](03-swiss-laws-and-finma-rules-for-tokenized-deposits.md#9-privacy-data-and-bank-secrecy) into architecture. It does not replace the FADP, Banking Act article 47, outsourcing, or foreign-access analysis; every arrow below needs a named purpose, recipient, location, retention rule, and accountable owner.
+
 ```mermaid
 flowchart TB
     subgraph PrivateBank["Bank-private domain"]

@@ -25,6 +25,20 @@ These are the bank's books, not the customer's personal accounting. A customer d
 
 Mint and burn are technical events. They cause a journal entry only when the approved accounting policy says the bank's recognized liability or its internal classification changes. A reservation may remain a customer-subledger status until the legal recognition point rather than becoming a separate statutory GL position.
 
+### Evidence boundary: illustrative logic is not approved policy
+
+The relevant Swiss accounting framework includes the FINMA Accounting Ordinance and FINMA Circular 2020/1 ([FINMA accounting material](https://www.finma.ch/en/news/2019/11/20191114-mm-rechnungslegung/)). Those sources establish the reporting framework; they do not, on their own, decide the recognition point for a bank's particular token contract, platform rulebook, or repair flow.
+
+| Question | Evidence required before an external pilot |
+|---|---|
+| One-liability treatment | Product terms, CBS/GL design, event-to-journal matrix, auditor conclusion |
+| Mint, transfer, burn, lock, and release timing | Approved recognition and reversal policy linked to exact lifecycle events |
+| Interbank failure after SIC settlement | Settlement evidence, due-to/suspense policy, customer-claim and repair treatment |
+| Regulatory reporting and prudential treatment | Finance and prudential-policy mapping to current Swiss rules and returns |
+| Depositor-protection aggregation | Legal conclusion, customer/depositor mapping, statutory analysis, depositor-list test |
+
+All journals below remain **illustrative** until that evidence is approved. Engineering must not implement a journal example as a recognition rule merely because it appears in the research.
+
 The tables use “debit” and “credit” from Bank A's perspective. Debiting Alice's deposit liability reduces what Bank A owes Alice; crediting Bob's deposit liability increases what it owes Bob. By contrast, debiting Bank A's SNB sight-deposit asset increases that asset. This bank perspective is why the entries may look reversed to a customer reading a personal account statement.
 
 ### Suggested account structure
@@ -176,7 +190,7 @@ Tokenization can leave the underlying deposit economics unchanged while changing
 | Operational risk | DLT, keys, smart contracts, third parties, and complex reconciliation expand operational scenarios | FINMA Circular 2023/1 and internal capital/risk assessment |
 | Disclosure | Own liabilities and customer custody assets must not be conflated | FINMA Accounting Ordinance, Circular 2020/1, auditor view |
 
-The Basel [SCO60 cryptoasset framework](https://www.bis.org/basel_framework/chapter/SCO/60.htm?inforce=20260101) is current from 1 January 2026 and expressly includes tokenized claims on banks in parts of its liquidity framework. Its classification and disclosure provisions must be mapped to current Swiss implementation rather than copied directly into a Swiss policy.
+The Basel [SCO60 cryptoasset framework](https://www.bis.org/basel_framework/chapter/SCO/60.htm?inforce=20260101) is current from 1 January 2026 and is relevant to the prudential treatment of cryptoassets and cryptoliabilities, including specified tokenized claims. Its provisions must be mapped to the selected product and current Swiss implementation; this research does not assume that every own-issued tokenized deposit or service receives the same treatment.
 
 FINMA issued a set of implementing ordinances for the final Basel III reforms effective from 1 January 2025. The bank should use the current ordinances listed on FINMA's [banking legal-basis page](https://www.finma.ch/en/documentation/legal-basis/laws-and-ordinances/banks/), not only older circular references.
 
@@ -230,7 +244,7 @@ The transition review should identify which references to the replaced circulars
 
 ## 8. Customer and depositor protection
 
-Swiss depositor protection depends on the legally recognized deposit, customer, bank, account aggregation, and statutory eligibility. A token interface should neither imply extra protection nor accidentally obscure an eligible claim. FINMA explains the statutory framework and limits on its [depositor-protection page](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/).
+Swiss depositor protection depends on the legally recognized deposit, customer, bank, account aggregation, and statutory eligibility. The statutory starting point is Banking Act arts. 37a–37k and Banking Ordinance arts. 42a–44a; FINMA and esisuisse provide explanatory material ([FINMA depositor protection](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/), [esisuisse FAQ](https://www.esisuisse.ch/en/deposit-insurance/questions-and-answers-faq)). A token interface should neither imply extra protection nor accidentally obscure an eligible claim.
 
 | Question | Retail emphasis | Wholesale/corporate emphasis |
 |---|---|---|
@@ -241,6 +255,8 @@ Swiss depositor protection depends on the legally recognized deposit, customer, 
 | Insolvency | Make claim and protection position understandable | Address counterparty, custody, set-off, and resolution effects |
 
 Wallet and token counts do not create additional protection limits. The bank needs one customer identity that aggregates ordinary and token-enabled deposits and can produce the statutory depositor position at the legal cut-off. Pending instructions and custody assets must be shown separately rather than silently included in or excluded from that total.
+
+The exact treatment of a token-enabled balance remains a product-specific legal and operational conclusion. The bank must test that its depositor-list extract maps `wallet -> token position -> CBS account -> legal customer -> all eligible deposits at the bank`, identifies pending/repair and custody positions separately, and can be produced at the statutory cut-off without relying solely on the DLT.
 
 Using the worked example, Alice's CHF 825 ordinary balance and CHF 125 token-enabled balance remain claims against the same bank and must be considered together when the bank determines her eligible position. If a corporate customer holds a token issued by another bank through Bank A's interface, that position cannot be assumed to be a protected deposit at Bank A. The legal debtor and holder eligibility must be established first.
 

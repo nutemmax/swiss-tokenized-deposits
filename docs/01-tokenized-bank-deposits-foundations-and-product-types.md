@@ -36,6 +36,8 @@ The decisive question is not which component looks most innovative. It is which 
 
 The products below can be grouped by their principal function. Some tokens carry an instruction to an existing account system. Some represent a commercial-bank liability and may themselves become part of the authoritative balance record. Others are separate settlement, investment, or custody assets. The label, visual appearance, and currency symbol do not establish which group applies.
 
+> **Critical Swiss terminology boundary:** the SBA's 2025 **Deposit Token** PoC did not put the authoritative customer deposit on-chain. Its report says the PoC focused on off-chain deposit transfers triggered by on-chain tokens, legally structured the token as a digital representation of a payment instruction, and kept the deposits and mirror-account movements off-chain. The official initiative name is retained, but its demonstrated product model is classified here as a **tokenized payment instruction**, not as evidence of a native or platform-authoritative tokenized deposit ([SBA results report, pp. 3, 5 and 32–35](sources/sba/deposit-token-poc-results-2025.pdf)).
+
 | Product | Issuer or debtor | Value mechanism | Typical legal focus | Is it a tokenized bank deposit? |
 |---|---|---|---|---|
 | Ordinary account deposit | Commercial bank | Bank's promise to repay at par | Banking, contract, AML, depositor protection | No token layer |
@@ -50,6 +52,21 @@ FINMA's [2024 stablecoin guidance](https://www.finma.ch/en/news/2024/07/20240726
 
 The taxonomy matters because two interfaces can display the same “CHF token” while giving the holder very different rights. Product design and marketing should therefore name the issuer, claim, redemption promise, and record authority rather than relying on the symbol or technology.
 
+### Swiss terminology: do not let the name decide the legal model
+
+The Swiss Bankers Association uses the label **Deposit Token** for its 2025 proof of concept. In that PoC, however, the on-chain object was a tokenized payment instruction that triggered off-chain bank-account movements; the instruction was not itself the authoritative deposit record or a separate form of money. The report further explains that transferring the instruction token did not by itself make the receiver a creditor. The label is therefore useful as the name of an industry initiative, but it is not a classification shortcut.
+
+This collection uses the terms below consistently:
+
+| Term in this research | Meaning | Do not infer |
+|---|---|---|
+| Tokenized payment instruction | A tokenized request to move an ordinary bank deposit | That the holder already owns a transferable deposit claim |
+| CBS-authoritative mirrored deposit | Token state that represents a controlled portion of an existing bank liability | That CBS and token supply are two liabilities |
+| Platform-authoritative deposit | A deposit whose tokenized portion is legally meaningful on the designated platform | That every DLT record is automatically legally constitutive |
+| Stablecoin | A distinct issuer/reserve/guarantee arrangement targeting a reference value | That it has the same debtor or deposit protection as a bank deposit |
+
+The official name of a source is preserved in citations, but the surrounding explanation must state the actual claim and authority model.
+
 For example, a merchant receiving a payment-instruction token may still depend on Bank A accepting the instruction. A merchant receiving a valid Bank A deposit token may become Bank A's creditor under the product terms. A merchant receiving a stablecoin may instead have rights against a separate issuer, reserve arrangement, or guarantor. The screens can look identical while the credit, recovery, and insolvency positions differ materially.
 
 ### Payment-instruction token
@@ -58,7 +75,7 @@ A payment-instruction token represents an instruction to a paying bank rather th
 
 Its main benefit is incremental change: the bank can preserve existing account, booking, and rejection controls. Its main risk is ambiguity for a later holder. The terms must explain whether the token has been accepted, whether it can expire or be revoked, who may present it, and whether the holder has an independent claim or only evidence of an instruction.
 
-The 2025 Swiss Bankers Association Deposit Token proof of concept is important evidence for this category. It used tokenized payment instructions on a public blockchain to trigger off-chain transfers of bank-account money. Its legal analysis considered variants with and without automatic off-chain settlement and did not treat the instruction token itself as the underlying deposit. This makes the PoC relevant to programmable payment design, but it should not be cited as proof that a native or mirrored deposit claim was placed on-chain ([SBA results report, especially Appendix B](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf)).
+The 2025 Swiss Bankers Association Deposit Token proof of concept is important evidence for this category. It used tokenized payment instructions on a public blockchain to trigger off-chain transfers of bank-account money. Its legal analysis considered variants with and without automatic off-chain settlement and did not treat the instruction token itself as the underlying deposit. This makes the PoC relevant to programmable payment design, but it should not be cited as proof that a native or mirrored deposit claim was placed on-chain ([local SBA results report, especially Appendix B](sources/sba/deposit-token-poc-results-2025.pdf); [canonical SBA publication](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf)).
 
 ### CBS-authoritative mirrored deposit
 
@@ -186,7 +203,45 @@ Placing logic on-chain is justified when several parties require a shared, deter
 
 “Final” must always be qualified. A token event may be technically confirmed while the corresponding accounting entry, interbank payment, or legal discharge remains pending. [Chapter 06](06-tokenized-deposit-issuance-transfers-redemption-and-settlement.md) defines the finality layers.
 
-## 6. Records-of-authority models
+## 6. Monetary-system properties
+
+A product can be operationally correct for one bank yet weaken the wider monetary arrangement if it fragments acceptance, liquidity, or settlement. The relevant test is therefore broader than token conservation. The bank should ask whether the design preserves the monetary properties that let different forms of CHF function as one currency.
+
+| Property | Meaning | Test for the proposed tokenized deposit |
+|---|---|---|
+| **Singleness of money** | CHF claims used as money are accepted at a uniform value rather than trading at issuer- or network-specific discounts. | Can the holder redeem at par, understand the debtor, and use a trusted settlement path without a separate exchange rate for the token? |
+| **Par convertibility** | One CHF unit converts into one CHF of the relevant anchor money under clear, reliable conditions. | Are redemption, fees, limits, timing, and stress arrangements explicit, and can participant banks settle issuer differences at par? |
+| **Integrity** | The system supports lawful use, verified participants, reliable records, and controls against financial crime and unauthorized value creation. | Do identity, AML/sanctions, entitlement, mint/burn, privacy, and reconciliation controls operate across both bank and ledger records? |
+| **Elasticity** | Liquidity can expand or be mobilized when legitimate payment demand rises, rather than being constrained by fixed prefunding alone. | Can treasury obtain and deploy settlement liquidity during peaks and outside ordinary hours without unsafe over-issuance or excessive trapped balances? |
+| **Fragmentation** | Separate issuers, ledgers, identities, standards, and bridges can divide liquidity and acceptance into incompatible pools. | Does the design reduce a demonstrated coordination problem, or create another wallet, bridge, liquidity pool, and reconciliation perimeter? |
+| **Settlement-anchor quality** | The asset and rules used to discharge institutional obligations provide strong credit quality, finality, liquidity, and governance. | Is an interbank CHF obligation settled in central-bank money through SIC or another explicitly approved anchor, and is its finality evidenced separately from the token event? |
+
+The BIS describes singleness as par redeemability of money claims into central-bank money with finality, and identifies central-bank money as the trust and settlement anchor. It also treats elasticity and integrity as foundational and warns that incompatible token networks can undermine monetary network effects through fragmentation ([BIS Annual Economic Report 2026, Chapter III](https://www.bis.org/publ/arpdf/ar2026e3.htm)). The CPMI similarly notes that token arrangements can change market structures but require sound governance and risk management ([CPMI tokenisation report](https://www.bis.org/cpmi/publ/d225.htm)).
+
+These properties do not imply that every tokenized deposit requires tokenized central-bank reserves. For the recommended first pilot, same-bank transfers do not need an interbank settlement asset, while a later interbank CHF flow can use SIC. The design question is whether the settlement anchor remains available and legally effective wherever one bank's liability must be replaced by another's.
+
+## 7. Model-selection decision tree
+
+The tree starts with the business problem and deliberately includes a non-token outcome. It is a decision aid, not an automatic legal classification.
+
+```mermaid
+flowchart TD
+    A["Defined customer or market problem"] --> B{"Does shared programmable state create measurable value beyond CBS automation, APIs, SIC instant payments, or escrow?"}
+    B -- No --> N["Use ordinary payments instead"]
+    B -- Yes --> C{"Is the object only an instruction to move an existing account balance?"}
+    C -- Yes --> PI["Tokenized payment instruction"]
+    C -- No --> D{"Must the holder have a direct claim on a commercial bank?"}
+    D -- No --> O["Assess stablecoin, security, custody asset, or central-bank-money model separately"]
+    D -- Yes --> E{"Must the shared platform be legally authoritative from the first pilot?"}
+    E -- No --> M["CBS-authoritative mirrored deposit - recommended first pilot"]
+    E -- Yes --> F{"Are legal effect, accounting ingestion, correction, resolution, privacy, and governance approved?"}
+    F -- No --> R["Do not launch; resolve authority model or return to a CBS mirror"]
+    F -- Yes --> P["Platform-authoritative tokenized deposit"]
+```
+
+The `use ordinary payments instead` outcome is successful product governance when tokenization cannot beat the existing baseline. A mirrored deposit is the recommended first tokenized-deposit model because it tests programmable representation and workflow without simultaneously replacing the bank's authoritative customer ledger. A platform-authoritative model remains possible only when the bank is prepared to make the platform's legal and operational effects constitutive.
+
+## 8. Records-of-authority models
 
 The record-of-authority choice determines which system resolves a disagreement. In normal operation all records should agree, so the distinction may appear theoretical. During a partial failure or insolvency, however, it decides whether the bank corrects the token ledger from the CBS, corrects the CBS from the platform, or treats a token transfer as independently constitutive.
 
@@ -196,11 +251,11 @@ The record-of-authority choice determines which system resolves a disagreement. 
 | Platform-authoritative | Shared ledger | Common state and programmable settlement | Bank must make platform state legally and operationally authoritative |
 | Token-native/bearer-like | Token ownership state | Direct transfer and composability | Key loss, holder identity, legal characterization, custody, and recovery |
 
-Project Agorá is an example of the second model for its prototype. The SBA deposit-token proof of concept provides Swiss industry evidence for multi-bank experimentation. Neither determines the production model for an individual bank.
+Project Agorá is an example of the second model in its report-era PoC and later controlled real-value test. The SBA Deposit Token PoC provides Swiss industry evidence for multi-bank payment-instruction workflows with deposits remaining off-chain. Neither determines the production model for an individual bank.
 
 For a first pilot, retaining the CBS as authoritative limits the number of simultaneous changes to customer statements, regulatory reporting, interest and fee processing, legal holds, and resolution operations. The architecture still needs to prove that a customer cannot spend the CBS balance and token representation twice and that every partial failure reaches a controlled state.
 
-## 7. Working glossary
+## 9. Working glossary
 
 These are working definitions for this collection. Industry documents may use the same words differently, so product documents and participant rules should define them rather than assume a universal meaning.
 

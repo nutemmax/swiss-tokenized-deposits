@@ -25,8 +25,9 @@ const SCENARIOS = {
   redeem: { label: 'Redeem / burn', description: 'Disable the token representation before ordinary bank value is released.', steps: ['Requested', 'Checked', 'Reserved', 'Burn', 'Evidence', 'Released', 'Final'] },
   same: { label: 'Same-bank transfer', description: 'Move value from Alice to Luca while Bank A remains the debtor.', steps: ['Requested', 'Checked', 'Reserved', 'Transfer', 'Internal post', 'Accepted', 'Final'] },
   interbank: { label: 'Swiss interbank', description: 'Separate Bank A’s claim, SIC settlement money and Bank B’s new claim.', steps: ['Requested', 'Checked', 'Reserved', 'Token action', 'SIC final', 'Bank B accepts', 'Final'] },
+  conditional: { label: 'Conditional payment', description: 'Reserve CHF 100, verify an agreed milestone, then release value to Luca.', steps: ['Requested', 'Checked', 'Funds locked', 'Condition pending', 'Condition verified', 'Released', 'Final'] },
   netting: { label: 'Gross versus net', description: 'Compare two gross obligations with a later net-settlement convention.', steps: ['Requested', 'Matched', 'Gross', 'Offset', 'Net settles', 'Accepted', 'Final'] },
-  correspondent: { label: 'Correspondent + FX', description: 'Follow CHF through a correspondent, illustrative FX and foreign settlement.', steps: ['Requested', 'Checked', 'FX locked', 'CHF leg', 'EUR leg', 'Accepted', 'Final'] },
+  correspondent: { label: 'Agorá five-stage payment', description: 'Confirm the payee, find a viable route, validate privately, lock both legs and settle.', steps: ['Confirm payee', 'Discover path', 'Validate', 'Lock & delegate', 'Settle'] },
   pvp: { label: 'Cross-border PvP', description: 'Lock the CHF and EUR legs so both settle together or neither completes.', steps: ['Requested', 'Checked', 'Both locked', 'Atomic release', 'Finality', 'Accepted', 'Final'] },
   cbdc: { label: 'Wholesale CBDC', description: 'Compare commercial-bank deposits with a central-bank settlement token.', steps: ['Requested', 'Checked', 'wCBDC ready', 'Atomic settle', 'Reconciled', 'Accepted', 'Final'] },
   bridge: { label: 'Bridge / wrapped token', description: 'Lock value on one ledger and create a wrapped representation on another.', steps: ['Requested', 'Checked', 'Source locked', 'Wrapped', 'Bridge confirms', 'Redeemed', 'Final'] },
@@ -71,6 +72,15 @@ const FLOW_STEP_ACTIONS = {
     'Luca accepts and can see CHF 100, while the institution or issuer total liability remains unchanged.',
     'The same-system transfer is final after the holder records agree; no interbank settlement occurred.'
   ],
+  conditional: [
+    'Alice requests a CHF 100 payment to Luca that should release only after an agreed business milestone is verified.',
+    'Bank A checks both customers, their authority, the available balance, the condition and the permitted workflow before reserving value.',
+    'CHF 100 is locked against conflicting use while Alice remains the holder of the pending claim.',
+    'The workflow waits for objective milestone evidence; no payment is released merely because time passes.',
+    'The authorized verifier confirms the milestone and the workflow records that the release condition has been satisfied.',
+    'Bank A releases CHF 100 to Luca and records the holder change under the selected product model.',
+    'The conditional payment is complete after the claim, token or instruction record, and Bank A’s authoritative record agree.'
+  ],
   interbank: [
     'Alice asks to send CHF 100 across institutions, so the design must distinguish the customer claim from settlement money.',
     'Both sides check identity, sanctions, account eligibility and the receiving arrangement before reserving value.',
@@ -90,13 +100,11 @@ const FLOW_STEP_ACTIONS = {
     'The batch is final after the net settlement and participant postings agree with the original gross obligations.'
   ],
   correspondent: [
-    'Alice requests a CHF 100 cross-border payment to a recipient who will receive the illustrative EUR equivalent.',
-    'The banks and correspondents screen both parties, the corridor, purpose and funding before execution.',
-    'The illustrative FX rate and the required CHF and EUR liquidity are locked; this is not live market data.',
-    'The CHF leg moves through the Swiss bank or correspondent and its domestic settlement arrangement.',
-    'The EUR correspondent funds the destination leg through the applicable foreign payment system.',
-    'The foreign receiving institution accepts the payment and records the recipient’s usable value.',
-    'The transfer is final only after both currency legs, correspondent records and receiving credit are reconciled.'
+    'The receiving institution confirms the intended beneficiary before route selection begins.',
+    'Participants discover a viable CHF-to-EUR route, including the banks and illustrative FX liquidity needed to complete it.',
+    'Each institution privately validates compliance, amount, funding and operational readiness, then shares only its endorsed outcome.',
+    'The required balances are locked and narrowly scoped settlement authority is delegated only after every validation succeeds.',
+    'The coordinated payment legs execute and the receiving institution records usable value after the agreed settlement conditions are met.'
   ],
   pvp: [
     'The parties request an exchange of a CHF 100 leg for an illustrative EUR 100 leg.',
@@ -141,6 +149,7 @@ const MODEL_FLOW_CONTEXT = {
     mint: 'The CBS account remains authoritative, and creating the token creates a payment instruction rather than a second deposit balance.',
     redeem: 'This is cancellation or execution of an instruction; the ordinary CBS balance changes only when the bank posts the result.',
     same: 'Bank A remains the debtor, and its CBS debit and credit—not movement of the instruction alone—change Alice’s and Luca’s deposits.',
+    conditional: 'The instruction coordinates the condition, but Bank A’s CBS posting changes the deposits only when the verified release is accepted.',
     interbank: 'The instruction does not itself become a Bank B deposit; ordinary settlement and Bank B acceptance are needed to create Luca’s claim.',
     netting: 'Instruction tokens may coordinate obligations, but the payment-system rulebook determines whether settlement is gross or net.',
     correspondent: 'The token coordinates data and authorization while correspondent accounts, FX and existing payment systems move the money.',
@@ -153,6 +162,7 @@ const MODEL_FLOW_CONTEXT = {
     mint: 'CBS and the general ledger remain authoritative, while the DLT token must exactly mirror the reserved token subaccount.',
     redeem: 'The token must be finally burned before CBS releases the mirror balance, and all three records must return to agreement.',
     same: 'Bank A remains the debtor; its CBS mirror subaccounts reallocate the liability and the DLT records the matching holder change.',
+    conditional: 'The token remains linked to Alice’s CBS-recorded claim while locked, then the CBS and DLT reallocate it together after verification.',
     interbank: 'Bank A’s claim is locked or extinguished, SIC funds Bank B in central-bank money, and Bank B then creates Luca’s separate claim.',
     netting: 'Customer tokens remain reconciled to each bank’s CBS while the banks may settle their resulting obligations gross or by an agreed net cycle.',
     correspondent: 'The mirrored deposit stays tied to its issuing bank until the correspondent and foreign-bank legs create the destination claim.',
@@ -165,6 +175,7 @@ const MODEL_FLOW_CONTEXT = {
     mint: 'The DLT creates the authoritative bank claim, and CBS and the general ledger must ingest the event for reporting and control.',
     redeem: 'Redemption extinguishes the authoritative on-chain claim before the bank creates an ordinary balance or makes a payout.',
     same: 'The DLT transfer changes the authoritative holder directly, while Bank A remains debtor and its reporting systems follow the event.',
+    conditional: 'The authoritative token is locked under the workflow and changes holder only when the approved verification event authorizes release.',
     interbank: 'A simple address transfer cannot change the debtor from Bank A to Bank B; explicit claim transformation and settlement logic are required.',
     netting: 'On-chain bank claims can generate interbank obligations, but the agreed settlement rules—not block confirmation alone—determine net or gross finality.',
     correspondent: 'The authoritative token state must be coordinated with FX, correspondent and foreign-payment events that exist outside its ledger.',
@@ -177,6 +188,7 @@ const MODEL_FLOW_CONTEXT = {
     mint: 'Funding creates a claim on the separate issuer or guarantee structure, whose ledger and reserve records—not Bank A’s CBS—govern the token.',
     redeem: 'The issuer extinguishes its token and pays from the reserve or guarantee arrangement; redemption is not an ordinary bank-deposit withdrawal.',
     same: 'The issuer remains the debtor when the coin moves between wallets, so the customers’ use of the same bank does not transform the legal claim.',
+    conditional: 'The issuer claim is locked under the condition and remains owed by the issuer when the verified workflow releases it to Luca.',
     interbank: 'The issuer remains the debtor after a direct wallet transfer; SIC and creation of a Bank B deposit are not intrinsic to this movement.',
     netting: 'Any netting concerns issuer-scheme or participant obligations, not an automatic offset of customer deposits at Bank A and Bank B.',
     correspondent: 'A stablecoin may serve as an intermediate corridor asset, but issuer redemption, FX and correspondent risks remain separate dependencies.',
@@ -190,12 +202,16 @@ const MODEL_FLOW_CONTEXT = {
 const STEP_EXPLANATIONS = Object.fromEntries(Object.entries(FLOW_STEP_ACTIONS).map(([scenario, steps]) => [scenario, steps.map((action) => Object.fromEntries(Object.keys(MODELS).map((model) => [model, `${action} ${MODEL_FLOW_CONTEXT[model][scenario]}`])))]));
 
 const FAILURE_SCENARIOS = {
-  aml: ['mint','redeem','same','interbank','correspondent','pvp','bridge'],
-  dlt: ['mint','redeem','same','interbank','correspondent','pvp','cbdc','bridge','mismatch'],
+  aml: ['mint','redeem','same','interbank','conditional','correspondent','pvp','bridge'],
+  dlt: ['mint','redeem','same','interbank','conditional','correspondent','pvp','cbdc','bridge','mismatch'],
   sic: ['interbank','netting'],
   receiver: ['interbank','correspondent','cbdc'],
-  mismatch: ['mint','redeem','same','interbank','correspondent','pvp','cbdc','bridge','mismatch'],
-  key: ['mint','redeem','same','interbank','correspondent','pvp','cbdc','bridge','mismatch']
+  mismatch: ['mint','redeem','same','interbank','conditional','correspondent','pvp','cbdc','bridge','mismatch'],
+  key: ['mint','redeem','same','interbank','conditional','correspondent','pvp','cbdc','bridge','mismatch']
+};
+
+const SCENARIO_FAILURE_TRIGGERS = {
+  correspondent: { aml: 2, receiver: 2 }
 };
 
 const FAILURE_COPY = {
@@ -247,6 +263,7 @@ const currentSteps = () => state.model === 'stablecoin' && state.scenario === 'i
   ? ['Requested', 'Checked', 'Reserved', 'Issuer transfer', 'Issuer recorded', 'Recipient accepts', 'Final']
   : SCENARIOS[state.scenario].steps;
 const finalStep = () => currentSteps().length - 1;
+const failureTrigger = (failure, scenario = state.scenario) => SCENARIO_FAILURE_TRIGGERS[scenario]?.[failure] ?? FAILURES[failure]?.trigger ?? -1;
 const failureApplicable = (failure, model = state.model, scenario = state.scenario) => {
   if (failure === 'none') return true;
   if (!FAILURE_SCENARIOS[failure]?.includes(scenario)) return false;
@@ -256,10 +273,12 @@ const failureApplicable = (failure, model = state.model, scenario = state.scenar
 };
 const activeFailure = () => {
   const failure = FAILURES[state.failure];
-  if (!failure || failure.trigger < 0 || !failureApplicable(state.failure)) return null;
-  return state.step >= failure.trigger && state.step < finalStep() ? failure : null;
+  const trigger = failureTrigger(state.failure);
+  if (!failure || trigger < 0 || !failureApplicable(state.failure)) return null;
+  return state.step >= trigger ? { ...failure, trigger } : null;
 };
 const isFinal = () => state.step >= finalStep() && !activeFailure();
+const completed = (step) => at(step) && (!activeFailure() || step < activeFailure().trigger);
 
 function snapshot() {
   const amount = AMOUNT;
@@ -267,60 +286,123 @@ function snapshot() {
   const scenario = state.scenario;
   const s = {
     aliceOrdinary: BASE, aliceToken: 0, aliceMirror: 0, lucaOrdinary: 0, lucaToken: 0, lucaMirror: 0,
-    bankASnb: BASE, bankBSnb: BASE, tokenSupply: 0, issuerReserve: 0,
-    holder: 'Alice', debtor: MODELS[model].debtor, authority: MODELS[model].authority,
-    finality: isFinal() ? 'Final' : activeFailure() ? 'Blocked' : at(4) ? 'Settlement pending' : 'Pending', reconciliation: 'Matched'
+    bankASnb: BASE, bankBSnb: BASE, tokenSupply: 0, instructionValue: 0, issuerReserve: 0,
+    eurTokenSupply: 0, wcbdcA: 0, wcbdcB: 0, wrapped: 0, destinationValue: 0, locked: false,
+    holder: 'Alice', debtor: model === 'instruction' ? 'Bank A ordinary deposit' : MODELS[model].debtor, authority: MODELS[model].authority,
+    workflowStatus: activeFailure() ? 'Blocked' : isFinal() ? 'Complete' : at(2) ? 'Reserved / in progress' : 'Pending',
+    ledgerStatus: 'Not recorded', accountingStatus: 'Not posted', settlementStatus: 'Not required', legalStatus: 'Not final',
+    finality: activeFailure() ? 'Blocked' : isFinal() ? 'Complete' : 'Pending', reconciliation: 'Matched'
   };
 
   if (scenario === 'mint') {
-    if (model === 'instruction') s.tokenSupply = at(3) ? amount : 0;
-    if (model === 'mirrored') { s.aliceOrdinary = at(3) ? BASE - amount : BASE; s.aliceMirror = at(3) ? amount : 0; s.aliceToken = at(3) ? amount : 0; s.tokenSupply = s.aliceToken; }
-    if (model === 'native') { s.aliceOrdinary = at(3) ? BASE - amount : BASE; s.aliceToken = at(3) ? amount : 0; s.tokenSupply = s.aliceToken; s.authority = 'DLT master record'; }
-    if (model === 'stablecoin') { s.aliceOrdinary = at(3) ? BASE - amount : BASE; s.aliceToken = at(3) ? amount : 0; s.tokenSupply = s.aliceToken; s.issuerReserve = s.tokenSupply; s.holder = at(3) ? 'Alice · issuer claim' : 'Alice'; }
+    if (model === 'instruction') s.instructionValue = completed(3) ? amount : 0;
+    if (model === 'mirrored') { s.aliceOrdinary = completed(2) ? BASE - amount : BASE; s.aliceMirror = completed(2) ? amount : 0; s.aliceToken = completed(3) ? amount : 0; s.tokenSupply = s.aliceToken; }
+    if (model === 'native') { s.aliceOrdinary = completed(2) ? BASE - amount : BASE; s.aliceToken = completed(3) ? amount : 0; s.tokenSupply = s.aliceToken; s.authority = 'DLT master record'; }
+    if (model === 'stablecoin') { s.aliceOrdinary = completed(2) ? BASE - amount : BASE; s.aliceToken = completed(3) ? amount : 0; s.tokenSupply = s.aliceToken; s.issuerReserve = completed(3) ? amount : 0; s.holder = completed(3) ? 'Alice · issuer claim' : 'Alice'; }
+    s.ledgerStatus = completed(3) ? (model === 'instruction' ? 'Instruction recorded' : 'Token recorded') : 'Not recorded';
+    s.accountingStatus = completed(4) ? 'Recorded' : completed(2) ? 'Reserved' : 'Not posted';
+    if (model === 'instruction' && completed(4)) s.debtor = 'Bank A ordinary deposit';
   }
 
   if (scenario === 'redeem') {
-    if (model === 'instruction') s.tokenSupply = at(2) && !isFinal() ? amount : 0;
-    if (model === 'mirrored') { s.aliceOrdinary = isFinal() ? BASE : BASE - amount; s.aliceMirror = isFinal() ? 0 : amount; s.aliceToken = s.aliceMirror; s.tokenSupply = s.aliceToken; }
-    if (model === 'native') { s.aliceOrdinary = isFinal() ? BASE : BASE - amount; s.aliceToken = isFinal() ? 0 : amount; s.tokenSupply = s.aliceToken; s.authority = 'DLT master record'; }
-    if (model === 'stablecoin') { s.aliceOrdinary = isFinal() ? BASE : BASE - amount; s.aliceToken = isFinal() ? 0 : amount; s.tokenSupply = s.aliceToken; s.issuerReserve = s.tokenSupply; }
+    if (model === 'instruction') s.instructionValue = completed(2) && !completed(3) ? amount : 0;
+    else {
+      s.aliceOrdinary = completed(5) ? BASE : BASE - amount;
+      s.aliceToken = completed(3) ? 0 : amount;
+      s.tokenSupply = s.aliceToken;
+      s.aliceMirror = model === 'mirrored' && !completed(5) ? amount : 0;
+      if (model === 'native') s.authority = 'DLT master record';
+      if (model === 'stablecoin') s.issuerReserve = completed(5) ? 0 : amount;
+    }
+    s.ledgerStatus = completed(3) ? (model === 'instruction' ? 'Instruction consumed' : 'Burn recorded') : 'Existing representation held';
+    s.accountingStatus = completed(5) ? 'Released to ordinary balance / payout' : completed(3) ? 'Burn evidence pending' : 'Reservation pending';
   }
 
   if (scenario === 'same') {
-    if (model === 'instruction') { s.tokenSupply = at(3) && !isFinal() ? amount : 0; s.aliceOrdinary = isFinal() ? BASE - amount : BASE; s.lucaOrdinary = isFinal() ? amount : 0; }
-    else { s.aliceOrdinary = BASE - amount; s.aliceToken = isFinal() ? 0 : amount; s.lucaToken = isFinal() ? amount : 0; s.tokenSupply = amount; if (model === 'mirrored') { s.aliceMirror = s.aliceToken; s.lucaMirror = s.lucaToken; } if (model === 'stablecoin') s.issuerReserve = amount; }
-    s.holder = isFinal() ? (model === 'stablecoin' ? 'Luca · issuer claim' : 'Luca') : 'Alice';
+    if (model === 'instruction') { s.instructionValue = completed(3) && !completed(4) ? amount : 0; s.aliceOrdinary = completed(4) ? BASE - amount : BASE; s.lucaOrdinary = completed(4) ? amount : 0; s.holder = completed(4) ? 'Luca' : 'Alice / instruction pending'; }
+    else {
+      s.aliceOrdinary = BASE - amount;
+      s.aliceToken = completed(3) ? 0 : amount;
+      s.lucaToken = completed(3) ? amount : 0;
+      s.tokenSupply = amount;
+      if (model === 'mirrored') { s.aliceMirror = s.aliceToken; s.lucaMirror = s.lucaToken; s.holder = completed(4) ? 'Luca' : 'Alice / CBS posting pending'; }
+      else s.holder = completed(3) ? (model === 'stablecoin' ? 'Luca · issuer claim' : 'Luca') : 'Alice';
+      if (model === 'stablecoin') s.issuerReserve = amount;
+    }
+    s.ledgerStatus = completed(3) ? (model === 'instruction' ? 'Instruction recorded' : 'Transfer recorded') : 'Existing holder record';
+    s.accountingStatus = completed(4) ? 'Customer reallocation posted' : 'Posting pending';
+    if (model === 'instruction') s.debtor = completed(4) ? 'Bank A ordinary deposit' : 'Bank A ordinary deposit / payment pending';
+  }
+
+  if (scenario === 'conditional') {
+    s.locked = completed(2) && !completed(5);
+    if (model === 'instruction') {
+      s.instructionValue = completed(2) && !completed(5) ? amount : 0;
+      s.aliceOrdinary = completed(5) ? BASE - amount : BASE;
+      s.lucaOrdinary = completed(5) ? amount : 0;
+      s.debtor = 'Bank A ordinary deposit';
+    } else {
+      s.aliceOrdinary = BASE - amount;
+      s.aliceToken = completed(5) ? 0 : amount;
+      s.lucaToken = completed(5) ? amount : 0;
+      s.tokenSupply = amount;
+      if (model === 'mirrored') { s.aliceMirror = s.aliceToken; s.lucaMirror = s.lucaToken; }
+      if (model === 'stablecoin') s.issuerReserve = amount;
+    }
+    s.holder = completed(5) ? (model === 'stablecoin' ? 'Luca · issuer claim' : 'Luca') : completed(2) ? 'Alice · condition locked' : 'Alice';
+    s.ledgerStatus = completed(5) ? 'Conditional release recorded' : completed(4) ? 'Condition verified' : completed(2) ? 'Conditional lock recorded' : 'No conditional event';
+    s.accountingStatus = completed(5) ? 'Customer reallocation posted' : completed(2) ? 'Value reserved' : 'Not posted';
+    s.settlementStatus = 'Not required · same debtor';
   }
 
   if (scenario === 'interbank') {
     if (model === 'stablecoin') {
-      s.aliceOrdinary = BASE - amount; s.aliceToken = at(5) ? 0 : amount; s.lucaToken = at(5) ? amount : 0; s.tokenSupply = amount; s.issuerReserve = amount;
-      s.holder = at(5) ? 'Luca · issuer claim' : 'Alice · issuer claim / pending'; s.debtor = 'Stablecoin issuer'; s.authority = 'Issuer ledger + reserve / guarantee';
-      s.finality = isFinal() ? 'Issuer-ledger final + accepted' : activeFailure() ? 'Blocked' : at(4) ? 'Issuer recorded / acceptance pending' : 'Pending';
+      s.aliceOrdinary = BASE - amount; s.aliceToken = completed(3) ? 0 : amount; s.lucaToken = completed(3) ? amount : 0; s.tokenSupply = amount; s.issuerReserve = amount;
+      s.holder = completed(3) ? 'Luca · issuer claim' : 'Alice · issuer claim / pending'; s.debtor = 'Stablecoin issuer'; s.authority = 'Issuer ledger + backing evidence';
+      s.ledgerStatus = completed(3) ? 'Issuer transfer recorded' : 'Issuer transfer pending'; s.accountingStatus = 'Issuer-side terms apply'; s.settlementStatus = 'No SIC leg in this model';
     } else {
-      if (model === 'instruction') { s.tokenSupply = at(3) && !isFinal() ? amount : 0; s.aliceOrdinary = isFinal() ? BASE - amount : BASE; s.lucaOrdinary = isFinal() ? amount : 0; }
-      else { s.aliceOrdinary = BASE - amount; s.aliceToken = at(4) ? 0 : amount; s.lucaToken = at(5) ? amount : 0; s.tokenSupply = s.aliceToken + s.lucaToken; if (model === 'mirrored') { s.aliceMirror = s.aliceToken; s.lucaMirror = s.lucaToken; } }
-      if (at(4)) { s.bankASnb = BASE - amount; s.bankBSnb = BASE + amount; }
-      s.holder = at(5) ? 'Luca' : 'Alice / pending'; s.debtor = at(5) ? 'Bank B' : 'Bank A until acceptance';
-      s.finality = isFinal() ? 'SIC final + accepted' : activeFailure() ? 'Blocked' : at(4) ? 'SIC final / acceptance pending' : 'Pending';
+      if (model === 'instruction') {
+        s.instructionValue = completed(3) && !completed(4) ? amount : 0;
+        s.aliceOrdinary = completed(4) ? BASE - amount : BASE;
+        s.lucaOrdinary = completed(5) ? amount : 0;
+      } else {
+        s.aliceOrdinary = BASE - amount;
+        s.aliceToken = completed(4) ? 0 : amount;
+        s.lucaToken = completed(5) ? amount : 0;
+        s.tokenSupply = s.aliceToken + s.lucaToken;
+        if (model === 'mirrored') { s.aliceMirror = s.aliceToken; s.lucaMirror = s.lucaToken; }
+      }
+      if (completed(4)) { s.bankASnb = BASE - amount; s.bankBSnb = BASE + amount; }
+      const receiverRejected = activeFailure()?.label === 'Receiving bank rejection';
+      s.holder = completed(5) ? 'Luca' : completed(4) ? receiverRejected ? 'Bank B suspense / repair' : 'Bank B acceptance pending' : 'Alice / reserved';
+      s.debtor = completed(5) ? 'Bank B' : completed(4) ? receiverRejected ? 'Bank B due-to settlement' : 'Bank A pending Bank B acceptance' : 'Bank A';
+      s.ledgerStatus = completed(4) ? 'Source retired after settlement' : completed(3) ? (model === 'instruction' ? 'Instruction recorded' : 'Source locked') : 'Existing source record';
+      s.accountingStatus = completed(5) ? 'Bank B customer claim posted' : completed(4) ? 'Settlement suspense / acceptance pending' : 'No external posting';
+      s.settlementStatus = completed(4) ? 'SIC final' : activeFailure()?.label === 'SIC unavailable' ? 'SIC not settled' : 'SIC pending';
+      if (model === 'instruction') s.debtor = completed(5) ? 'Bank B ordinary deposit' : completed(4) ? receiverRejected ? 'Bank B due-to settlement' : 'Bank A payment pending Bank B acceptance' : 'Bank A ordinary deposit';
     }
   }
 
   if (scenario === 'netting') {
     s.grossA = amount; s.grossB = Math.round(amount * .6); s.net = s.grossA - s.grossB;
-    if (at(4)) { s.bankASnb = BASE - s.net; s.bankBSnb = BASE + s.net; }
-    s.holder = model === 'stablecoin' ? 'Issuer-scheme obligations' : 'Bank obligations'; s.debtor = model === 'stablecoin' ? 'Issuer-scheme participants' : 'Bank A and Bank B'; s.authority = 'Payment-system rules';
+    if (model !== 'stablecoin' && completed(4)) { s.bankASnb = BASE - s.net; s.bankBSnb = BASE + s.net; }
+    s.holder = model === 'stablecoin' ? 'Issuer-scheme obligations' : 'Bank obligations'; s.debtor = model === 'stablecoin' ? 'Issuer-scheme participants' : 'Bank A and Bank B'; s.authority = model === 'native' ? 'DLT master record + payment-system rules' : 'Payment-system rules';
+    s.ledgerStatus = completed(3) ? 'Net obligation calculated' : 'Gross obligations pending'; s.accountingStatus = completed(5) ? 'Participant postings recorded' : 'Participant postings pending'; s.settlementStatus = model === 'stablecoin' ? 'No SIC leg in this model' : completed(4) ? 'Net SIC settlement final' : activeFailure()?.label === 'SIC unavailable' ? 'SIC not settled' : 'Net settlement pending';
   }
 
-  if (scenario === 'correspondent') { s.aliceOrdinary = at(5) ? BASE - amount : BASE; s.lucaOrdinary = isFinal() ? amount : 0; s.holder = isFinal() ? (model === 'stablecoin' ? 'Foreign customer · issuer claim' : 'Foreign customer') : 'Alice / pending'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer / corridor parties' : isFinal() ? 'Foreign bank' : 'Correspondent chain'; s.authority = model === 'stablecoin' ? 'Issuer ledger + corridor records' : 'CBS + correspondent RTGS'; s.finality = isFinal() ? 'Foreign leg final' : 'Cross-border pending'; }
-  if (scenario === 'pvp') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = at(5) ? 0 : amount; s.lucaToken = at(5) ? amount : 0; s.tokenSupply = amount; s.holder = at(2) && !at(5) ? 'Both legs locked' : at(5) ? 'Both counterparties' : 'Alice / counterparty'; s.debtor = model === 'stablecoin' ? 'Two token issuers' : 'Two issuing banks'; s.authority = 'Shared PvP rules'; s.finality = isFinal() ? 'Both legs final' : activeFailure() ? 'Neither leg final' : 'Both legs pending'; }
-  if (scenario === 'cbdc') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = at(5) ? 0 : amount; s.lucaToken = at(5) ? amount : 0; s.tokenSupply = amount; s.wcbdc = at(2) ? amount : 0; s.holder = at(5) ? 'Recipient' : model === 'stablecoin' ? 'Issuer claim' : 'Commercial-bank claim'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer; SNB for wCBDC' : 'Commercial banks; SNB for wCBDC'; s.authority = model === 'stablecoin' ? 'Issuer ledger + wCBDC settlement' : 'Deposit ledger + wCBDC settlement'; }
-  if (scenario === 'bridge') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = at(2) ? 0 : amount; s.tokenSupply = amount; s.locked = at(2) && !isFinal(); s.wrapped = at(3) && !isFinal(); s.holder = isFinal() ? 'Destination wallet' : s.locked ? 'Bridge escrow' : 'Alice'; s.debtor = 'Origin issuer / bridge rules'; s.authority = 'Two ledgers + bridge'; s.finality = isFinal() ? 'Redeemed' : activeFailure() ? 'Bridge paused' : 'Cross-ledger pending'; }
-  if (scenario === 'mismatch') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = amount; s.aliceMirror = amount; s.tokenSupply = at(2) && state.step < 6 ? amount + 10 : amount; s.holder = 'Alice · held'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer' : 'Bank A'; s.authority = model === 'stablecoin' ? at(3) && state.step < 6 ? 'Issuer records paused' : 'Issuer ledger + reserve records' : at(3) && state.step < 6 ? 'CBS / GL paused' : 'CBS / GL + DLT'; s.reconciliation = at(2) && state.step < 6 ? 'Mismatch' : 'Matched'; s.finality = state.step >= 6 ? 'Restored' : at(2) ? 'Blocked' : 'Pending'; }
+  if (scenario === 'correspondent') { s.aliceOrdinary = completed(4) ? BASE - amount : BASE; s.lucaOrdinary = completed(4) ? amount : 0; s.locked = completed(3) && !completed(4); s.holder = completed(4) ? (model === 'stablecoin' ? 'Foreign customer · issuer claim' : 'Foreign customer') : completed(3) ? 'Alice / both legs locked' : 'Alice / pending'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer / corridor parties' : completed(4) ? 'Foreign bank' : 'Origin and corridor institutions'; s.authority = model === 'stablecoin' ? 'Issuer ledger + corridor records' : model === 'native' ? 'DLT master record + corridor records' : 'Bank records + payment-system evidence'; s.ledgerStatus = completed(4) ? 'Coordinated settlement recorded' : completed(3) ? 'Locks and delegation recorded' : completed(2) ? 'Validations endorsed' : 'Workflow pending'; s.accountingStatus = completed(4) ? 'Receiving claim posted' : 'Posting pending'; s.settlementStatus = completed(4) ? 'Coordinated legs settled' : completed(3) ? 'Both currency legs locked' : 'Path not committed'; }
+  if (scenario === 'pvp') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = model === 'instruction' ? 0 : completed(4) ? 0 : amount; s.lucaToken = model === 'instruction' ? 0 : completed(4) ? amount : 0; s.tokenSupply = model === 'instruction' ? 0 : amount; s.instructionValue = model === 'instruction' && completed(2) && !completed(4) ? amount : 0; s.eurTokenSupply = amount; s.holder = completed(5) ? 'Both counterparties' : completed(2) ? 'Both legs locked' : 'Alice / counterparty'; s.debtor = model === 'stablecoin' ? 'Two token issuers' : model === 'instruction' ? 'Issuing banks / payment orders pending' : 'Two issuing banks'; s.authority = model === 'native' ? 'DLT master record + shared PvP rules' : model === 'instruction' ? 'Payment-system and bank records' : 'Shared PvP rules'; s.ledgerStatus = completed(4) ? 'CHF and EUR releases recorded' : completed(2) ? 'Both legs locked' : 'Not locked'; s.accountingStatus = completed(5) ? 'Both receiving claims posted' : 'Posting pending'; s.settlementStatus = completed(4) ? 'Both legs released' : 'Both legs pending'; }
+  if (scenario === 'cbdc') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = model === 'instruction' ? 0 : completed(5) ? 0 : amount; s.lucaToken = model === 'instruction' ? 0 : completed(5) ? amount : 0; s.tokenSupply = model === 'instruction' ? 0 : amount; s.instructionValue = model === 'instruction' && completed(2) && !completed(5) ? amount : 0; s.wcbdcA = completed(3) ? 0 : completed(2) ? amount : 0; s.wcbdcB = completed(3) ? amount : 0; s.holder = completed(5) ? 'Recipient' : model === 'stablecoin' ? 'Issuer claim' : 'Commercial-bank claim pending'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer; SNB for wCBDC' : model === 'instruction' ? 'Bank A ordinary deposit / payment pending' : 'Commercial banks; SNB for wCBDC'; s.authority = model === 'stablecoin' ? 'Issuer ledger + wCBDC settlement' : model === 'native' ? 'DLT master record + wCBDC settlement' : model === 'instruction' ? 'CBS + payment-system records' : 'Deposit ledger + wCBDC settlement'; s.ledgerStatus = completed(3) ? 'Institutional settlement recorded' : 'Customer transfer pending'; s.accountingStatus = completed(5) ? 'Receiving customer claim posted' : 'Posting pending'; s.settlementStatus = completed(3) ? 'wCBDC moved between institutions' : 'wCBDC held at Bank A'; }
+  if (scenario === 'bridge') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = model === 'instruction' ? 0 : completed(2) ? 0 : amount; s.tokenSupply = s.aliceToken; s.instructionValue = model === 'instruction' && completed(2) && !completed(5) ? amount : 0; s.locked = completed(2) && !completed(5); s.wrapped = completed(3) && !completed(5) ? amount : 0; s.destinationValue = completed(5) ? amount : 0; s.holder = completed(5) ? 'Destination wallet' : s.locked ? 'Bridge escrow' : 'Alice'; s.debtor = model === 'instruction' ? 'Bank A ordinary deposit / bridge payment pending' : 'Origin issuer / bridge rules'; s.authority = model === 'native' ? 'DLT master record + bridge rules' : model === 'instruction' ? 'CBS + bridge payment records' : 'Two ledgers + bridge'; s.ledgerStatus = completed(5) ? 'Source redeemed; destination recorded' : completed(3) ? 'Wrapped representation pending redemption' : completed(2) ? 'Source locked' : 'Source available'; s.accountingStatus = completed(5) ? 'Destination entitlement recorded' : 'Cross-ledger posting pending'; s.settlementStatus = completed(5) ? 'Bridge redemption complete' : 'Bridge confirmation pending'; }
+  if (scenario === 'mismatch') { s.aliceOrdinary = model === 'instruction' ? BASE : BASE - amount; s.aliceToken = model === 'instruction' ? 0 : amount; s.aliceMirror = model === 'instruction' ? 0 : amount; s.tokenSupply = model === 'instruction' ? 0 : at(2) && state.step < 6 ? amount + 10 : amount; s.instructionValue = model === 'instruction' ? amount : 0; s.holder = 'Alice · held'; s.debtor = model === 'stablecoin' ? 'Stablecoin issuer' : model === 'instruction' ? 'Bank A ordinary deposit' : 'Bank A'; s.authority = model === 'stablecoin' ? at(3) && state.step < 6 ? 'Issuer records paused' : 'Issuer ledger + reserve records' : model === 'instruction' ? at(3) && state.step < 6 ? 'CBS payment record paused' : 'CBS + payment record' : at(3) && state.step < 6 ? 'CBS / GL paused' : 'CBS / GL + DLT'; s.reconciliation = at(2) && state.step < 6 ? 'Mismatch' : 'Matched'; s.finality = state.step >= 6 ? 'Restored' : at(2) ? 'Blocked' : 'Pending'; }
 
   if (model === 'stablecoin' && s.tokenSupply > 0 && s.issuerReserve === 0) s.issuerReserve = amount;
 
-  if (activeFailure()) { s.finality = 'Blocked'; if (state.failure === 'mismatch') s.reconciliation = 'Mismatch'; }
+  if (scenario === 'mismatch') { s.ledgerStatus = s.reconciliation === 'Mismatch' ? 'Movement halted' : 'Repaired'; s.accountingStatus = s.reconciliation === 'Mismatch' ? 'Control break under investigation' : 'Control records restored'; }
+  if (['interbank','netting','correspondent','pvp','cbdc'].includes(scenario) && s.settlementStatus === 'Not required') s.settlementStatus = 'Pending';
+  if (activeFailure()) { s.workflowStatus = 'Blocked'; s.finality = 'Blocked'; s.legalStatus = 'Not final'; if (state.failure === 'mismatch') s.reconciliation = 'Mismatch'; }
+  else if (isFinal()) { s.workflowStatus = 'Complete'; s.finality = 'Complete'; s.legalStatus = ['interbank','netting','correspondent','pvp','cbdc','bridge'].includes(scenario) ? 'Subject to terms / rulebook' : 'Product terms apply'; }
+  else s.legalStatus = 'Not final';
   return s;
 }
 
@@ -375,14 +457,17 @@ function bank(x, y, name, balance, active, selected, dormant = false) {
   </g>`;
 }
 
-function dlt(x, y, supply, active, model) {
-  const label = 'DLT LEDGER';
+function dlt(x, y, s, active, model) {
+  const isInstruction = model === 'instruction';
+  const label = isInstruction ? 'INSTRUCTION LEDGER' : 'DLT LEDGER';
+  const value = isInstruction ? s.instructionValue : s.tokenSupply;
+  const valueLabel = isInstruction ? 'INSTRUCTION' : 'SUPPLY';
   return `<g class="actor-hit ${active ? 'dlt-active' : ''}" data-actor="dlt" role="button" tabindex="0" aria-label="Inspect ${label}" transform="translate(${x} ${y})">
     <path class="dlt-line" d="M25 48 82 16l55 39-52 40Z M25 48l60 47M82 16l3 79M137 55l55 45M85 95l107 5"></path>
     <circle class="dlt-node actor-accent" cx="25" cy="48" r="16"></circle><circle class="dlt-node" cx="82" cy="16" r="16"></circle><circle class="dlt-node" cx="137" cy="55" r="16"></circle><circle class="dlt-node" cx="85" cy="95" r="16"></circle><circle class="dlt-node" cx="192" cy="100" r="16"></circle>
     <rect x="38" y="129" width="150" height="50" rx="5" fill="#fff" stroke="#151515" stroke-width="2"></rect>
     <text x="113" y="151" text-anchor="middle" class="infra-title">${label}</text>
-    <text x="113" y="168" text-anchor="middle" class="actor-amount">SUPPLY · ${supply ? esc(money(supply)) : '—'}</text>
+    <text x="113" y="168" text-anchor="middle" class="actor-amount">${valueLabel} · ${value ? esc(money(value)) : '—'}</text>
   </g>`;
 }
 
@@ -395,7 +480,7 @@ function issuerFacility(x, y, supply, reserve, active) {
       <circle class="issuer-vault-door" cx="49" cy="48" r="28"></circle>
       <path class="issuer-vault-spoke" d="M49 26v44M27 48h44M34 33l30 30M64 33 34 63"></path>
       <circle cx="49" cy="48" r="6" fill="#d52f3a"></circle>
-      <text x="49" y="105" text-anchor="middle" class="issuer-caption">RESERVE / GUARANTEE</text>
+      <text x="49" y="105" text-anchor="middle" class="issuer-caption">BACKING EVIDENCE</text>
     </g>
     <g transform="translate(133 74)">
       <rect class="issuer-screen" width="78" height="71" rx="5"></rect>
@@ -406,7 +491,7 @@ function issuerFacility(x, y, supply, reserve, active) {
       <text x="39" y="94" text-anchor="middle" class="issuer-caption">TOKEN SUPPLY</text>
     </g>
     <text x="122" y="211" text-anchor="middle" class="actor-label">STABLECOIN ISSUER</text>
-    <text x="122" y="230" text-anchor="middle" class="actor-amount">RESERVE ${esc(money(reserve))}</text>
+    <text x="122" y="230" text-anchor="middle" class="actor-amount">BACKING (ILLUSTRATIVE) ${esc(money(reserve))}</text>
     <text x="122" y="249" text-anchor="middle" class="actor-meta">SUPPLY · ${supply ? esc(money(supply)) : '—'}</text>
   </g>`;
 }
@@ -425,15 +510,22 @@ function bridgeObject(s) {
   return `<g class="actor-hit" data-actor="bridge" role="button" tabindex="0" aria-label="Inspect bridge" transform="translate(405 322)">
     <path class="bridge-deck actor-accent" d="M0 74h250"></path><path class="bridge-cable" d="M20 74C65 4 185 4 230 74M42 48v26M74 22v52M108 9v65M142 9v65M176 22v52M208 48v26"></path>
     <rect x="-8" y="70" width="34" height="60" fill="#151515"></rect><rect x="224" y="70" width="34" height="60" fill="#151515"></rect>
-    <text x="125" y="108" text-anchor="middle" class="rail-label">BRIDGE</text><text x="125" y="125" text-anchor="middle" class="rail-sub">${s.locked ? 'source locked' : 'lock'} · ${s.wrapped ? 'wrapped live' : 'wrap'} · redeem</text>
+    <text x="125" y="108" text-anchor="middle" class="rail-label">BRIDGE</text><text x="125" y="125" text-anchor="middle" class="rail-sub">${s.destinationValue ? 'destination recorded' : s.locked ? 'source locked' : 'lock'} · ${s.wrapped ? 'wrapped pending' : 'no wrapped unit'} · redeem</text>
   </g>`;
 }
 
 function specialInfrastructure(s) {
   if (state.scenario === 'bridge') return bridgeObject(s);
-  if (state.scenario === 'pvp') return `<g class="actor-hit" data-actor="pvp" role="button" tabindex="0" transform="translate(430 342)"><rect x="0" y="0" width="200" height="88" rx="9" fill="#fff" stroke="#151515" stroke-width="2"></rect><path d="M48 48h104" stroke="#d52f3a" stroke-width="8"></path><rect class="pvp-lock" x="81" y="19" width="38" height="42" rx="5"></rect><path d="M90 20v-9c0-18 20-18 20 0v9" fill="none" stroke="#151515" stroke-width="5"></path><text x="100" y="79" text-anchor="middle" class="infra-title">CHF ↔ EUR · BOTH OR NEITHER</text></g>`;
-  if (state.scenario === 'correspondent') return `<g class="actor-hit" data-actor="fx" role="button" tabindex="0" transform="translate(426 344)"><circle cx="52" cy="43" r="40" fill="#151515"></circle><circle cx="145" cy="43" r="40" fill="#fff" stroke="#151515" stroke-width="2"></circle><text x="52" y="49" text-anchor="middle" class="rail-label">CHF</text><text x="145" y="49" text-anchor="middle" class="infra-title">EUR</text><path d="M90 33h20m-20 20h20" stroke="#d52f3a" stroke-width="5"></path><text x="98" y="104" text-anchor="middle" class="infra-title">ILLUSTRATIVE FX · 1 : 1</text></g>`;
-  if (state.scenario === 'cbdc') return `<g class="actor-hit" data-actor="wcbdc" role="button" tabindex="0" transform="translate(433 337)"><circle cx="98" cy="58" r="55" fill="#d52f3a"></circle><path d="M68 65h60M76 45h44M84 25h28" stroke="#fff" stroke-width="6"></path><text x="98" y="130" text-anchor="middle" class="infra-title">WHOLESALE CBDC</text><text x="98" y="147" text-anchor="middle" class="infra-sub">central-bank settlement asset</text></g>`;
+  if (state.scenario === 'conditional') {
+    const status = completed(5) ? 'RELEASED' : completed(4) ? 'VERIFIED' : completed(2) ? 'LOCKED' : 'AWAITING LOCK';
+    return `<g class="actor-hit" data-actor="condition" role="button" tabindex="0" aria-label="Inspect conditional payment" transform="translate(416 342)"><rect class="condition-card actor-accent" width="228" height="105" rx="9"></rect><path d="M24 34h32M40 18v32" stroke="#d52f3a" stroke-width="5"></path><text x="78" y="29" class="infra-title">BUSINESS MILESTONE</text><text x="78" y="47" class="infra-sub">verified before release</text><rect x="22" y="67" width="184" height="23" rx="11" class="condition-status"></rect><text x="114" y="83" text-anchor="middle" class="condition-status-label">${status}</text></g>`;
+  }
+  if (state.scenario === 'pvp') return `<g class="actor-hit" data-actor="pvp" role="button" tabindex="0" transform="translate(430 342)"><rect x="0" y="0" width="200" height="104" rx="9" fill="#fff" stroke="#151515" stroke-width="2"></rect><path d="M48 48h104" stroke="#d52f3a" stroke-width="8"></path><rect class="pvp-lock" x="81" y="19" width="38" height="42" rx="5"></rect><path d="M90 20v-9c0-18 20-18 20 0v9" fill="none" stroke="#151515" stroke-width="5"></path><text x="100" y="79" text-anchor="middle" class="infra-title">CHF ↔ EUR · BOTH OR NEITHER</text><text x="100" y="96" text-anchor="middle" class="infra-sub">CHF ${esc(money(s.tokenSupply))} · EUR ${esc(money(s.eurTokenSupply, 'EUR'))}</text></g>`;
+  if (state.scenario === 'correspondent') {
+    const labels = ['PAYEE', 'PATH', 'VALIDATE', 'LOCK', 'SETTLE'];
+    return `<g class="actor-hit" data-actor="fx" role="button" tabindex="0" aria-label="Inspect Agorá five-stage payment workflow" transform="translate(315 350)"><text x="215" y="-13" text-anchor="middle" class="infra-title">AGORÁ FIVE-STAGE WORKFLOW</text>${labels.map((label, index) => `<g class="workflow-stage ${index < state.step ? 'is-complete' : ''} ${index === state.step ? 'is-current' : ''}" transform="translate(${index * 88} 0)"><circle cx="19" cy="19" r="18"></circle><text x="19" y="23" text-anchor="middle">${index + 1}</text><text x="19" y="52" text-anchor="middle" class="workflow-label">${label}</text>${index < labels.length - 1 ? '<path d="M39 19h46"></path>' : ''}</g>`).join('')}</g>`;
+  }
+  if (state.scenario === 'cbdc') return `<g class="actor-hit" data-actor="wcbdc" role="button" tabindex="0" transform="translate(433 337)"><circle cx="98" cy="58" r="55" fill="#d52f3a"></circle><path d="M68 65h60M76 45h44M84 25h28" stroke="#fff" stroke-width="6"></path><text x="98" y="130" text-anchor="middle" class="infra-title">WHOLESALE CBDC</text><text x="98" y="147" text-anchor="middle" class="infra-sub">BANK A ${esc(money(s.wcbdcA))} · BANK B ${esc(money(s.wcbdcB))}</text></g>`;
   return '';
 }
 
@@ -442,8 +534,9 @@ const FLOW_POINTS = {
   redeem: [[145,110],[618,182],[618,182],[618,182],[405,230],[320,130],[145,110]],
   same: [[145,110],[320,130],[405,230],[618,182],[405,230],[960,110],[960,110]],
   interbank: [[145,110],[320,130],[405,230],[618,182],[590,530],[850,230],[960,110]],
+  conditional: [[145,110],[320,130],[455,390],[530,390],[605,390],[960,110],[960,110]],
   netting: [[320,130],[800,130],[330,530],[530,530],[790,530],[800,130],[800,130]],
-  correspondent: [[145,110],[320,130],[478,387],[478,387],[571,387],[800,130],[960,110]],
+  correspondent: [[334,369],[422,369],[510,369],[598,369],[686,369]],
   pvp: [[145,110],[320,130],[478,390],[530,390],[580,390],[800,130],[960,110]],
   cbdc: [[145,110],[320,130],[531,395],[531,395],[531,395],[800,130],[960,110]],
   bridge: [[145,110],[320,130],[430,396],[530,396],[640,396],[800,130],[960,110]],
@@ -479,6 +572,8 @@ function routes() {
 function fundPosition() { return flowPoints()[state.step]; }
 
 function fundMarkup() {
+  const tokenActionFailed = activeFailure() && ['dlt','key'].includes(state.failure) && state.step >= FAILURES[state.failure].trigger;
+  if (tokenActionFailed && ['mint','bridge'].includes(state.scenario)) return '';
   const [x, y] = fundPosition();
   const form = MODELS[state.model].tokenForm;
   const shape = form === 'ticket'
@@ -494,6 +589,8 @@ function fundMarkup() {
 function annotation(s) {
   if (activeFailure()) return `<g class="scene-chip scene-chip--red" transform="translate(362 18)"><rect width="336" height="43" rx="5"></rect><text x="168" y="26" text-anchor="middle">${esc(activeFailure().label.toUpperCase())} · VALUE HELD</text></g>`;
   if (state.scenario === 'same') return `<g class="scene-chip" transform="translate(370 18)"><rect width="320" height="43" rx="5"></rect><text x="160" y="26" text-anchor="middle">NO SIC · BANK A LIABILITY UNCHANGED</text></g>`;
+  if (state.scenario === 'conditional') return `<g class="scene-chip ${s.locked ? 'scene-chip--red' : ''}" transform="translate(350 18)"><rect width="360" height="43" rx="5"></rect><text x="180" y="26" text-anchor="middle">${completed(5) ? 'CONDITION VERIFIED · VALUE RELEASED' : s.locked ? 'CHF 100 LOCKED · CONDITION PENDING' : 'CONDITIONAL PAYMENT · NO SIC'}</text></g>`;
+  if (state.scenario === 'correspondent') return `<g class="scene-chip" transform="translate(347 18)"><rect width="366" height="43" rx="5"></rect><text x="183" y="26" text-anchor="middle">STAGE ${state.step + 1} OF 5 · ${esc(currentSteps()[state.step].toUpperCase())}</text></g>`;
   if (state.scenario === 'netting') return `<g class="scene-chip" transform="translate(380 18)"><rect width="300" height="43" rx="5"></rect><text x="150" y="26" text-anchor="middle">GROSS ${esc(money(s.grossA + s.grossB))} · NET ${esc(money(s.net))}</text></g>`;
   if (state.scenario === 'mismatch') return `<g class="scene-chip ${s.reconciliation === 'Mismatch' ? 'scene-chip--red' : ''}" transform="translate(375 18)"><rect width="310" height="43" rx="5"></rect><text x="155" y="26" text-anchor="middle">${s.reconciliation === 'Mismatch' ? 'MISMATCH · PAUSE AND REPAIR' : 'DLT = SUBLEDGER = GL'}</text></g>`;
   return `<g class="scene-chip" transform="translate(408 18)"><rect width="244" height="43" rx="5"></rect><text x="122" y="26" text-anchor="middle">${esc(MODELS[state.model].label.toUpperCase())}</text></g>`;
@@ -505,10 +602,10 @@ function renderScene(s) {
   refs.stageBackground.innerHTML = `<rect width="1060" height="590" class="scene-bg"></rect><rect width="1060" height="440" class="scene-dot-field"></rect>${railFloor}`;
   refs.stageRoutes.innerHTML = routes();
   const authorityObject = state.model === 'stablecoin'
-    ? issuerFacility(422, 70, s.tokenSupply, s.issuerReserve, at(3))
-    : dlt(414, 82, s.tokenSupply, state.model === 'native' || at(3), state.model);
+    ? issuerFacility(422, 70, s.tokenSupply, s.issuerReserve, completed(3))
+    : dlt(414, 82, s, state.model === 'native' || completed(3), state.model);
   refs.stageInfrastructure.innerHTML = `${usesSic ? settlementRail(s) : ''}${specialInfrastructure(s)}${authorityObject}`;
-  const bankBDormant = ['mint','redeem','same','mismatch'].includes(state.scenario) || (state.model === 'stablecoin' && state.scenario === 'interbank');
+  const bankBDormant = ['mint','redeem','same','conditional','mismatch'].includes(state.scenario) || (state.model === 'stablecoin' && state.scenario === 'interbank');
   const lucaDormant = ['mint','redeem','netting','mismatch'].includes(state.scenario);
   const aliceDormant = state.scenario === 'netting';
   refs.stageActors.innerHTML = `${person(22, 155, 'Alice', money(visibleCustomerBalance(s.aliceOrdinary, s.aliceToken)), state.selectedActor === 'alice', 'left', aliceDormant)}${bank(220, 124, 'BANK A', money(s.bankASnb), state.selectedActor === 'banka', state.selectedActor === 'banka')}${bank(700, 124, 'BANK B', money(s.bankBSnb), s.holder.startsWith('Luca'), state.selectedActor === 'bankb', bankBDormant)}${person(912, 155, 'Luca', money(visibleCustomerBalance(s.lucaOrdinary, s.lucaToken)), state.selectedActor === 'luca', 'right', lucaDormant)}`;
@@ -525,19 +622,20 @@ function actorData(s) {
     ? 'Bank B may provide Luca’s wallet or custody interface, but receiving the stablecoin does not make Bank B the debtor.'
     : 'Bank B becomes Luca’s debtor only after the receiving side accepts and records the new claim.';
   const data = {
-    alice: { title: 'Alice', summary: 'Alice is the initiating customer and the first holder of the claim.', rows: [['Visible balance', money(visibleCustomerBalance(s.aliceOrdinary, s.aliceToken))], ['Ordinary deposit', money(s.aliceOrdinary)], ['Token / instruction', s.aliceToken || s.tokenSupply ? money(s.aliceToken || s.tokenSupply) : 'None'], ['Current claim', s.holder.startsWith('Alice') ? 'Held by Alice' : 'Transferred / pending']] },
+    alice: { title: 'Alice', summary: 'Alice is the initiating customer and the first holder of the claim.', rows: [['Visible balance', money(visibleCustomerBalance(s.aliceOrdinary, s.aliceToken))], ['Ordinary deposit', money(s.aliceOrdinary)], [state.model === 'instruction' ? 'Payment instruction' : 'Token representation', state.model === 'instruction' ? (s.instructionValue ? money(s.instructionValue) : 'None') : (s.aliceToken ? money(s.aliceToken) : 'None')], ['Current claim', s.holder.startsWith('Alice') ? 'Held by Alice' : 'Transferred / pending']] },
     luca: { title: 'Luca', summary: 'Luca is the receiving customer. His creditor relationship depends on acceptance and the product model.', rows: [['Visible balance', money(visibleCustomerBalance(s.lucaOrdinary, s.lucaToken))], ['Ordinary deposit', money(s.lucaOrdinary)], ['Token balance', s.lucaToken ? money(s.lucaToken) : 'None'], ['Status', s.holder.startsWith('Luca') ? 'Accepted holder' : 'Waiting']] },
-    banka: { title: 'Bank A', summary: bankASummary, rows: [['Customer-liability role', directStablecoinTransfer ? 'Interface / custodian' : 'Original debtor'], ['SNB sight balance', money(s.bankASnb)], ['Authoritative record', directStablecoinTransfer ? 'Issuer ledger' : state.model === 'native' ? 'DLT + reporting sync' : 'CBS / GL'], ['State', activeFailure() ? 'Held / repairable' : at(4) ? 'Settlement processed' : 'Open']] },
-    bankb: { title: 'Bank B', summary: bankBSummary, rows: [['Customer-liability role', directStablecoinTransfer ? 'Not token debtor' : s.holder.startsWith('Luca') ? 'New debtor' : 'Prospective debtor'], ['SNB sight balance', money(s.bankBSnb)], ['Acceptance', directStablecoinTransfer ? 'Issuer-ledger transfer' : at(5) ? 'Accepted' : 'Pending'], ['Customer claim', directStablecoinTransfer ? 'Claim on issuer' : s.lucaOrdinary + s.lucaToken ? money(s.lucaOrdinary + s.lucaToken) : 'None']] },
+    banka: { title: 'Bank A', summary: bankASummary, rows: [['Customer-liability role', directStablecoinTransfer ? 'Interface / custodian' : 'Original debtor'], ['SNB sight balance', money(s.bankASnb)], ['Authoritative record', directStablecoinTransfer ? 'Issuer ledger' : state.model === 'native' ? 'DLT + reporting sync' : 'CBS / GL'], ['State', activeFailure() ? 'Held / repairable' : s.settlementStatus.includes('final') ? 'Settlement processed' : 'Open']] },
+    bankb: { title: 'Bank B', summary: bankBSummary, rows: [['Customer-liability role', directStablecoinTransfer ? 'Not token debtor' : s.holder.startsWith('Luca') ? 'New debtor' : 'Prospective debtor'], ['SNB sight balance', money(s.bankBSnb)], ['Acceptance', directStablecoinTransfer ? 'Issuer-ledger transfer' : s.holder.startsWith('Luca') ? 'Accepted' : s.holder.includes('suspense') ? 'Rejected / repair' : 'Pending'], ['Customer claim', directStablecoinTransfer ? 'Claim on issuer' : s.lucaOrdinary + s.lucaToken ? money(s.lucaOrdinary + s.lucaToken) : 'None']] },
     cbsa: { title: 'Bank A · CBS / GL', summary: directStablecoinTransfer ? 'Bank A’s records may support custody or funding, but they are not the authoritative stablecoin-holder record.' : 'The core banking system maintains customer accounts; the GL records the bank’s financial position.', rows: [['Authority', directStablecoinTransfer ? 'Supporting record' : state.model === 'native' ? 'Reporting replica' : 'Authoritative'], ['Alice ordinary', money(s.aliceOrdinary)], ['Mirror subaccount', s.aliceMirror ? money(s.aliceMirror) : 'None'], ['Control', s.reconciliation]] },
-    cbsb: { title: 'Bank B · CBS / GL', summary: directStablecoinTransfer ? 'Bank B may record custody or customer reporting, while the issuer ledger remains authoritative for the stablecoin.' : 'Bank B records Luca’s customer claim after its acceptance conditions are met.', rows: [['Authority', directStablecoinTransfer ? 'Supporting record' : state.model === 'native' ? 'Reporting replica' : 'Authoritative'], ['Luca ordinary', money(s.lucaOrdinary)], ['Mirror subaccount', s.lucaMirror ? money(s.lucaMirror) : 'None'], ['Acceptance', directStablecoinTransfer ? 'Not a new bank claim' : at(5) ? 'Accepted' : 'Pending']] },
-    dlt: { title: 'DLT ledger', summary: state.model === 'native' ? 'The DLT is the authoritative holder record.' : 'The DLT is a controlled representation reconciled to banking records.', rows: [['Token supply', money(s.tokenSupply)], ['Authority', state.model === 'native' ? 'Master record' : 'Representation'], ['Access', 'Permissioned / allow-listed'], ['Reconciliation', s.reconciliation]] },
-    issuer: { title: 'Stablecoin issuer', summary: 'The issuer—not the accepting bank—owes the stablecoin holder under the issuer terms.', rows: [['Token supply', money(s.tokenSupply)], ['Reserve / guarantee', money(s.issuerReserve)], ['Legal debtor', 'Issuer / guarantor'], ['Bank deposit protection', 'Not automatic']] },
+    cbsb: { title: 'Bank B · CBS / GL', summary: directStablecoinTransfer ? 'Bank B may record custody or customer reporting, while the issuer ledger remains authoritative for the stablecoin.' : 'Bank B records Luca’s customer claim after its acceptance conditions are met.', rows: [['Authority', directStablecoinTransfer ? 'Supporting record' : state.model === 'native' ? 'Reporting replica' : 'Authoritative'], ['Luca ordinary', money(s.lucaOrdinary)], ['Mirror subaccount', s.lucaMirror ? money(s.lucaMirror) : 'None'], ['Acceptance', directStablecoinTransfer ? 'Not a new bank claim' : s.holder.startsWith('Luca') ? 'Accepted' : s.holder.includes('suspense') ? 'Rejected / repair' : 'Pending']] },
+    dlt: { title: state.model === 'instruction' ? 'Instruction ledger' : 'DLT ledger', summary: state.model === 'instruction' ? 'This ledger records an instruction; the ordinary account and CBS remain authoritative.' : state.model === 'native' ? 'The DLT is the authoritative holder record.' : 'The DLT is a controlled representation reconciled to banking records.', rows: [[state.model === 'instruction' ? 'Instruction value' : 'Token supply', money(state.model === 'instruction' ? s.instructionValue : s.tokenSupply)], ['Authority', state.model === 'instruction' ? 'CBS / ordinary account' : state.model === 'native' ? 'Master record' : 'Representation'], ['Access', 'Permissioned / allow-listed'], ['Reconciliation', s.reconciliation]] },
+    issuer: { title: 'Stablecoin issuer', summary: 'The issuer—not the accepting bank—owes the stablecoin holder under the issuer terms.', rows: [['Token supply', money(s.tokenSupply)], ['Backing evidence', s.issuerReserve ? money(s.issuerReserve) : 'Not assessed / no live reserve data'], ['Legal debtor', 'Issuer / guarantor'], ['Bank deposit protection', 'Not automatic']] },
     sic: { title: 'SIC / SNB rail', summary: 'This rail moves central-bank money between participating banks. Alice’s retail token does not enter the SNB.', rows: [['Settlement asset', 'SNB sight deposits'], ['Bank A balance', money(s.bankASnb)], ['Bank B balance', money(s.bankBSnb)], ['Finality', s.finality]] },
     bridge: { title: 'Cross-ledger bridge', summary: 'The bridge locks value on one ledger and authorizes a wrapped representation on another.', rows: [['Source state', s.locked ? 'Locked' : 'Available'], ['Wrapped state', s.wrapped ? money(AMOUNT) : 'None'], ['Additional dependency', 'Bridge keys / contract'], ['Finality', s.finality]] },
-    pvp: { title: 'PvP mechanism', summary: 'Payment-versus-payment coordinates two currency legs so principal does not settle one-sided.', rows: [['CHF leg', money(AMOUNT)], ['EUR leg', money(AMOUNT, 'EUR')], ['Release rule', 'Both or neither'], ['Finality', s.finality]] },
-    fx: { title: 'FX / correspondent', summary: 'Cross-border settlement adds conversion, correspondent balances and foreign payment-system rules.', rows: [['Illustrative rate', '1 CHF = 1 EUR'], ['Market data', 'No · illustrative'], ['Origin leg', 'CHF'], ['Destination leg', 'EUR']] },
-    wcbdc: { title: 'Wholesale CBDC', summary: 'Wholesale CBDC is a central-bank liability used for institutional settlement—not a retail customer deposit.', rows: [['Issuer', 'Central bank'], ['Eligible holders', 'Participating institutions'], ['Customer claim', 'Still commercial-bank money'], ['Status', 'Conceptual comparison']] }
+    pvp: { title: 'PvP mechanism', summary: 'Payment-versus-payment coordinates two currency legs so principal does not settle one-sided.', rows: [['CHF token leg', money(s.tokenSupply)], ['EUR token leg', money(s.eurTokenSupply, 'EUR')], ['Release rule', 'Both or neither'], ['Settlement', s.settlementStatus]] },
+    fx: { title: 'Agorá five-stage workflow', summary: 'The workflow confirms the payee and route before private validation, locking and coordinated settlement.', rows: [['Current stage', `${state.step + 1} / 5 · ${currentSteps()[state.step]}`], ['Private work', 'Compliance, funding and readiness'], ['Shared work', 'Endorsements, locks and settlement'], ['Legal effect', 'Subject to each rail and product terms']] },
+    wcbdc: { title: 'Wholesale CBDC', summary: 'Wholesale CBDC is a central-bank liability used for institutional settlement—not a retail customer deposit.', rows: [['Issuer', 'Central bank'], ['Bank A wCBDC', money(s.wcbdcA)], ['Bank B wCBDC', money(s.wcbdcB)], ['Customer claim', 'Still commercial-bank money']] },
+    condition: { title: 'Conditional workflow', summary: 'The workflow holds value until an agreed, objective milestone is verified by the authorized party.', rows: [['Amount', money(AMOUNT)], ['Value state', s.locked ? 'Locked against conflicting use' : completed(5) ? 'Released to Luca' : 'Available to Alice'], ['Condition', completed(4) ? 'Verified' : 'Pending'], ['Settlement rail', 'None · same debtor']] }
   };
   return data[state.selectedActor] || data.alice;
 }
@@ -573,7 +671,7 @@ function renderStepExplanation() {
   if (state.failure === 'none') return;
   const armed = !failure;
   refs.stepRisk.classList.toggle('is-armed', armed);
-  refs.stepRiskTitle.textContent = armed ? `⚠ Risk armed · ${FAILURES[state.failure].label} · ${steps[FAILURES[state.failure].trigger]}` : `⚠ ${FAILURES[state.failure].label}`;
+  refs.stepRiskTitle.textContent = armed ? `⚠ Risk armed · ${FAILURES[state.failure].label} · ${steps[failureTrigger(state.failure)]}` : `⚠ ${FAILURES[state.failure].label}`;
   refs.stepRiskCopy.textContent = armed
     ? ''
     : FAILURE_COPY[state.failure][state.model];
@@ -603,17 +701,22 @@ function updateModelFacts() {
 }
 
 function updateFlowControls() {
-  const core = ['mint','redeem','same','interbank','netting'];
+  const core = ['mint','redeem','same','interbank','conditional'];
   document.querySelectorAll('.flow-button').forEach((button) => button.classList.toggle('is-selected', button.dataset.scenario === state.scenario));
   refs.scenarioSelect.value = core.includes(state.scenario) ? '' : state.scenario;
   refs.scenarioKicker.textContent = SCENARIOS[state.scenario].label.toUpperCase();
   refs.scenarioDescription.textContent = state.model === 'stablecoin' && state.scenario === 'interbank'
     ? 'Transfer the issuer’s claim between wallets; SIC and a new Bank B deposit are not intrinsic to the movement.'
+    : state.scenario === 'interbank' && state.model === 'instruction'
+      ? 'Record a payment instruction, settle the banks through SIC, then create Luca’s ordinary Bank B deposit only on acceptance.'
+      : state.scenario === 'interbank' && state.model === 'native'
+        ? 'A token transfer alone cannot change the debtor from Bank A to Bank B; the claim transformation and SIC settlement remain explicit.'
     : SCENARIOS[state.scenario].description;
 }
 
 function updateTimeline() {
   const steps = currentSteps();
+  refs.timelineTrack.style.gridTemplateColumns = `repeat(${steps.length},1fr)`;
   refs.timelineTrack.innerHTML = steps.map((_, index) => `<span class="timeline-step ${index < state.step ? 'is-complete' : ''} ${index === state.step ? 'is-current' : ''}"></span>`).join('');
   refs.stepLabel.textContent = steps[state.step]; refs.stepCount.textContent = `${state.step + 1} / ${steps.length}`;
 }
@@ -622,8 +725,8 @@ function render() {
   syncFailureOptions();
   const s = snapshot();
   updateModelFacts(); updateFlowControls(); renderScene(s); renderDrawer(s); updateTimeline(); renderStepExplanation();
-  refs.statusHolder.textContent = s.holder; refs.statusDebtor.textContent = s.debtor; refs.statusFinality.textContent = s.finality; refs.statusReconciliation.textContent = s.reconciliation;
-  refs.statusFinality.classList.toggle('is-warning', s.finality === 'Blocked' || s.finality === 'Pending'); refs.statusReconciliation.classList.toggle('is-warning', s.reconciliation === 'Mismatch');
+  refs.statusHolder.textContent = s.holder; refs.statusDebtor.textContent = s.debtor; refs.statusWorkflow.textContent = s.workflowStatus; refs.statusLedger.textContent = s.ledgerStatus; refs.statusAccounting.textContent = s.accountingStatus; refs.statusSettlement.textContent = s.settlementStatus; refs.statusLegal.textContent = s.legalStatus; refs.statusReconciliation.textContent = s.reconciliation;
+  [refs.statusWorkflow, refs.statusLedger, refs.statusAccounting, refs.statusSettlement, refs.statusLegal].forEach((element) => element.classList.toggle('is-warning', /Blocked|Pending|Not final|Not settled|held/i.test(element.textContent))); refs.statusReconciliation.classList.toggle('is-warning', s.reconciliation === 'Mismatch');
   refs.playButton.innerHTML = state.playing ? '<span aria-hidden="true">Ⅱ</span> Pause' : '<span aria-hidden="true">▶</span> Play';
   refs.stageStatus.textContent = activeFailure() ? FAILURES[state.failure].label : isFinal() ? 'Final state · illustrative' : 'Illustrative simulation';
   refs.stageSvg.setAttribute('aria-label', `${MODELS[state.model].label}; ${SCENARIOS[state.scenario].label}; ${currentSteps()[state.step]}. Claim: ${s.holder}. Debtor: ${s.debtor}.`);
@@ -634,7 +737,7 @@ function schedule() { if (state.playing) state.timer = setTimeout(advance, 1000 
 function advance() { if (activeFailure() || state.step >= finalStep()) { stop(); render(); return; } state.step += 1; render(); schedule(); }
 function reset() { stop(); state.step = 0; render(); }
 function play() { if (state.playing) { stop(); render(); return; } if (isFinal() || activeFailure()) state.step = 0; state.playing = true; render(); schedule(); }
-function chooseScenario(value) { stop(); state.scenario = value; state.step = 0; state.selectedActor = value === 'bridge' ? 'bridge' : value === 'pvp' ? 'pvp' : value === 'cbdc' ? 'wcbdc' : value === 'correspondent' ? 'fx' : 'alice'; render(); }
+function chooseScenario(value) { stop(); state.scenario = value; state.step = 0; state.selectedActor = value === 'bridge' ? 'bridge' : value === 'pvp' ? 'pvp' : value === 'cbdc' ? 'wcbdc' : value === 'correspondent' ? 'fx' : value === 'conditional' ? 'condition' : 'alice'; render(); }
 
 function bind() {
   document.querySelectorAll('.model-tab').forEach((button) => button.addEventListener('click', () => { stop(); state.model = button.dataset.model; state.step = 0; state.selectedActor = state.model === 'stablecoin' ? 'issuer' : 'alice'; render(); }));
@@ -649,7 +752,7 @@ function bind() {
 }
 
 function init() {
-  ['stage-background','stage-routes','stage-infrastructure','stage-actors','stage-funds','stage-annotations','stage-svg','scenario-select','scenario-kicker','scenario-description','stage-status','speed-select','step-button','play-button','reset-button','timeline-track','step-label','step-count','step-position','step-explainer-title','step-context','step-explanation','step-risk','step-risk-title','step-risk-copy','status-holder','status-debtor','status-finality','status-reconciliation','fact-claim','fact-authority','fact-mechanism','fact-risk','drawer-title','drawer-summary','drawer-details','insight-debtor','insight-ledger','insight-failure','failure-select','apply-failure-button','risk-note'].forEach((id) => { refs[id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = $(id); });
+  ['stage-background','stage-routes','stage-infrastructure','stage-actors','stage-funds','stage-annotations','stage-svg','scenario-select','scenario-kicker','scenario-description','stage-status','speed-select','step-button','play-button','reset-button','timeline-track','step-label','step-count','step-position','step-explainer-title','step-context','step-explanation','step-risk','step-risk-title','step-risk-copy','status-holder','status-debtor','status-workflow','status-ledger','status-accounting','status-settlement','status-legal','status-reconciliation','fact-claim','fact-authority','fact-mechanism','fact-risk','drawer-title','drawer-summary','drawer-details','insight-debtor','insight-ledger','insight-failure','failure-select','apply-failure-button','risk-note'].forEach((id) => { refs[id.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = $(id); });
   validateExplanationMatrix();
   bind(); render();
 }

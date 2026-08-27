@@ -4,7 +4,7 @@ Research and prototype repository for a Swiss bank model of tokenized deposits, 
 
 ## Repository status
 
-The research has been reorganized into a sequential, source-backed documentation collection. The next work focuses on aligning the interactive demo with the research before improving its visual design.
+The research is organized as a sequential, source-backed documentation collection. The main interactive demo now uses the approved guided architecture-and-scenario workspace; the previous implementation is retained as archived v1.
 
 ## Start here
 
@@ -14,19 +14,9 @@ The research has been reorganized into a sequential, source-backed documentation
 
 ## Interactive demo
 
-Open [the tokenized-deposit explainer](demo/index.html) locally in a browser. It is a dependency-free HTML/CSS/JavaScript simulation with model switching, animated mint/burn and transfer flows, SIC/FX/PvP comparisons, reconciliation, netting and failure states. The [presenter script](docs/appendices/demo/presenter-script.md) provides a research-aligned walkthrough.
+Open [the tokenized-deposit explorer](demo/index.html) locally in a browser. It is a dependency-free guided presentation that introduces the Swiss landscape, compares four money architectures, and walks through lifecycle, domestic, cross-border, infrastructure and failure scenarios step by step.
 
-### Next demo work
-
-The demo should be improved in two stages:
-
-1. **Correctness and research alignment**
-   - Work through the [complete demo factual, state, and UI audit](docs/appendices/audits/demo-complete-factual-state-and-ui-audit-2026-08-14.md).
-   - Use the [demo-to-research claim map](docs/appendices/demo/claim-map.md) to check terminology, authority, balances, settlement states, and qualifications.
-   - Treat the active research chapters as authoritative when demo wording or behavior differs.
-2. **Visual refactor**
-   - Begin after the factual and state corrections are complete.
-   - Preserve the corrected lifecycle, actors, balances, and failure behavior while improving layout, navigation, hierarchy, and presentation.
+The previous illustrated demo is preserved as [archived v1](demo/deprecated/v1/index.html), together with its original styles, simulation engine and specification. Its [presenter script](docs/appendices/demo/presenter-script.md) remains available for the archived version.
 
 The visual demo is an explanatory simulation. It should not be presented as an approved legal model, accounting policy, FINMA position, or production architecture.
 

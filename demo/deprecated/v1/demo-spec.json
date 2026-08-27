@@ -1,0 +1,32 @@
+{
+  "title": "Tokenized deposits — interactive explainer",
+  "learning_objective": "Show how the token's legal meaning, authoritative ledger, accounting state and settlement design change who owes the money and when a transfer can be treated as complete.",
+  "audience": "Mixed executive, banking, legal and technical audience",
+  "mode": "hybrid",
+  "complexity": "standard",
+  "data": {
+    "kind": "illustrative deterministic simulation",
+    "source": "Project research notes and linked primary sources; no live data"
+  },
+  "assets": [],
+  "assumptions": [
+    "CHF amounts are illustrative and not market data.",
+    "Cross-border examples use a fixed illustrative 1 CHF = 1 EUR rate.",
+    "Legal, accounting and finality outcomes are model-dependent and require product-specific review.",
+    "A successful DLT event is not presented as interbank settlement finality, a transfer of the debtor, or a final customer credit unless the relevant workflow status confirms it.",
+    "Stablecoin backing is illustrative evidence only; it is not a statement of reserve composition, guarantee terms, audit status or deposit protection.",
+    "The conditional-payment milestone and verifier are illustrative; production terms must define the evidence, authority, expiry and dispute process.",
+    "The Agorá five-stage scenario adapts the report-era workflow pattern to this explainer; it does not reproduce Agorá’s platform-authoritative architecture."
+  ],
+  "source_register": [
+    "../docs/10-tokenized-deposit-sources-and-regulatory-watch.md",
+    "../docs/00-executive-summary.md",
+    "../docs/03-swiss-laws-and-finma-rules-for-tokenized-deposits.md",
+    "../docs/06-tokenized-deposit-issuance-transfers-redemption-and-settlement.md",
+    "../docs/08-project-agora-and-cross-border-tokenized-deposits.md"
+  ],
+  "validation": {
+    "automated": "node tests/demo-snapshot.test.js",
+    "scope": "Deterministic state checks for the high-priority settlement, failure and representation boundaries, the conditional-payment lifecycle and the Agorá five-stage workflow."
+  }
+}

@@ -1,197 +1,3588 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="An illustrated interactive presentation explaining tokenized-deposit product models and settlement flows.">
-    <title>Tokenized deposits — illustrated explorer</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <main>
-      <section class="scene scene--intro" aria-labelledby="intro-title">
-        <header class="hero">
-          <p class="overline">SWISS BANKING · ILLUSTRATIVE PRESENTATION</p>
-          <h1 id="intro-title">A deposit is already digital.<br><span>Tokenisation changes how it moves.</span></h1>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swiss tokenized deposits — interactive explorer</title>
+  <style>
+    :root {
+      --ink: #000;
+      --muted: #4d4d4d;
+      --paper: #eeeae4;
+      --paper-deep: #dedbd6;
+      --card: #fff;
+      --line: #bcbcbc;
+      --red: #e3262e;
+      --red-dark: #e3262e;
+      --red-soft: #ededed;
+      --green: #000;
+      --green-soft: #ededed;
+      --amber: #000;
+      --amber-soft: #ededed;
+      --shadow: 0 18px 54px rgba(0, 0, 0, 0.14);
+      --radius: 22px;
+      --radius-small: 14px;
+      --focus: 0 0 0 4px rgba(227, 38, 46, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      color-scheme: light;
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #faf8f4 0, var(--paper) 34rem);
+      font: 16px/1.5 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      min-height: 44px;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    dialog:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+
+    [hidden] { display: none !important; }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .landing {
+      width: min(1380px, calc(100% - 48px));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 42px 0 64px;
+      display: grid;
+      align-content: start;
+      gap: 52px;
+    }
+
+    .landing-header {
+      width: 100%;
+      min-height: min(820px, 92vh);
+      padding: 42px 0 56px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 34px;
+      align-content: center;
+    }
+
+    .landing-hero-kicker {
+      margin: 0 0 18px;
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .landing h1 {
+      max-width: none;
+      margin: 0 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 5.8vw, 74px);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 0.98;
+    }
+
+    .landing-definition {
+      max-width: none;
+      margin: 0 0 20px;
+      padding: 14px 0 14px 22px;
+      border-left: 5px solid var(--red);
+      color: var(--ink);
+      font-size: clamp(18px, 1.8vw, 23px);
+      line-height: 1.48;
+    }
+
+    .landing-intro {
+      max-width: none;
+      margin: 0;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .hero-architecture {
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .hero-architecture-heading {
+      margin: 0 0 15px;
+    }
+
+    .hero-architecture-heading h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(27px, 3vw, 38px);
+      font-weight: 500;
+      letter-spacing: -.025em;
+      line-height: 1.08;
+    }
+
+    .hero-architecture-heading span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero-architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .hero-flow-item {
+      position: relative;
+      min-height: 132px;
+      padding: 21px 28px 20px 22px;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      column-gap: 14px;
+      align-content: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .hero-flow-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      right: -15px;
+      width: 28px;
+      height: 28px;
+      border-top: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      background: var(--card);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .hero-flow-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--red-soft);
+    }
+
+    .hero-flow-icon svg {
+      width: 25px;
+      height: 25px;
+      color: var(--red-dark);
+    }
+
+    .hero-flow-copy span,
+    .hero-flow-copy strong {
+      display: block;
+    }
+
+    .hero-flow-copy > span {
+      margin-bottom: 3px;
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .06em;
+    }
+
+    .hero-flow-copy strong {
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.2;
+    }
+
+    .hero-flow-copy small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .landing-lens-panel {
+      display: grid;
+      grid-template-columns: minmax(260px, .38fr) minmax(0, .62fr);
+      gap: 46px;
+      align-items: start;
+      padding: 30px;
+      border-radius: var(--radius);
+      color: #fff;
+      background: var(--ink);
+      box-shadow: 0 20px 42px rgba(23, 23, 23, 0.2), 0 2px 8px rgba(23, 23, 23, 0.12);
+    }
+
+    .landing-lens-heading > p {
+      margin: 0 0 8px;
+      padding-left: 10px;
+      border-left: 3px solid var(--red);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .landing-lens-panel h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(27px, 3vw, 38px);
+      font-weight: 500;
+      letter-spacing: -.025em;
+      line-height: 1.08;
+    }
+
+    .landing-lenses {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      list-style: none;
+    }
+
+    .landing-lenses li {
+      padding: 16px 0;
+      display: grid;
+      grid-template-columns: 50px minmax(0, 1fr);
+      gap: 12px;
+      border-top: 1px solid #45413d;
+      color: #d0d0d0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .landing-lenses li > span {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      margin: 0;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red);
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .06em;
+    }
+
+    .landing-lenses strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .landing-choice-section,
+    .landing-scenario-section {
+      scroll-margin-top: 24px;
+    }
+
+    .landing-choice-heading {
+      max-width: 800px;
+      margin-bottom: 22px;
+    }
+
+    .landing-choice-heading h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 3.5vw, 46px);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+    }
+
+    .landing-choice-heading p:last-child {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .landing-scenario-section {
+      padding-top: 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .landing-scenario-groups .scenario-group + .scenario-group {
+      margin-top: 28px;
+    }
+
+    .landing-report,
+    .landing-conclusion {
+      padding: 44px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .landing-report-header {
+      max-width: 1080px;
+      margin-bottom: 24px;
+    }
+
+    .landing-report h2,
+    .landing-conclusion h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 4.2vw, 54px);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.02;
+    }
+
+    .landing-report-header > p:last-child,
+    .landing-conclusion-header > p:last-child {
+      max-width: 1050px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.58;
+    }
+
+    .landing-report-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .landing-report-grid article {
+      min-height: 262px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .landing-report-grid h3,
+    .landing-recommendation h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.18;
+    }
+
+    .landing-card-icon {
+      display: grid;
+      width: 82px;
+      height: 78px;
+      margin-bottom: 18px;
+      place-items: center;
+    }
+
+    .landing-card-icon svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .landing-report-grid p,
+    .landing-recommendation p,
+    .landing-landscape-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .landing-card-key {
+      display: block;
+      margin-top: 15px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .landing-landscape {
+      margin-top: 42px;
+      padding-top: 38px;
+      border-top: 1px solid var(--line);
+    }
+
+    .landing-landscape-header {
+      max-width: 960px;
+      margin-bottom: 22px;
+    }
+
+    .landing-landscape-header h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(27px, 3vw, 38px);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+
+    .landing-landscape-header > p:last-child {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .landing-landscape-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .landing-landscape-card {
+      min-height: 230px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .landing-landscape-card h4 {
+      margin: 0 0 9px;
+      font-size: 18px;
+      line-height: 1.22;
+    }
+
+    .landing-landscape-card > .landing-card-top {
+      display: flex;
+      min-height: 112px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .landing-landscape-card > .landing-card-top > .landing-card-icon {
+      width: 58px;
+      height: 54px;
+      margin: 0;
+      flex: 0 0 58px;
+    }
+
+    .landing-landscape-card > .landing-card-top > .landing-maturity {
+      margin: 3px 0 0;
+    }
+
+    .landing-landscape-card > .landing-card-top > .landing-maturity-list {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .landing-maturity {
+      display: inline-flex;
+      min-height: 28px;
+      margin-bottom: 16px;
+      padding: 4px 9px;
+      align-items: center;
+      border: 1px solid rgba(227, 38, 46, 0.32);
+      border-radius: 999px;
+      color: #b51f26;
+      background: var(--red-soft);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .landing-maturity-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .landing-maturity-list .landing-maturity {
+      margin-bottom: 0;
+    }
+
+    .maturity-dot {
+      width: 8px;
+      height: 8px;
+      margin-right: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .maturity-dot.is-production { background: #3b8c5a; }
+    .maturity-dot.is-exploratory { background: #d18a00; }
+
+    .landing-report-link {
+      margin: 16px 0 0;
+      padding: 17px 20px;
+      border-left: 4px solid var(--red);
+      color: var(--ink);
+      background: var(--card);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .landing-conclusion {
+      margin-top: 54px;
+      padding-bottom: 10px;
+    }
+
+    .landing-conclusion-header {
+      max-width: 1080px;
+      margin-bottom: 24px;
+    }
+
+    .landing-conclusion-layout {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .landing-recommendation {
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .landing-recommendation .eyebrow { color: var(--red-dark); }
+    .landing-recommendation h3 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; }
+    .landing-recommendation p { color: var(--muted); }
+
+    .landing-decision-list {
+      margin: 0;
+      display: contents;
+    }
+
+    .landing-decision-list div {
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+
+    .landing-decision-list dt {
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .landing-decision-list dd {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .landing-conclusion-outcome {
+      margin: 16px 0 0;
+      padding: 18px 20px;
+      border-left: 4px solid var(--red);
+      color: var(--ink);
+      background: var(--card);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .model-card {
+      position: relative;
+      min-height: 280px;
+      padding: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .model-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--red);
+      box-shadow: var(--shadow);
+    }
+
+    .model-card[aria-pressed="true"] {
+      border-color: var(--red);
+      background: var(--red-soft);
+      box-shadow: inset 0 0 0 1px var(--red), var(--shadow);
+    }
+
+    .model-number {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red);
+      font-weight: 850;
+    }
+
+    .model-visual {
+      display: grid;
+      width: 92px;
+      height: 82px;
+      margin: 0 0 16px;
+      place-items: center;
+      color: var(--ink);
+    }
+
+    .model-visual svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .model-card strong {
+      display: block;
+      max-width: 220px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.06;
+    }
+
+    .model-card span:last-child {
+      display: block;
+      max-width: 230px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .workspace {
+      min-height: 100vh;
+    }
+
+    .context-shell {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+      backdrop-filter: blur(16px);
+    }
+
+    .context-bar {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 12px 0;
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) auto auto;
+      align-items: end;
+      gap: 18px;
+    }
+
+    .context-current {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .overview-button {
+      min-width: 92px;
+      height: 44px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: var(--ink);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .overview-button:hover {
+      color: var(--red-dark);
+      border-color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .swiss-mark {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--red);
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .context-copy {
+      min-width: 0;
+    }
+
+    .context-label {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .context-copy strong {
+      display: block;
+      overflow: hidden;
+      font-size: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .context-copy strong span {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .mode-switch {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .mode-switch legend {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .segmented {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--paper-deep);
+    }
+
+    .segmented label {
+      position: relative;
+      display: grid;
+      min-width: 92px;
+      min-height: 44px;
+      padding: 0 16px;
+      place-items: center;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .segmented input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .segmented label:has(input:checked) {
+      color: #fff;
+      background: var(--ink);
+      box-shadow: 0 3px 10px rgba(23, 23, 23, 0.14);
+    }
+
+    .segmented label:has(input:focus-visible) {
+      box-shadow: var(--focus);
+    }
+
+    .context-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 9px 16px;
+      border: 1px solid var(--ink);
+      border-radius: 12px;
+      color: var(--ink);
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .button-primary {
+      color: #fff;
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    .button-primary:hover {
+      border-color: var(--red-dark);
+      background: var(--red-dark);
+    }
+
+    .button-dark {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .button-dark:hover { background: #333; }
+
+    .failure-bar {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 0 0 12px 56px;
+    }
+
+    .failure-empty {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .failure-options {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .failure-options > span {
+      flex: 0 0 auto;
+      margin-right: 3px;
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .failure-choice {
+      position: relative;
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: 28px auto;
+      min-height: 44px;
+      padding: 8px 13px;
+      place-items: center;
+      gap: 7px;
+      border: 1px solid #bcbcbc;
+      border-radius: 999px;
+      color: var(--red-dark);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .failure-choice input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .failure-choice:has(input:checked) {
+      color: #fff;
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    .failure-choice-icon {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+    }
+
+    .failure-choice-icon svg { width: 28px; height: 28px; }
+    .failure-choice:has(input:checked) .failure-icon-paper { fill: var(--red); }
+    .failure-choice:has(input:checked) .failure-icon-ink { stroke: #fff; }
+
+    .failure-choice:has(input:focus-visible) {
+      box-shadow: var(--focus);
+    }
+
+    .workspace-main {
+      width: min(1440px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 34px 0 64px;
+    }
+
+    .scenario-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .scenario-heading.has-failure {
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+    }
+
+    .scenario-heading h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 4vw, 58px);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .scenario-description {
+      max-width: 760px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .scenario-code {
+      min-width: 140px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .scenario-code span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .scenario-code strong {
+      font-size: 15px;
+    }
+
+    .stage-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stage,
+    .inspector {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.07);
+    }
+
+    .stage {
+      position: relative;
+      min-height: 350px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -170px;
+      top: -180px;
+      border: 54px solid var(--red-soft);
+      border-radius: 50%;
+      opacity: 0.72;
+    }
+
+    .stage-topline {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 318px;
+      align-items: start;
+      gap: 16px;
+    }
+
+    .stage-context {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stage-context strong {
+      font-size: 15px;
+    }
+
+    .stage-controls {
+      width: 318px;
+      margin-left: auto;
+      display: grid;
+      grid-template-columns: 86px 72px 144px;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .stage-controls .button {
+      width: 100%;
+      min-width: 0;
+      padding-inline: 8px;
+      white-space: nowrap;
+      background: var(--card);
+    }
+
+    .stage-controls .button:disabled {
+      cursor: default;
+      opacity: .42;
+    }
+
+    .stage-controls .button:hover { background: var(--ink); }
+
+    .stage-controls .button-primary {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .stage-controls .button-primary:hover { background: var(--red-dark); }
+
+    .stage-controls .button-dark {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .failure-summary {
+      min-height: 146px;
+      padding: 18px 20px;
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      color: var(--red-dark);
+      background: var(--card);
+      box-shadow: 0 10px 28px rgba(23, 23, 23, 0.08);
+    }
+
+    .failure-summary .eyebrow { margin-bottom: 6px; }
+
+    .failure-summary h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    .failure-summary p:last-child {
+      margin: 10px 0 0;
+      color: #000;
+      font-size: 15px;
+      line-height: 1.48;
+    }
+
+    .failure-summary.is-triggered {
+      border-color: var(--red-dark);
+      background: var(--red-soft);
+    }
+
+    .journey {
+      position: relative;
+      z-index: 1;
+      min-height: 248px;
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: minmax(110px, 1fr) 56px minmax(130px, 1.1fr) 56px minmax(130px, 1.1fr) 56px minmax(110px, 1fr);
+      align-items: end;
+      padding: 6px 4px 12px;
+    }
+
+    .journey::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      right: 2%;
+      bottom: 69px;
+      left: 2%;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.15), transparent 68%);
+      transform: scaleY(0.42);
+    }
+
+    .journey-node {
+      position: relative;
+      min-height: 218px;
+      padding: 0 8px 8px;
+      display: grid;
+      align-content: end;
+      justify-items: center;
+      text-align: center;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .journey-node.is-complete::after {
+      content: "✓";
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border: 3px solid var(--card);
+      border-radius: 50%;
+      color: #fff;
+      background: var(--green);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .journey-node.is-active {
+      transform: translateY(-5px);
+    }
+
+    .journey-node.is-blocked::after {
+      content: "!";
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 3px solid var(--card);
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red-dark);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .journey-node.has-failure .node-glyph {
+      border-color: var(--red-dark);
+      background: var(--red-soft);
+      filter: grayscale(0.72);
+      opacity: 0.62;
+    }
+
+    .journey-node.has-failure .node-glyph::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      width: 112%;
+      height: 7px;
+      border: 3px solid var(--card);
+      border-radius: 999px;
+      background: var(--red-dark);
+      transform: rotate(-38deg);
+    }
+
+    .scene-failure-marker {
+      position: absolute;
+      z-index: 7;
+      top: -11px;
+      left: 50%;
+      display: flex;
+      width: max-content;
+      max-width: 160px;
+      min-height: 42px;
+      padding: 5px 9px 5px 6px;
+      align-items: center;
+      gap: 6px;
+      border: 2px solid var(--red-dark);
+      border-radius: 11px;
+      color: var(--red-dark);
+      background: var(--card);
+      box-shadow: 0 8px 18px rgba(23, 23, 23, 0.18);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.08;
+      transform: translateX(-50%);
+    }
+
+    .scene-failure-marker svg {
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+    }
+
+    .scene-failure-marker.is-triggered {
+      color: #fff;
+      background: var(--red-dark);
+    }
+
+    .scene-failure-marker.is-triggered .failure-icon-paper { fill: var(--red-dark); }
+    .scene-failure-marker.is-triggered .failure-icon-ink { stroke: #fff; }
+    .scene-failure-marker.is-triggered .lucide-small { color: #fff; }
+
+    .node-glyph {
+      position: relative;
+      display: grid;
+      width: min(100%, 132px);
+      height: 150px;
+      margin-bottom: 3px;
+      place-items: center;
+      border: 2px solid transparent;
+      border-radius: 50% 50% 22px 22px;
+      transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .node-glyph svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .scene-shadow { fill: rgba(23, 23, 23, 0.13); }
+    .scene-ink { fill: var(--ink); }
+    .scene-paper { fill: #fff; }
+    .scene-cream { fill: #d6d6d6; }
+    .scene-red { fill: var(--red); }
+    .scene-red-soft { fill: #bcbcbc; }
+    .scene-skin { fill: #d8b08a; }
+    .scene-line {
+      fill: none;
+      stroke: var(--ink);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 3;
+    }
+    .scene-light-line {
+      fill: none;
+      stroke: #fff;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 3;
+    }
+
+    .scene-svg-light-label {
+      fill: #fff;
+      font: 900 14px/1 Inter, ui-sans-serif, sans-serif;
+      letter-spacing: -0.04em;
+    }
+
+    .lucide-main,
+    .lucide-light,
+    .lucide-small {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .lucide-main { color: var(--ink); }
+    .lucide-light { color: #fff; }
+
+    .lucide-small {
+      width: 100%;
+      height: 100%;
+      color: var(--red-dark);
+    }
+
+    .journey-node.is-active .node-glyph,
+    .journey-node.is-blocked .node-glyph {
+      border-color: var(--red);
+      background: var(--red-soft);
+      box-shadow: 0 10px 26px rgba(227, 38, 46, 0.18);
+    }
+
+    .journey-node.is-active .node-glyph {
+      animation: node-pulse 1.8s ease-in-out infinite;
+    }
+
+    .journey-node > strong {
+      position: relative;
+      z-index: 2;
+      min-width: 86px;
+      padding: 5px 9px 2px;
+      border-radius: 9px 9px 0 0;
+      background: var(--card);
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .journey-node > span:last-child {
+      position: relative;
+      z-index: 2;
+      min-width: 86px;
+      padding: 1px 9px 5px;
+      border-radius: 0 0 9px 9px;
+      color: var(--muted);
+      background: var(--card);
+      font-size: 14px;
+    }
+
+    .journey-arrow {
+      position: relative;
+      align-self: center;
+      height: 3px;
+      margin: 0 4px 38px;
+      background: var(--line);
+    }
+
+    .journey-arrow::after {
+      content: "";
+      position: absolute;
+      top: -4px;
+      right: -1px;
+      width: 8px;
+      height: 8px;
+      border-top: 2px solid var(--line);
+      border-right: 2px solid var(--line);
+      transform: rotate(45deg);
+    }
+
+    .journey-arrow.is-active {
+      background: var(--red);
+    }
+
+    .journey-arrow.is-active::after {
+      border-color: var(--red);
+    }
+
+    .journey-token-layer {
+      position: absolute;
+      z-index: 8;
+      inset: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .journey-token {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: grid;
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      padding-inline: 6px;
+      place-items: center;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red);
+      box-shadow: 0 5px 14px rgba(227, 38, 46, 0.36);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+      opacity: 1;
+      transform: translate3d(-100px, -100px, 0);
+      transition: transform 900ms cubic-bezier(.22, .74, .18, 1), opacity 180ms ease;
+      will-change: transform;
+    }
+
+    .journey-token.is-wide {
+      width: 60px;
+      border-radius: 14px;
+    }
+
+    .journey-token.is-extra-wide {
+      width: 72px;
+    }
+
+    .journey[data-model="instruction"] .journey-token {
+      border-radius: 8px;
+      background: var(--ink);
+      box-shadow: 0 5px 14px rgba(23, 23, 23, 0.3);
+    }
+
+    .journey[data-model="mirrored"] .journey-token {
+      box-shadow: 5px 5px 0 #bcbcbc, 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .journey[data-model="stablecoin"] .journey-token {
+      color: var(--ink);
+      border-color: var(--ink);
+      background: #fff;
+    }
+
+    @keyframes node-pulse {
+      0%, 100% { box-shadow: 0 12px 26px rgba(227, 38, 46, 0.12); }
+      50% { box-shadow: 0 12px 30px rgba(227, 38, 46, 0.28); }
+    }
+
+    .inspector {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      color: #fff;
+      border-color: var(--ink);
+      background: var(--ink);
+      box-shadow: 0 16px 34px rgba(23, 23, 23, 0.16), 0 2px 7px rgba(23, 23, 23, 0.12);
+    }
+
+    .inspector h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    .inspector .eyebrow { color: #fff; }
+
+    .inspector-copy {
+      margin: 10px 0 16px;
+      color: #d0d0d0;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .inspector-facts {
+      margin: auto 0 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .fact {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid #4d4d4d;
+      border-radius: 9px;
+      background: #1a1a1a;
+    }
+
+    .fact dt {
+      color: #d0d0d0;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .fact dd {
+      margin: 3px 0 0;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .status-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .status-card {
+      min-height: 116px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .status-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .status-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .timeline-panel {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .timeline-header h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .timeline-hint {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .timeline {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(var(--step-count), minmax(0, 1fr));
+      list-style: none;
+    }
+
+    .timeline li {
+      position: relative;
+      min-width: 0;
+    }
+
+    .timeline li:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      top: 18px;
+      left: calc(50% + 15px);
+      width: calc(100% - 30px);
+      height: 2px;
+      background: var(--line);
+    }
+
+    .timeline li.is-complete:not(:last-child)::after {
+      background: var(--green);
+    }
+
+    .timeline-step {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      min-height: 74px;
+      padding: 0 5px;
+      border: 0;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .timeline-step::before {
+      content: attr(data-step);
+      display: grid;
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 7px;
+      place-items: center;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      background: var(--card);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .timeline li.is-complete .timeline-step::before {
+      content: "✓";
+      color: #fff;
+      border-color: var(--green);
+      background: var(--green);
+    }
+
+    .timeline-step[aria-current="step"] {
+      color: var(--red-dark);
+      font-weight: 850;
+    }
+
+    .timeline-step[aria-current="step"]::before {
+      color: #fff;
+      border-color: var(--red);
+      background: var(--red);
+      box-shadow: 0 0 0 5px var(--red-soft);
+    }
+
+    dialog {
+      width: min(1120px, calc(100% - 34px));
+      max-height: min(88vh, 900px);
+      margin: auto;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      color: var(--ink);
+      background: var(--card);
+      box-shadow: 0 30px 100px rgba(23, 23, 23, 0.3);
+    }
+
+    dialog::backdrop {
+      background: rgba(23, 23, 23, 0.56);
+      backdrop-filter: blur(5px);
+    }
+
+    .dialog-inner {
+      max-height: min(88vh, 900px);
+      overflow-y: auto;
+      padding: 28px;
+      overscroll-behavior: contain;
+    }
+
+    .dialog-header {
+      position: sticky;
+      z-index: 2;
+      top: -28px;
+      margin: -28px -28px 24px;
+      padding: 26px 28px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(14px);
+    }
+
+    .dialog-header h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .dialog-header p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .close-button {
+      flex: 0 0 auto;
+      width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--ink);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .close-button:hover {
+      color: #fff;
+      border-color: var(--ink);
+      background: var(--ink);
+    }
+
+    .dialog-section + .dialog-section {
+      margin-top: 28px;
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 13px;
+    }
+
+    .section-heading h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-heading span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .scenario-option {
+      min-height: 126px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      column-gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      color: var(--ink);
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .scenario-option:hover {
+      border-color: var(--red);
+      background: var(--card);
+    }
+
+    .scenario-option[aria-pressed="true"] {
+      border: 2px solid var(--red);
+      background: var(--red-soft);
+    }
+
+    .scenario-option strong,
+    .scenario-option span {
+      display: block;
+    }
+
+    .scenario-thumbnail {
+      width: 58px;
+      height: 58px;
+      margin: 0 !important;
+      grid-row: 1 / span 2;
+      align-self: start;
+      border-radius: 12px;
+      background: var(--paper);
+    }
+
+    .scenario-thumbnail svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .scenario-option strong {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .scenario-option > span:last-child {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .explore-row {
+      margin-top: 14px;
+    }
+
+    .scenario-group + .scenario-group {
+      margin-top: 24px;
+    }
+
+    .scenario-group h4 {
+      margin: 0 0 10px;
+      color: var(--red-dark);
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-architecture-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero-flow-item:nth-child(2)::after { display: none; }
+      .landing-report-grid,
+      .landing-landscape-grid,
+      .landing-conclusion-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .model-card { min-height: 240px; }
+      .context-actions { grid-column: 1 / -1; justify-content: flex-end; }
+      .failure-bar { padding-left: 0; }
+      .scenario-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+      .landing-lens-panel { grid-template-columns: 1fr; }
+      .scenario-heading.has-failure { grid-template-columns: 1fr; }
+      .stage-layout { grid-template-columns: 1fr; }
+      .inspector { min-height: 250px; }
+      .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .journey {
+        grid-template-columns: minmax(90px, 1fr) 44px minmax(110px, 1fr) 44px minmax(110px, 1fr) 44px minmax(90px, 1fr);
+      }
+      .journey-node { min-height: 198px; padding-inline: 4px; }
+      .node-glyph { height: 132px; }
+      .journey-arrow { margin-inline: 2px; }
+    }
+
+    @media (max-width: 700px) {
+      .landing {
+        width: min(100% - 28px, 620px);
+        padding: 24px 0 44px;
+        align-content: start;
+      }
+
+      .landing-header { min-height: auto; padding: 34px 0 44px; }
+      .landing-lens-panel { padding: 24px; }
+      .hero-architecture-heading { display: block; }
+      .hero-architecture-heading span { display: block; margin-top: 5px; }
+      .hero-architecture-flow { grid-template-columns: 1fr; gap: 12px; }
+      .hero-flow-item::after { display: none !important; }
+      .landing-report-grid,
+      .landing-landscape-grid,
+      .landing-conclusion-layout { grid-template-columns: 1fr; }
+      .landing-report,
+      .landing-conclusion { padding-block: 38px; }
+      .model-grid { grid-template-columns: 1fr; }
+      .model-card { min-height: 210px; }
+      .model-number { margin-bottom: 24px; }
+
+      .context-bar,
+      .failure-bar,
+      .workspace-main {
+        width: calc(100% - 24px);
+      }
+
+      .context-bar {
+        padding: 8px 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .swiss-mark { width: 40px; height: 40px; }
+      .context-label { display: none; }
+      .context-copy strong { font-size: 14px; }
+      .context-copy strong span { display: block; }
+      .mode-switch { grid-column: 1; }
+      .segmented { width: 100%; }
+      .segmented label { min-width: 0; padding-inline: 10px; }
+      .context-actions { grid-column: 2; grid-row: 2; }
+      .context-actions .button:first-child { display: none; }
+      .context-actions .button { padding-inline: 12px; }
+      .failure-bar { padding-bottom: 8px; }
+
+      .workspace-main { padding-top: 24px; }
+      .scenario-heading { grid-template-columns: 1fr; gap: 14px; }
+      .scenario-code { justify-self: start; }
+      .stage { min-height: 0; padding: 18px; }
+      .stage-context { width: 100%; justify-content: space-between; }
+      .stage-topline { grid-template-columns: 1fr; }
+      .stage-controls {
+        width: 100%;
+        grid-row: 1;
+        justify-self: end;
+        grid-template-columns: minmax(82px, 1fr) 72px minmax(118px, 1.45fr);
+      }
+      .stage-context { grid-row: 2; }
+      .stage-controls .button { flex: 1; min-width: 0; }
+
+      .journey {
+        min-height: 0;
+        margin-top: 10px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .journey::before { display: none; }
+
+      .journey-node {
+        min-height: 112px;
+        padding: 5px 12px;
+        grid-template-columns: 84px 1fr;
+        justify-items: start;
+        column-gap: 12px;
+        text-align: left;
+      }
+
+      .node-glyph {
+        width: 80px;
+        height: 96px;
+        margin: 0;
+        grid-row: 1 / span 2;
+      }
+
+      .node-glyph svg { width: 100%; height: 100%; }
+
+      .journey-node > strong { align-self: end; }
+      .journey-node > span:last-child { align-self: start; }
+      .journey-arrow { width: 3px; height: 22px; margin: 0 0 0 40px; }
+      .journey-arrow::after { top: auto; right: -3px; bottom: 0; transform: rotate(135deg); }
+      .status-grid { grid-template-columns: 1fr; }
+      .status-card { min-height: 92px; }
+      .timeline-header { align-items: flex-start; flex-direction: column; }
+      .timeline { grid-template-columns: 1fr; gap: 4px; }
+      .timeline li:not(:last-child)::after { display: none; }
+      .timeline-step {
+        min-height: 48px;
+        padding: 5px 8px;
+        display: grid;
+        grid-template-columns: 38px 1fr;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+      }
+      .timeline-step::before { width: 34px; height: 34px; margin: 0; }
+
+      dialog {
+        width: 100%;
+        max-width: none;
+        max-height: 92dvh;
+        margin: auto 0 0;
+        border-radius: 24px 24px 0 0;
+      }
+      .dialog-inner { max-height: 92dvh; padding: 20px 16px; }
+      .dialog-header { top: -20px; margin: -20px -16px 20px; padding: 22px 16px 16px; }
+      .scenario-grid { grid-template-columns: 1fr; }
+      .scenario-option { min-height: 96px; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+    }
+
+    /* Guided workspace redesign */
+    .run-mode-select {
+      display: grid;
+      gap: 3px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .run-mode-select select {
+      width: 230px;
+      min-width: 0;
+      height: 44px;
+      padding: 8px 38px 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: var(--ink);
+      background: var(--card);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    #change-flow {
+      width: 230px;
+      height: 44px;
+    }
+
+    .guided-layout {
+      display: grid;
+      grid-template-columns: minmax(180px, .64fr) minmax(520px, 2fr) minmax(300px, 1fr);
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .step-panel {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, .06);
+    }
+
+    .step-panel-header h2 {
+      margin: 2px 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      font-weight: 600;
+    }
+
+    .step-list {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .step-button {
+      width: 100%;
+      min-height: 50px;
+      padding: 7px 9px;
+      display: grid;
+      grid-template-columns: 31px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.16;
+      text-align: left;
+    }
+
+    .step-button::before {
+      content: attr(data-step);
+      display: grid;
+      width: 31px;
+      height: 31px;
+      place-items: center;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      background: var(--card);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .step-button:hover { color: var(--ink); background: var(--paper-deep); }
+    .step-button.is-complete { color: var(--ink); }
+    .step-button.is-complete::before { color: #fff; border-color: var(--ink); background: var(--ink); }
+    .step-button[aria-current="step"] { color: var(--ink); border-color: var(--red); background: var(--red-soft); }
+    .step-button[aria-current="step"]::before { color: #fff; border-color: var(--red); background: var(--red); }
+    .step-button.is-blocked { color: var(--red-dark); border-color: var(--red-dark); background: var(--card); }
+    .step-button.is-blocked::before { content: "!"; color: #fff; border-color: var(--red-dark); background: var(--red-dark); }
+
+    .guided-layout .stage {
+      min-width: 0;
+      min-height: 430px;
+      padding: 18px 16px;
+    }
+
+    #stage-object-state {
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .guided-layout .journey {
+      min-width: 0;
+      min-height: 340px;
+      margin-top: 12px;
+      padding: 8px 0 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .guided-layout .journey-node {
+      min-width: 0;
+      min-height: 278px;
+      flex: 1 1 0;
+      padding-inline: 3px;
+    }
+
+    .guided-layout .node-glyph {
+      width: min(100%, 108px);
+      height: 132px;
+    }
+
+    .guided-layout .journey-node > strong,
+    .guided-layout .journey-node > span:last-child {
+      min-width: 0;
+      width: 100%;
+      padding-inline: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .guided-layout .journey-arrow {
+      flex: 0 0 30px;
+      margin-inline: 1px;
+    }
+
+    .guided-layout .journey-arrow.is-reverse::after {
+      right: auto;
+      left: -1px;
+      transform: rotate(-135deg);
+    }
+
+    .guided-layout .inspector {
+      min-width: 0;
+      min-height: 430px;
+    }
+
+    .inspector-copy { margin-bottom: 22px; }
+
+    .scenario-details {
+      margin-top: 14px;
+      border-top: 1px solid #484440;
+    }
+
+    .scenario-details h3 {
+      margin: 14px 0 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .scenario-details dl { margin: 0; display: grid; gap: 8px; }
+    .scenario-details dl div { padding-top: 7px; border-top: 1px solid #3b3937; }
+    .scenario-details dt { color: #d0d0d0; font-size: 14px; font-weight: 800; }
+    .scenario-details dd { margin: 3px 0 0; color: #fff; font-size: 14px; line-height: 1.35; }
+
+    .dialog-model-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .dialog-model-option {
+      min-height: 82px;
+      padding: 11px;
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--ink);
+      background: var(--card);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .dialog-model-option svg { width: 42px; height: 42px; }
+    .dialog-model-option strong { font-size: 14px; line-height: 1.2; }
+    .dialog-model-option[aria-pressed="true"] { border-color: var(--red); background: var(--red-soft); box-shadow: inset 0 0 0 1px var(--red); }
+
+    .scenario-option { position: relative; }
+    .scenario-option.is-recommended {
+      min-height: 148px;
+      padding-top: 50px;
+    }
+
+    .scenario-option.is-recommended::after {
+      content: "Recommended";
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--red);
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    @media (max-width: 1180px) {
+      .guided-layout { grid-template-columns: 210px minmax(0, 1fr); }
+      .guided-layout .inspector { grid-column: 1 / -1; min-height: 280px; }
+    }
+
+    @media (max-width: 800px) {
+      .context-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .context-current { grid-column: 1 / -1; }
+      .run-mode-select { grid-column: 1; grid-row: 2; }
+      .run-mode-select select { width: 100%; min-width: 0; }
+      #change-flow { grid-column: 2; grid-row: 2; width: 100%; }
+      .guided-layout { grid-template-columns: 1fr; }
+      .step-panel { position: sticky; z-index: 12; top: 118px; padding: 10px; }
+      .step-panel-header { display: none; }
+      .step-list { grid-auto-flow: column; grid-auto-columns: minmax(104px, 1fr); overflow-x: auto; scrollbar-width: thin; }
+      .step-button { min-height: 46px; grid-template-columns: 27px minmax(0, 1fr); padding: 5px; }
+      .step-button::before { width: 27px; height: 27px; }
+      .guided-layout .stage { min-height: 390px; }
+      .guided-layout .inspector { min-height: 300px; }
+      .dialog-model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 540px) {
+      .context-bar { width: calc(100% - 20px); }
+      .swiss-mark { display: none; }
+      .overview-button { min-width: 44px; width: 44px; padding-inline: 0; font-size: 0; }
+      .overview-button::before { content: "←"; font-size: 18px; }
+      .context-copy strong span { display: inline; }
+      .run-mode-select span { display: none; }
+      .workspace-main { width: calc(100% - 20px); }
+      .scenario-heading { grid-template-columns: 1fr; }
+      .step-panel { top: 104px; margin-inline: -2px; }
+      .guided-layout .journey { display: grid; grid-template-columns: 1fr; align-items: stretch; }
+      .guided-layout .journey-node { min-height: 104px; grid-template-columns: 78px 1fr; text-align: left; justify-items: start; }
+      .guided-layout .node-glyph { width: 74px; height: 88px; grid-row: 1 / span 2; }
+      .guided-layout .journey-arrow { width: 3px; height: 20px; margin: 0 0 0 37px; }
+      .guided-layout .journey-arrow::after { top: auto; right: -3px; bottom: 0; transform: rotate(135deg); }
+      .guided-layout .journey-arrow.is-reverse::after { top: 0; right: -3px; bottom: auto; left: auto; transform: rotate(-45deg); }
+      .dialog-model-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <main>
+    <section class="landing" id="landing" aria-labelledby="landing-title">
+      <header class="landing-header">
+        <div class="landing-hero-copy">
+          <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
+          <h1 id="landing-title" tabindex="-1">Tokenized deposits: how architecture changes a payment.</h1>
+          <p class="landing-definition">A tokenized deposit is a claim on a commercial bank represented or operated through token or distributed-ledger technology.</p>
+          <p class="landing-intro">Tokenization can coordinate bank money with conditions, assets, currencies and institutions. Its value must be demonstrated against core-banking automation, account APIs, SIC Instant Payments and ordinary escrow.</p>
+        </div>
+
+        <section class="hero-architecture" aria-labelledby="hero-architecture-title">
+          <header class="hero-architecture-heading">
+            <h2 id="hero-architecture-title">Four alternative structures</h2>
+            <span>Compared across the same payment scenarios—not a maturity sequence</span>
+          </header>
+          <div class="hero-architecture-flow">
+            <article class="hero-flow-item">
+              <span class="hero-flow-icon" data-hero-icon="receipt-text" aria-hidden="true"></span>
+              <div class="hero-flow-copy"><span>01</span><strong>Payment instruction</strong><small>Bank executes a request</small></div>
+            </article>
+            <article class="hero-flow-item">
+              <span class="hero-flow-icon" data-hero-icon="database" aria-hidden="true"></span>
+              <div class="hero-flow-copy"><span>02</span><strong>Mirrored deposit</strong><small>CBS + token mirror</small></div>
+            </article>
+            <article class="hero-flow-item">
+              <span class="hero-flow-icon" data-hero-icon="network" aria-hidden="true"></span>
+              <div class="hero-flow-copy"><span>03</span><strong>Native on-chain</strong><small>DLT is authoritative</small></div>
+            </article>
+            <article class="hero-flow-item">
+              <span class="hero-flow-icon" data-hero-icon="coins" aria-hidden="true"></span>
+              <div class="hero-flow-copy"><span>04</span><strong>Non-bank stablecoin</strong><small>Separate issuer claim</small></div>
+            </article>
+          </div>
+        </section>
+
+        <aside class="landing-lens-panel" aria-labelledby="landing-lens-title">
+          <div class="landing-lens-heading">
+            <p>How to read the explorer</p>
+            <h2 id="landing-lens-title">Four questions follow every payment.</h2>
+          </div>
+          <ol class="landing-lenses" aria-label="Questions examined by the demonstration">
+            <li><span>01</span><div><strong>Claim</strong>Who owes the value to the holder?</div></li>
+            <li><span>02</span><div><strong>Authority</strong>Which record defines ownership?</div></li>
+            <li><span>03</span><div><strong>Settlement</strong>Which asset completes the payment?</div></li>
+            <li><span>04</span><div><strong>Control</strong>Who can issue, transfer, pause and recover?</div></li>
+          </ol>
+        </aside>
+      </header>
+
+      <section class="landing-report" aria-labelledby="landing-context-title">
+        <header class="landing-report-header">
+          <p class="eyebrow">Before the explorer</p>
+          <h2 id="landing-context-title">Understand the money before choosing the technology.</h2>
+          <p>A tokenized deposit remains a commercial-bank liability. Tokenization may change its representation and workflow, while the product must still define the debtor, authoritative record, settlement arrangement and legal effect.</p>
         </header>
 
-        <div class="primer" aria-label="How an ordinary deposit becomes tokenized">
-          <div class="primer-art" aria-hidden="true">
-            <svg viewBox="0 0 920 430">
-              <defs>
-                <pattern id="primer-dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#d8d1ca"></circle></pattern>
-                <filter id="primer-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000" flood-opacity=".13"></feDropShadow></filter>
-              </defs>
-              <rect width="920" height="430" rx="24" fill="#f3eee8"></rect>
-              <rect x="18" y="18" width="884" height="394" rx="18" fill="url(#primer-dots)"></rect>
-
-              <g transform="translate(62 77)">
-                <ellipse cx="78" cy="292" rx="64" ry="10" fill="#d8d1ca"></ellipse>
-                <circle cx="80" cy="55" r="33" fill="#e5b999"></circle>
-                <path d="M47 55c0-48 66-52 69-3l-4 78-20-15V61c-13-3-23-12-31-25-2 15-7 27-14 35Z" fill="#171717"></path>
-                <path d="M51 101c18-15 49-15 66 0l25 125H34Z" fill="#d52f3a" stroke="#171717" stroke-width="3"></path>
-                <path d="M60 225 52 296M116 225l9 71" stroke="#171717" stroke-width="6"></path>
-                <path d="M40 300h28M111 300h26" stroke="#171717" stroke-width="8" stroke-linecap="round"></path>
-                <rect x="103" y="128" width="28" height="50" rx="7" fill="#171717"></rect>
-                <circle cx="117" cy="168" r="2" fill="#fff"></circle>
-                <text x="80" y="325" text-anchor="middle" class="primer-name">ALICE</text>
-                <text x="80" y="346" text-anchor="middle" class="primer-role">customer</text>
-              </g>
-
-              <g transform="translate(298 62)" filter="url(#primer-shadow)">
-                <path d="M18 102 162 24l144 78Z" fill="#171717"></path>
-                <rect x="35" y="102" width="254" height="203" rx="3" fill="#fff"></rect>
-                <rect x="55" y="128" width="100" height="150" rx="8" fill="#f5eeee" stroke="#d52f3a" stroke-width="3"></rect>
-                <text x="105" y="151" text-anchor="middle" class="primer-small-red">CBS / GL</text>
-                <rect x="72" y="169" width="67" height="11" rx="5" fill="#171717"></rect>
-                <rect x="72" y="192" width="54" height="8" rx="4" fill="#bbb2ab"></rect>
-                <rect x="72" y="215" width="67" height="8" rx="4" fill="#bbb2ab"></rect>
-                <rect x="72" y="241" width="67" height="22" rx="5" fill="#d52f3a"></rect>
-                <text x="105" y="256" text-anchor="middle" class="primer-white">CHF 1'000</text>
-                <path d="M182 132h78v146h-78Z" fill="#171717"></path>
-                <path d="M192 151h58M192 175h58M192 199h58M192 223h58" stroke="#fff" stroke-width="6" opacity=".7"></path>
-                <text x="162" y="335" text-anchor="middle" class="primer-name">BANK A</text>
-                <text x="162" y="356" text-anchor="middle" class="primer-role">debtor + record keeper</text>
-              </g>
-
-              <path d="M204 173C250 130 273 130 312 152" fill="none" stroke="#d52f3a" stroke-width="6" stroke-linecap="round"></path>
-              <path d="m302 141 14 11-17 5" fill="none" stroke="#d52f3a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
-              <rect x="192" y="96" width="160" height="40" rx="20" fill="#d52f3a"></rect>
-              <text x="272" y="121" text-anchor="middle" class="primer-white primer-white--large">BANK A OWES ALICE</text>
-
-              <g transform="translate(688 82)" filter="url(#primer-shadow)">
-                <circle cx="92" cy="108" r="82" fill="#171717"></circle>
-                <path d="M92 43 150 78 133 145 92 176 51 145 34 78Z" fill="#d52f3a" stroke="#fff" stroke-width="3"></path>
-                <path d="m92 43 22 43-22 67-22-67Z" fill="#f06a72"></path>
-                <path d="m34 78 36 8 22-43-41 35m99 0-36 8-22-43 41 35M51 145l19-59 22 67-41-8m82 0-19-59-22 67 41-8" fill="#a71824"></path>
-                <path d="m65 68 20-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"></path>
-                <rect x="38" y="186" width="108" height="48" rx="8" fill="#fff" stroke="#d52f3a" stroke-width="3"></rect>
-                <text x="92" y="206" text-anchor="middle" class="primer-small-red">TOKEN</text>
-                <text x="92" y="222" text-anchor="middle" class="primer-role">digital representation</text>
-                <text x="92" y="276" text-anchor="middle" class="primer-name">TOKENISATION</text>
-                <text x="92" y="297" text-anchor="middle" class="primer-role">adds a new movement layer</text>
-              </g>
-              <path d="M608 170h86" stroke="#171717" stroke-width="3" stroke-dasharray="7 8"></path>
-            </svg>
-          </div>
-
-          <div class="primer-notes">
-            <article><span>01</span><div><h2>Ordinary deposit</h2><p>Alice's CHF 1,000 is money she can spend, but legally it is an amount Bank A owes her.</p></div></article>
-            <article><span>02</span><div><h2>Claim</h2><p>The debtor matters. Alice has a claim on Bank A—not on the app, wallet or payment network.</p></div></article>
-            <article><span>03</span><div><h2>CBS</h2><p>The core banking system and general ledger record the account and the bank's liability.</p></div></article>
-            <article><span>04</span><div><h2>Tokenisation</h2><p>A token adds a programmable representation. Its contract decides whether it is the claim, a mirror or only an instruction.</p></div></article>
-          </div>
+        <div class="landing-report-grid">
+          <article>
+            <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="coins" aria-hidden="true"></span>
+            <h3>It remains bank money</h3>
+            <p>The issuing bank owes the value to the holder. The token does not create a second asset or turn the deposit into central-bank money.</p>
+            <span class="landing-card-key">Define the debtor and holder</span>
+          </article>
+          <article>
+            <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="badge-check" aria-hidden="true"></span>
+            <h3>The record model matters</h3>
+            <p>The CBS, DLT and general ledger may record related facts. The design must state which record prevails and how disagreements are repaired.</p>
+            <span class="landing-card-key">Name the authoritative record</span>
+          </article>
+          <article>
+            <span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="lock-keyhole" aria-hidden="true"></span>
+            <h3>Tokenization adds coordination</h3>
+            <p>Shared state can support conditional release, synchronized asset or FX exchange and workflows involving several institutions.</p>
+            <span class="landing-card-key">Prove value beyond ordinary payments</span>
+          </article>
+          <article>
+            <span class="landing-card-icon" data-guide-icon="git-compare-arrows" data-guide-badge="network" aria-hidden="true"></span>
+            <h3>Architectures change the risk</h3>
+            <p>An instruction, CBS mirror, authoritative on-chain deposit and separate stablecoin place authority, recovery and issuer risk differently.</p>
+            <span class="landing-card-key">Compare the same flow across models</span>
+          </article>
         </div>
-        <p class="primer-takeaway"><b>The question is not “is there a token?”</b> It is “what does the token represent, who owes it, and which record is authoritative?”</p>
+
+        <section class="landing-landscape" aria-labelledby="landing-landscape-title">
+          <header class="landing-landscape-header">
+            <p class="eyebrow">Swiss landscape</p>
+            <h3 id="landing-landscape-title">Related initiatives test different parts of the system.</h3>
+            <p>Maturity labels show what each initiative has demonstrated or put into operation. They distinguish production infrastructure, pilots, proofs of concept and sandboxes; none is approval for a bank-specific tokenized deposit.</p>
+          </header>
+
+          <div class="landing-landscape-grid">
+            <article class="landing-landscape-card">
+              <div class="landing-card-top">
+                <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="arrow-right-left" aria-hidden="true"></span>
+                <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>Production</span>
+              </div>
+              <h4>SIC and Instant Payments</h4>
+              <p>CHF interbank settlement in SNB money and the domestic benchmark for fast, continuously available account payments.</p>
+            </article>
+            <article class="landing-landscape-card">
+              <div class="landing-card-top">
+                <span class="landing-card-icon" data-guide-icon="receipt-text" data-guide-badge="workflow" aria-hidden="true"></span>
+                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Concept · PoC · pilot</span>
+              </div>
+              <h4>SBA and bank initiatives</h4>
+              <p>The SBA PoC used on-chain instructions with off-chain account movements. Bank pilots examine treasury and programmable-payment uses.</p>
+            </article>
+            <article class="landing-landscape-card">
+              <div class="landing-card-top">
+                <span class="landing-card-icon" data-guide-icon="network" data-guide-badge="landmark" aria-hidden="true"></span>
+                <div class="landing-maturity-list" aria-label="Maturity by initiative">
+                  <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Helvetia · Pilot</span>
+                  <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>BX · Production scope</span>
+                  <span class="landing-maturity"><span class="maturity-dot" aria-hidden="true"></span>Agorá · Controlled test</span>
+                </div>
+              </div>
+              <h4>Helvetia, BX and Agorá</h4>
+              <p>These initiatives examine tokenized central-bank settlement, DLT securities infrastructure and cross-border workflows at different stages of deployment.</p>
+            </article>
+            <article class="landing-landscape-card">
+              <div class="landing-card-top">
+                <span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="wallet-cards" aria-hidden="true"></span>
+                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Sandbox</span>
+              </div>
+              <h4>CHF stablecoin work</h4>
+              <p>An adjacent private-money model with a separate issuer and reserve arrangement rather than a deposit claim on the customer’s bank.</p>
+            </article>
+          </div>
+        </section>
+
+        <p class="landing-report-link"><strong>Next:</strong> choose one architecture and one scenario. The explorer will show how the claim, authority, settlement and controls change at every step.</p>
       </section>
 
-      <section class="scene scene--explorer" aria-labelledby="explorer-title">
-        <header class="section-title">
-          <p class="overline">INTERACTIVE EXPLORER</p>
-          <h2 id="explorer-title">Same CHF 100. Four different products.</h2>
-          <p>Choose the product first, then run a flow. The scene keeps the customer claim, token representation and settlement money visually separate.</p>
+      <section class="landing-choice-section" aria-labelledby="landing-model-title">
+        <header class="landing-choice-heading">
+          <p class="eyebrow">Step 1 of 2</p>
+          <h2 id="landing-model-title">Choose the money architecture</h2>
+          <p>The architecture determines the holder’s claim, the authoritative record and the role of the bank or issuer throughout the selected flow.</p>
+        </header>
+        <div class="model-grid" id="model-grid" aria-label="Money architectures"></div>
+      </section>
+
+      <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title" hidden>
+        <header class="landing-choice-heading">
+          <p class="eyebrow">Step 2 of 2</p>
+          <h2 id="landing-scenario-title">Choose the scenario to examine</h2>
+          <p id="landing-scenario-help">Recommended scenarios are marked, while the complete library remains available.</p>
+        </header>
+        <div class="landing-scenario-groups" id="landing-scenario-groups"></div>
+      </section>
+
+      <section class="landing-conclusion" aria-labelledby="landing-conclusion-title">
+          <header class="landing-conclusion-header">
+            <p class="eyebrow">Decision perspective</p>
+            <h2 id="landing-conclusion-title">Use the explorer to narrow a bank proposition—not to select a ledger.</h2>
+            <p>A technical flow demonstrates a mechanism. Adoption also requires product, legal, financial, risk and operating evidence.</p>
+          </header>
+
+          <div class="landing-conclusion-layout">
+            <article class="landing-recommendation">
+              <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="refresh-cw" aria-hidden="true"></span>
+              <p class="eyebrow">Starting hypothesis</p>
+              <h3>A narrow CBS-authoritative pilot</h3>
+              <p>Bank-issued CHF mirror, identified customers, recoverable wallets, low limits, one conditional flow and continuous CBS, GL and token reconciliation.</p>
+            </article>
+
+            <dl class="landing-decision-list">
+              <div><span class="landing-card-icon" data-guide-icon="scale" data-guide-badge="badge-check" aria-hidden="true"></span><dt>Business fit</dt><dd>Beat APIs, SIC or escrow on measured value.</dd></div>
+              <div><span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="database" aria-hidden="true"></span><dt>Claim and authority</dt><dd>Approve the debtor, transfer effect and prevailing record.</dd></div>
+              <div><span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="arrow-right-left" aria-hidden="true"></span><dt>Settlement and liquidity</dt><dd>Define finality, anchor asset and funding obligations.</dd></div>
+              <div><span class="landing-card-icon" data-guide-icon="shield-alert" data-guide-badge="lock-keyhole" aria-hidden="true"></span><dt>Controls and privacy</dt><dd>Test AML, secrecy, reconciliation and recovery.</dd></div>
+              <div><span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="key-round" aria-hidden="true"></span><dt>Governance and evidence</dt><dd>Name owners, pause rights, exit paths and gates.</dd></div>
+            </dl>
+          </div>
+
+          <p class="landing-conclusion-outcome"><strong>Valid outcomes: proceed, narrow, postpone or use ordinary payments.</strong> Stop while creditor, liability, finality or customer-value recovery remains unresolved.</p>
+      </section>
+    </section>
+
+    <section class="workspace" id="workspace" hidden aria-labelledby="scenario-title">
+      <div class="context-shell">
+        <nav class="context-bar" aria-label="Current flow and controls">
+          <div class="context-current">
+            <button class="overview-button" id="back-to-overview" type="button" aria-label="Back to research overview">Overview</button>
+            <div class="swiss-mark" aria-hidden="true">+</div>
+            <div class="context-copy">
+              <span class="context-label">Current flow</span>
+              <strong><span id="context-model"></span> · <span id="context-scenario"></span></strong>
+            </div>
+          </div>
+
+          <label class="run-mode-select" for="run-mode-select">
+            <span>Run mode</span>
+            <select id="run-mode-select" aria-label="Run mode"></select>
+          </label>
+
+          <button class="button button-primary" id="change-flow" type="button">Change flow</button>
+        </nav>
+      </div>
+
+      <div class="workspace-main">
+        <header class="scenario-heading">
+          <div>
+            <p class="eyebrow" id="scenario-category"></p>
+            <h1 id="scenario-title" tabindex="-1"></h1>
+            <p class="scenario-description" id="scenario-description"></p>
+          </div>
+          <aside class="failure-summary" id="failure-summary" aria-labelledby="failure-summary-title" hidden>
+            <p class="eyebrow" id="failure-summary-status">Failure mode</p>
+            <h2 id="failure-summary-title"></h2>
+            <p id="failure-summary-copy"></p>
+          </aside>
         </header>
 
-        <div class="explorer-shell">
-          <div class="model-dock" role="tablist" aria-label="Product model">
-            <button class="model-tab is-selected" type="button" role="tab" aria-selected="true" data-model="instruction"><b>01</b><span><strong>Payment instruction</strong><small>Bank executes a request</small></span></button>
-            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="mirrored"><b>02</b><span><strong>Mirrored deposit</strong><small>CBS + token mirror</small></span></button>
-            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="native"><b>03</b><span><strong>Native on-chain</strong><small>DLT is authoritative</small></span></button>
-            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="stablecoin"><b>04</b><span><strong>Non-bank stablecoin</strong><small>Separate issuer</small></span></button>
-          </div>
-
-          <div class="flow-console">
-            <div class="core-flows" role="group" aria-label="Core flow">
-              <button type="button" class="flow-button is-selected" data-scenario="mint">Convert / mint</button>
-              <button type="button" class="flow-button" data-scenario="redeem">Redeem / burn</button>
-              <button type="button" class="flow-button" data-scenario="same">Same bank</button>
-              <button type="button" class="flow-button" data-scenario="interbank">Swiss interbank</button>
-              <button type="button" class="flow-button" data-scenario="netting">Gross vs net</button>
+        <div class="guided-layout">
+          <nav class="step-panel" aria-labelledby="steps-title">
+            <div class="step-panel-header">
+              <span class="eyebrow">Scenario path</span>
+              <h2 id="steps-title">Steps</h2>
             </div>
-            <label class="more-flow"><span>More flows</span><select id="scenario-select"><option value="">Choose advanced…</option><option value="correspondent">Correspondent + FX</option><option value="pvp">Cross-border PvP</option><option value="cbdc">Wholesale CBDC</option><option value="bridge">Bridge / wrapped token</option><option value="mismatch">Mismatch + recovery</option></select></label>
-          </div>
+            <ol class="step-list" id="step-list"></ol>
+          </nav>
 
-          <div class="stage-header">
-            <div><span id="scenario-kicker">CONVERT / MINT</span><strong id="scenario-description">Move an ordinary bank balance into the selected representation.</strong></div>
-            <span id="stage-status">Illustrative simulation</span>
-          </div>
-
-          <div class="stage-layout">
-            <div class="stage-canvas">
-              <svg id="stage-svg" viewBox="0 0 1060 590" role="img" aria-labelledby="stage-title stage-desc">
-                <title id="stage-title">Tokenized deposit product and payment flow</title>
-                <desc id="stage-desc">An illustrated scene with customers, commercial banks, ledgers and settlement infrastructure.</desc>
-                <defs>
-                  <marker id="arrow-red" viewBox="0 0 10 10" markerWidth="11" markerHeight="11" refX="9.5" refY="5" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 .5 9.5 5 0 9.5Z" fill="#d52f3a"></path></marker>
-                  <filter id="object-shadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity=".16"></feDropShadow></filter>
-                  <pattern id="scene-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#ded7d1"></circle></pattern>
-                  <pattern id="warning-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#d52f3a" stroke-width="2" opacity=".35"></line></pattern>
-                </defs>
-                <g id="stage-background"></g>
-                <g id="stage-infrastructure"></g>
-                <g id="stage-routes"></g>
-                <g id="stage-actors"></g>
-                <g id="stage-funds" aria-hidden="true"></g>
-                <g id="stage-annotations"></g>
-              </svg>
+          <section class="stage" aria-label="Payment scenario stage">
+            <div class="stage-topline">
+              <div class="stage-context">
+                <strong id="stage-caption">Value movement</strong>
+                <span id="stage-object-state">Ready</span>
+              </div>
+              <div class="stage-controls" aria-label="Step controls">
+                <button class="button" id="previous" type="button">← Previous</button>
+                <button class="button button-dark" id="play" type="button" aria-pressed="false">Play</button>
+                <button class="button button-primary" id="next" type="button">Next →</button>
+              </div>
             </div>
+            <div class="journey" id="journey" aria-live="polite"></div>
+          </section>
 
-            <aside class="inspect-drawer">
-              <section class="actor-inspector" aria-label="Selected actor">
-                <div class="drawer-head"><span>INSPECT</span><strong id="drawer-title">Alice</strong></div>
-                <p id="drawer-summary">Alice owns the starting claim and initiates the selected flow.</p>
-                <dl id="drawer-details"></dl>
-              </section>
-              <section class="step-explainer" aria-labelledby="step-explainer-title" aria-live="polite">
-                <div class="step-explainer-head"><span id="step-position">CURRENT STEP · 1 / 7</span><strong id="step-explainer-title">REQUESTED</strong></div>
-                <span class="step-context" id="step-context">Payment instruction · Convert / mint</span>
-                <p id="step-explanation">Alice asks Bank A to create the selected representation; no balance or legal claim has changed yet.</p>
-                <div class="step-risk" id="step-risk" hidden><strong id="step-risk-title">⚠ Risk armed</strong><p id="step-risk-copy"></p></div>
-              </section>
-            </aside>
-          </div>
+          <aside class="inspector" aria-labelledby="inspector-title">
+            <p class="eyebrow" id="inspector-kicker">What happens now</p>
+            <h2 id="inspector-title"></h2>
+            <p class="inspector-copy" id="inspector-copy"></p>
 
-          <div class="play-console" aria-label="Simulation controls">
-            <div class="transport">
-              <button class="control-button control-button--primary" id="step-button" type="button"><span aria-hidden="true">→</span> Step</button>
-              <button class="control-button" id="play-button" type="button"><span aria-hidden="true">▶</span> Play</button>
-              <button class="control-button" id="reset-button" type="button"><span aria-hidden="true">↺</span> Reset</button>
-            </div>
-            <label class="speed-control" for="speed-select"><span>Speed</span><select id="speed-select"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
-          </div>
-
-          <div class="progress-row"><div class="timeline-track" id="timeline-track" aria-label="Scenario progress"></div><span id="step-label">Requested</span><span id="step-count">1 / 7</span></div>
-
-          <div class="result-ribbon" aria-live="polite">
-            <div><span>CLAIM</span><strong id="status-holder">Alice</strong></div>
-            <div><span>DEBTOR</span><strong id="status-debtor">Bank A</strong></div>
-            <div><span>FINALITY</span><strong id="status-finality">Pending</strong></div>
-            <div><span>RECONCILIATION</span><strong id="status-reconciliation">Matched</strong></div>
-          </div>
-
-          <div class="model-detail" aria-live="polite">
-            <div><span>CUSTOMER CLAIM</span><strong id="fact-claim">Payment instruction / ordinary account</strong></div>
-            <div><span>AUTHORITATIVE RECORD</span><strong id="fact-authority">CBS + ordinary account</strong></div>
-            <div><span>TRANSFER MECHANISM</span><strong id="fact-mechanism">Bank accepts instruction, then posts payment</strong></div>
-            <div><span>MAIN DIFFICULTY</span><strong id="fact-risk">Who owes the holder before acceptance?</strong></div>
-          </div>
-
-          <details class="risk-details"><summary>Advanced risk mode</summary><div class="risk-controls"><label for="failure-select">Inject one failure</label><select id="failure-select"><option value="none">No failure</option><option value="aml">AML / sanctions rejection</option><option value="dlt">DLT unavailable</option><option value="sic">SIC unavailable</option><option value="receiver">Receiving bank rejects</option><option value="mismatch">Reconciliation mismatch</option><option value="key">Key or contract pause</option></select><button id="apply-failure-button" type="button">Apply and reset</button></div><p id="risk-note">Failure paths are simulated and deterministic. They do not represent a legal conclusion.</p></details>
+            <section class="scenario-details" aria-labelledby="scenario-details-title">
+              <h3 id="scenario-details-title">Scenario details</h3>
+              <dl>
+                <div><dt>Claim</dt><dd id="detail-claim"></dd></div>
+                <div><dt>Authority</dt><dd id="detail-authority"></dd></div>
+                <div><dt>Settlement</dt><dd id="detail-settlement"></dd></div>
+                <div><dt>Current record</dt><dd id="detail-record"></dd></div>
+              </dl>
+            </section>
+          </aside>
         </div>
+
+        <p class="sr-only" id="timeline-announcement" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="flow-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <header class="dialog-header">
+        <div>
+          <h2 id="dialog-title">Choose a model and scenario</h2>
+          <p>Select the money model first, then choose any scenario.</p>
+        </div>
+        <button class="close-button" id="close-dialog" type="button" aria-label="Close flow browser">×</button>
+      </header>
+
+      <section class="dialog-section" aria-labelledby="dialog-model-title">
+        <div class="section-heading">
+          <h3 id="dialog-model-title">1. Money model</h3>
+          <span id="dialog-model-help">Current selection</span>
+        </div>
+        <div class="dialog-model-grid" id="dialog-model-grid"></div>
       </section>
 
-      <section class="scene scene--conclusion" aria-labelledby="conclusion-title">
-        <header class="section-title"><p class="overline">WHAT TO REMEMBER</p><h2 id="conclusion-title">The technology is visible. The liability design is decisive.</h2></header>
-        <div class="takeaway-stage">
-          <div class="takeaway-core"><span>CHF 100</span><strong>One amount</strong><p>Its legal and operational meaning changes with the product model.</p></div>
-          <article><b>01</b><h3>Who owes it?</h3><p id="insight-debtor">The token may be an instruction before it becomes a direct deposit claim.</p></article>
-          <article><b>02</b><h3>Which record is final?</h3><p id="insight-ledger">CBS remains authoritative for the payment-instruction model.</p></article>
-          <article><b>03</b><h3>What settles?</h3><p>Between banks, SIC moves central-bank money. The retail token does not enter the SNB.</p></article>
-          <article><b>04</b><h3>What if it fails?</h3><p id="insight-failure">A safe design pauses value and repairs through explicit controlled actions.</p></article>
+      <section class="dialog-section" aria-labelledby="dialog-scenario-title">
+        <div class="section-heading">
+          <h3 id="dialog-scenario-title">2. Scenario</h3>
+          <span>Recommended flows are marked</span>
         </div>
-        <p class="closing-line">Start with the product and legal claim. Then choose the ledger, settlement asset and technology.</p>
+        <div id="scenario-groups"></div>
       </section>
-    </main>
-    <script src="app.js"></script>
-  </body>
+    </div>
+  </dialog>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const models = {
+        instruction: {
+          number: "01",
+          name: "Payment instruction",
+          summary: "Bank executes a request",
+          defaultScenario: "interbank",
+          recommended: ["interbank", "same", "conditional", "correspondent"],
+          claim: "Claim remains on the bank",
+          authority: "Core banking account",
+          bankNote: "Account & controls",
+          context: "The digital object carries the payment request. The bank posts the resulting account movement to the core account record, which remains authoritative for the deposit."
+        },
+        mirrored: {
+          number: "02",
+          name: "Mirrored deposit",
+          summary: "CBS + token mirror",
+          defaultScenario: "conditional",
+          recommended: ["conditional", "mint", "interbank", "mismatch"],
+          claim: "Deposit plus synchronized token record",
+          authority: "Core banking, reconciled to DLT",
+          bankNote: "Core banking system",
+          context: "The core banking record remains authoritative while the token mirrors the position. Each step requires controlled synchronization and reconciliation between the two records."
+        },
+        native: {
+          number: "03",
+          name: "Native on-chain",
+          summary: "DLT is authoritative",
+          defaultScenario: "same",
+          recommended: ["same", "pvp", "bridge", "mismatch"],
+          claim: "On-chain bank deposit claim",
+          authority: "Authoritative DLT record",
+          bankNote: "Issuer & controls",
+          context: "The DLT holder record is authoritative for the bank deposit claim. Contract controls, keys, finality rules, and bank accounting support that legal effect."
+        },
+        stablecoin: {
+          number: "04",
+          name: "Non-bank stablecoin",
+          summary: "Separate issuer",
+          defaultScenario: "mint",
+          recommended: ["mint", "redeem", "bridge", "pvp"],
+          claim: "Claim on a separate issuer",
+          authority: "Issuer ledger or token contract",
+          bankNote: "Reserve bank",
+          context: "The token gives its holder a claim on a separate issuer. Reserve, redemption, and issuer-governance arrangements determine how the value is issued, transferred, and converted."
+        }
+      };
+
+      const visualSvg = (content, viewBox = "0 0 150 150") => `<svg viewBox="${viewBox}" aria-hidden="true">${content}</svg>`;
+
+      // Interface pictograms use Lucide SVG paths under the ISC License.
+      // Source and license details: demo/THIRD_PARTY_LICENSES.md
+      const lucideIcons = {"landmark":"<path d=\"M10 18v-7\" />\n  <path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\" />\n  <path d=\"M14 18v-7\" />\n  <path d=\"M18 18v-7\" />\n  <path d=\"M3 22h18\" />\n  <path d=\"M6 18v-7\" />","receipt-text":"<path d=\"M13 16H8\" />\n  <path d=\"M14 8H8\" />\n  <path d=\"M16 12H8\" />\n  <path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" />\n  <path d=\"M3 5V19A9 3 0 0 0 21 19V5\" />\n  <path d=\"M3 12A9 3 0 0 0 21 12\" />","network":"<rect x=\"16\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" />\n  <rect x=\"2\" y=\"16\" width=\"6\" height=\"6\" rx=\"1\" />\n  <rect x=\"9\" y=\"2\" width=\"6\" height=\"6\" rx=\"1\" />\n  <path d=\"M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3\" />\n  <path d=\"M12 12V8\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" />\n  <path d=\"M3 7h18\" />\n  <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","coins":"<path d=\"M13.744 17.736a6 6 0 1 1-7.48-7.48\" />\n  <path d=\"M15 6h1v4\" />\n  <path d=\"m6.134 14.768.866-.5 2 3.464\" />\n  <circle cx=\"16\" cy=\"8\" r=\"6\" />","banknote-arrow-up":"<path d=\"M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5\" />\n  <path d=\"M18 12h.01\" />\n  <path d=\"M19 22v-6\" />\n  <path d=\"m22 19-3-3-3 3\" />\n  <path d=\"M6 12h.01\" />\n  <circle cx=\"12\" cy=\"12\" r=\"2\" />","banknote-arrow-down":"<path d=\"M12 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5\" />\n  <path d=\"m16 19 3 3 3-3\" />\n  <path d=\"M18 12h.01\" />\n  <path d=\"M19 16v6\" />\n  <path d=\"M6 12h.01\" />\n  <circle cx=\"12\" cy=\"12\" r=\"2\" />","arrow-right-left":"<path d=\"m16 3 4 4-4 4\" />\n  <path d=\"M20 7H4\" />\n  <path d=\"m8 21-4-4 4-4\" />\n  <path d=\"M4 17h16\" />","lock-keyhole":"<circle cx=\"12\" cy=\"16\" r=\"1\" />\n  <rect x=\"3\" y=\"10\" width=\"18\" height=\"12\" rx=\"2\" />\n  <path d=\"M7 10V7a5 5 0 0 1 10 0v3\" />","scale":"<path d=\"M12 3v18\" />\n  <path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" />\n  <path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" />\n  <path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" />\n  <path d=\"M7 21h10\" />","route":"<circle cx=\"6\" cy=\"19\" r=\"3\" />\n  <path d=\"M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15\" />\n  <circle cx=\"18\" cy=\"5\" r=\"3\" />","waypoints":"<path d=\"m10.586 5.414-5.172 5.172\" />\n  <path d=\"m18.586 13.414-5.172 5.172\" />\n  <path d=\"M6 12h12\" />\n  <circle cx=\"12\" cy=\"20\" r=\"2\" />\n  <circle cx=\"12\" cy=\"4\" r=\"2\" />\n  <circle cx=\"20\" cy=\"12\" r=\"2\" />\n  <circle cx=\"4\" cy=\"12\" r=\"2\" />","badge-check":"<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\" />\n  <path d=\"m9 12 2 2 4-4\" />","triangle-alert":"<path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" />\n  <path d=\"M12 9v4\" />\n  <path d=\"M12 17h.01\" />","shield-alert":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\" />\n  <path d=\"M12 8v4\" />\n  <path d=\"M12 16h.01\" />","building-2":"<path d=\"M10 12h4\" />\n  <path d=\"M10 8h4\" />\n  <path d=\"M14 21v-3a2 2 0 0 0-4 0v3\" />\n  <path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\" />\n  <path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\" />","key-round":"<path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\" />\n  <circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","circle-pause":"<circle cx=\"12\" cy=\"12\" r=\"10\" />\n  <line x1=\"10\" x2=\"10\" y1=\"15\" y2=\"9\" />\n  <line x1=\"14\" x2=\"14\" y1=\"15\" y2=\"9\" />","workflow":"<rect width=\"8\" height=\"8\" x=\"3\" y=\"3\" rx=\"2\" />\n  <path d=\"M7 11v4a2 2 0 0 0 2 2h4\" />\n  <rect width=\"8\" height=\"8\" x=\"13\" y=\"13\" rx=\"2\" />","git-compare-arrows":"<circle cx=\"5\" cy=\"6\" r=\"3\" />\n  <path d=\"M12 6h5a2 2 0 0 1 2 2v7\" />\n  <path d=\"m15 9-3-3 3-3\" />\n  <circle cx=\"19\" cy=\"18\" r=\"3\" />\n  <path d=\"M12 18H7a2 2 0 0 1-2-2V9\" />\n  <path d=\"m9 15 3 3-3 3\" />","scan-line":"<path d=\"M3 7V5a2 2 0 0 1 2-2h2\" />\n  <path d=\"M17 3h2a2 2 0 0 1 2 2v2\" />\n  <path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" />\n  <path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" />\n  <path d=\"M7 12h10\" />","blocks":"<path d=\"M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2\" />\n  <rect x=\"14\" y=\"2\" width=\"8\" height=\"8\" rx=\"1\" />","repeat-2":"<path d=\"m2 9 3-3 3 3\" />\n  <path d=\"M13 18H7a2 2 0 0 1-2-2V6\" />\n  <path d=\"m22 15-3 3-3-3\" />\n  <path d=\"M11 6h6a2 2 0 0 1 2 2v10\" />","refresh-cw":"<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\" />\n  <path d=\"M21 3v5h-5\" />\n  <path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\" />\n  <path d=\"M8 16H3v5\" />"};
+
+      const lucideSvg = (name) => `<svg class="lucide-small" viewBox="0 0 24 24" aria-hidden="true">${lucideIcons[name]}</svg>`;
+
+      const iconVisual = (name, badge = "") => visualSvg(`
+        <ellipse class="scene-shadow" cx="75" cy="140" rx="54" ry="7"></ellipse>
+        <circle class="scene-red" cx="78" cy="67" r="54"></circle>
+        <circle class="scene-paper" stroke="#171717" stroke-width="4" cx="69" cy="61" r="50"></circle>
+        <g class="lucide-main" transform="translate(33 25) scale(3)">${lucideIcons[name]}</g>
+        ${badge ? `<circle class="scene-red" cx="111" cy="109" r="23"></circle><g class="lucide-light" transform="translate(100 98) scale(.92)">${lucideIcons[badge]}</g>` : ""}
+      `);
+
+      const modelVisuals = {
+        instruction: iconVisual("receipt-text", "arrow-right-left"),
+        mirrored: iconVisual("database", "refresh-cw"),
+        native: iconVisual("network", "badge-check"),
+        stablecoin: iconVisual("coins", "wallet-cards")
+      };
+
+      document.querySelectorAll?.("[data-hero-icon]").forEach((visual) => {
+        visual.innerHTML = lucideSvg(visual.dataset.heroIcon);
+      });
+
+      document.querySelectorAll?.("[data-guide-icon]").forEach((visual) => {
+        visual.innerHTML = iconVisual(visual.dataset.guideIcon, visual.dataset.guideBadge || "");
+      });
+
+      const scenarioVisuals = {
+        mint: iconVisual("banknote-arrow-up", "badge-check"),
+        redeem: iconVisual("banknote-arrow-down", "landmark"),
+        same: iconVisual("landmark", "arrow-right-left"),
+        interbank: iconVisual("building-2", "landmark"),
+        conditional: iconVisual("lock-keyhole", "badge-check"),
+        netting: iconVisual("scale", "arrow-right-left"),
+        correspondent: iconVisual("route", "workflow"),
+        pvp: iconVisual("repeat-2", "coins"),
+        cbdc: iconVisual("landmark", "coins"),
+        bridge: iconVisual("waypoints", "blocks"),
+        mismatch: iconVisual("git-compare-arrows", "triangle-alert")
+      };
+
+      const failureVisuals = {
+        aml: lucideSvg("shield-alert"),
+        dlt: lucideSvg("network"),
+        sic: lucideSvg("landmark"),
+        receiver: lucideSvg("building-2"),
+        reconciliation: lucideSvg("git-compare-arrows"),
+        key: lucideSvg("key-round")
+      };
+      const failureTargets = { aml: 1, dlt: 2, sic: 2, receiver: 3, reconciliation: 2, key: 2 };
+
+      const categories = {
+        lifecycle: "Lifecycle",
+        domestic: "Domestic",
+        crossborder: "Cross-border",
+        infrastructure: "Infrastructure & controls"
+      };
+
+      const modelIds = Object.keys(models);
+      const copies = (text, overrides = {}) => Object.fromEntries(modelIds.map((id) => [id, overrides[id] || text]));
+      const scene = (focus, stateLabel, moves = []) => ({ focus: Array.isArray(focus) ? focus : [focus], stateLabel, moves });
+      const step = (label, actor, action, object, result, sceneState, explanation, overrides = {}) => ({
+        label, actor, action, object, result, scene: sceneState, explanations: copies(explanation, overrides)
+      });
+
+      const scenarios = {
+        mint: {
+          name: "Convert / mint",
+          category: "lifecycle",
+          summary: "Reserve eligible funds and create the selected digital-money form.",
+          description: "Alice asks a bank or separate issuer to convert CHF 100 of eligible existing funds into the selected digital-money form. The flow examines funding checks, reservation, creation on the authorized record, reconciliation and delivery to Alice’s wallet.",
+          settlement: "Issuance against eligible funds",
+          steps: [
+            step("Requested", "Alice", "Requests conversion", "CHF 100", "Conversion request received", scene("alice", "Request received"), "Alice asks to convert CHF 100 into the selected digital-money form. The existing funds remain available until the issuing process reserves them."),
+            step("Checked", "Bank or issuer", "Checks eligibility", "Customer, wallet and funds", "Checks passed", scene("issuer", "Eligibility confirmed", [{ from: "alice", to: "issuer", label: "REQ" }]), "The bank or issuer checks Alice, the wallet, the source of funds, product eligibility and transaction limits. A successful result allows the funds to be reserved.",
+              { stablecoin: "The separate stablecoin issuer checks Alice, the destination wallet, the funding source and the issuer’s eligibility rules. A successful result allows the reserve-backed issuance process to continue." }),
+            step("Funds reserved", "Bank or issuer", "Reserves funding", "CHF 100 funding position", "CHF 100 reserved", scene("issuer", "Funds reserved"), "CHF 100 is reserved against another use while issuance is pending. Alice keeps the defined claim on the reserved value.",
+              {
+                instruction: "Bank A reserves CHF 100 in Alice’s ordinary account for the requested payment instruction. The core account remains the authoritative deposit record.",
+                mirrored: "Bank A moves CHF 100 into the controlled mirror position recorded in its core system. That reservation will back the matching token amount.",
+                native: "Bank A reserves CHF 100 before creating the authoritative on-chain deposit claim. The reservation prevents duplicate use during issuance.",
+                stablecoin: "Eligible funds are committed to the stablecoin issuer’s reserve or funding arrangement. The issuer can mint only against the accepted funding position."
+              }),
+            step("Digital object created", "Authorized ledger", "Creates the instruction or token", "Digital representation", "Digital object recorded", scene("ledger", "Digital object created", [{ from: "issuer", to: "ledger", label: "CHF" }]), "The authorized ledger creates the selected digital object after the funding control succeeds.",
+              {
+                instruction: "Bank A records a digital payment instruction for CHF 100. The instruction carries the request while the core account continues to record Alice’s deposit.",
+                mirrored: "The DLT mints CHF 100 of mirrored deposit tokens against the controlled core-banking position. Token supply and the mirror position must agree.",
+                native: "The DLT creates the authoritative CHF 100 deposit claim and records Alice as holder. Bank reporting systems must ingest the event.",
+                stablecoin: "The separate issuer mints CHF 100 of stablecoin value and records Alice as holder. The issuer’s reserve and supply records must support the issuance."
+              }),
+            step("Records aligned", "Bank or issuer", "Aligns control records", "Ledger, account and audit reference", "Required records agree", scene(["issuer", "ledger"], "Records aligned"), "The relevant ledger, account and audit records are matched before the new position is released for use.",
+              {
+                instruction: "Bank A links the payment instruction to Alice’s core-account record and audit reference. The instruction status and account posting controls agree.",
+                mirrored: "Bank A reconciles token supply with the customer mirror subledger and general-ledger control balance. All three records show CHF 100.",
+                native: "The authoritative DLT event is ingested into the bank’s accounting, reporting and control records. The records acknowledge the same holder and amount.",
+                stablecoin: "The issuer reconciles token supply with its reserve, guarantee and customer-entitlement records. The supported position equals CHF 100."
+              }),
+            step("Available", "Alice", "Receives usable value", "Selected digital-money form", "CHF 100 available", scene("wallet", "Value available", [{ from: "ledger", to: "wallet", label: "CHF" }]), "Alice can now use the CHF 100 position within the selected product rules and permitted network.",
+              {
+                instruction: "Alice can submit the recorded instruction through Bank A’s accepted payment workflow. Account postings still determine when her bank deposit changes.",
+                mirrored: "Alice can transfer the mirrored token while Bank A maintains the corresponding controlled core-banking position.",
+                native: "Alice holds the authoritative on-chain bank deposit claim and can transfer it under the contract and bank controls.",
+                stablecoin: "Alice holds a claim on the stablecoin issuer and can transfer it under the issuer’s network and redemption rules."
+              }),
+            step("Complete", "Issuing arrangement", "Confirms conversion", "CHF 100 position", "Conversion complete", scene(["ledger", "wallet"], "Conversion complete"), "The conversion finishes with one usable CHF 100 position in the selected form and a complete audit trail.")
+          ]
+        },
+        redeem: {
+          name: "Redeem / burn",
+          category: "lifecycle",
+          summary: "Remove the digital position and release account money or a payout.",
+          description: "Alice returns a CHF 100 digital position to the bank or issuer for conversion into account money or an approved payout. The flow checks ownership, locks the position, removes the digital representation, verifies the evidence and releases the corresponding funds.",
+          settlement: "Redemption into account money or issuer payout",
+          steps: [
+            step("Requested", "Alice", "Requests redemption", "CHF 100 digital position", "Redemption request received", scene("wallet", "Request received"), "Alice asks to redeem CHF 100 from the selected digital form into an eligible account or issuer payout."),
+            step("Checked", "Bank or issuer", "Checks ownership and eligibility", "Token, wallet and destination", "Redemption checks passed", scene("issuer", "Redemption approved", [{ from: "wallet", to: "issuer", label: "REQ" }]), "The bank or issuer checks ownership, wallet authority, compliance requirements and the destination for the released funds."),
+            step("Position locked", "Bank or issuer", "Prevents another transfer", "CHF 100 digital position", "CHF 100 locked", scene(["wallet", "issuer"], "Position locked"), "The CHF 100 digital position is locked while redemption remains pending. The lock prevents a competing transfer."),
+            step("Representation removed", "Authorized ledger", "Burns or consumes the object", "Token or instruction", "Digital object disabled", scene("ledger", "Representation removed", [{ from: "issuer", to: "ledger", label: "CHF" }]), "The authorized ledger disables the digital representation and records the event.",
+              {
+                instruction: "Bank A consumes or cancels the CHF 100 payment instruction. The ordinary core-account balance changes when the bank posts the accepted result.",
+                mirrored: "The DLT burns CHF 100 of mirrored tokens. Bank A keeps the mirror balance reserved until final burn evidence is accepted.",
+                native: "The DLT extinguishes the authoritative CHF 100 on-chain deposit claim. The bank can then create the approved conventional value.",
+                stablecoin: "The issuer burns CHF 100 of stablecoins and reduces the holder’s issuer claim. The corresponding reserve or payout process can then proceed."
+              }),
+            step("Evidence matched", "Bank or issuer", "Verifies removal", "Burn or cancellation evidence", "Evidence accepted", scene(["issuer", "ledger"], "Evidence accepted"), "The bank or issuer matches the final removal event with the pending redemption and its audit reference."),
+            step("Funds released", "Bank or issuer", "Credits the destination", "CHF 100 account value or payout", "CHF 100 released", scene("account", "Funds released", [{ from: "ledger", to: "account", label: "CHF" }]), "CHF 100 is released to the eligible destination after the removal evidence is accepted.",
+              {
+                instruction: "Bank A posts the accepted instruction result to the ordinary account record and releases the corresponding CHF 100.",
+                mirrored: "Bank A releases CHF 100 from the mirror position into the ordinary account after CBS, GL and DLT records agree.",
+                native: "Bank A credits the approved account or payout after the authoritative on-chain claim has been extinguished.",
+                stablecoin: "The issuer pays CHF 100 through its reserve or guarantee arrangement after the token burn is confirmed."
+              }),
+            step("Complete", "Redemption arrangement", "Confirms redemption", "Released CHF 100", "Redemption complete", scene(["ledger", "account"], "Redemption complete"), "The digital object can no longer be used and the destination records the released CHF 100.")
+          ]
+        },
+        same: {
+          name: "Same-bank transfer",
+          category: "domestic",
+          summary: "Move value between two customers inside one issuing perimeter.",
+          description: "Alice sends CHF 100 to Luca while both remain within the same bank or issuer perimeter. The institution checks the parties and funds, updates the authoritative holder and internal records, and makes the value available to Luca without using an external interbank settlement rail.",
+          settlement: "Internal transfer with the same debtor",
+          steps: [
+            step("Requested", "Alice", "Initiates payment", "CHF 100", "Payment request received", scene("alice", "Request received"), "Alice asks to transfer CHF 100 to Luca within the same issuing perimeter."),
+            step("Checked", "Bank or issuer", "Checks both parties", "Payment instruction and balances", "Transfer checks passed", scene("bankA", "Transfer approved", [{ from: "alice", to: "bankA", label: "REQ" }]), "The institution checks Alice, Luca, the available balance, payment authority, limits and compliance requirements."),
+            step("Value reserved", "Bank or issuer", "Reserves CHF 100", "Alice’s position", "CHF 100 reserved", scene(["alice", "bankA"], "Value reserved"), "CHF 100 is reserved against another use while Alice remains the holder of the pending position."),
+            step("Holder changed", "Authoritative record", "Moves value to Luca", "CHF 100 claim or instruction", "Transfer event recorded", scene("ledger", "Holder change recorded", [{ from: "bankA", to: "ledger", label: "CHF" }]), "The selected authoritative record moves or prepares the CHF 100 holder change from Alice to Luca.",
+              {
+                instruction: "Bank A accepts the payment instruction and prepares the core-account debit and credit. Movement of the instruction coordinates the posting.",
+                mirrored: "The DLT transfers the mirrored token to Luca while Bank A prepares the matching mirror-subaccount reallocation.",
+                native: "The authoritative DLT transfer records Luca as the new holder of the bank deposit claim.",
+                stablecoin: "The issuer ledger transfers the CHF 100 issuer claim from Alice’s wallet to Luca’s wallet."
+              }),
+            step("Internal records posted", "Bank or issuer", "Posts the reallocation", "Customer and control records", "Internal records updated", scene(["bankA", "ledger"], "Internal records updated"), "The institution posts the internal reallocation and aligns the customer, ledger and control records."),
+            step("Luca receives", "Luca", "Receives usable value", "CHF 100", "CHF 100 available to Luca", scene("luca", "Luca credited", [{ from: "ledger", to: "luca", label: "CHF" }]), "Luca can see and use the CHF 100 position under the selected product rules. The total liability of the same issuer remains CHF 100."),
+            step("Complete", "Issuing arrangement", "Confirms transfer", "Aligned holder records", "Same-bank transfer complete", scene(["ledger", "luca"], "Transfer complete"), "The transfer is complete after the authoritative holder record and supporting bank or issuer records agree.")
+          ]
+        },
+        interbank: {
+          name: "Swiss interbank",
+          category: "domestic",
+          summary: "Send value from Bank A to Bank B and settle the institutional leg.",
+          description: "Alice at Bank A sends CHF 100 to Luca at Bank B. The flow separates the customer-facing claims from the institutional settlement leg through SIC and SNB money; for a stablecoin, the same issuer’s ledger transfers the issuer claim directly.",
+          settlement: "SIC central-bank money, or issuer-ledger transfer for a stablecoin",
+          steps: [
+            step("Requested", "Alice", "Initiates interbank payment", "CHF 100", "Payment request received", scene("alice", "Request received"), "Alice asks Bank A to send CHF 100 to Luca at Bank B."),
+            step("Bank A checks", "Bank A", "Checks payment and destination", "Customer claim and instruction", "Sending checks passed", scene("bankA", "Bank A approved", [{ from: "alice", to: "bankA", label: "REQ" }]), "Bank A checks Alice, the available balance, sanctions controls, Bank B routing and Luca’s receiving arrangement."),
+            step("Sending value reserved", "Bank A", "Reserves the sending position", "Alice’s CHF 100 claim", "CHF 100 reserved", scene(["alice", "bankA"], "Sending value reserved"), "Bank A reserves CHF 100 while Alice keeps the defined pending claim under the scheme rules."),
+            step("Sending record prepared", "Bank A and selected ledger", "Prepares outgoing value", "Instruction, token or issuer claim", "Outgoing leg prepared", scene(["bankA", "settlement"], "Outgoing leg prepared", [{ from: "bankA", to: "settlement", label: "CHF" }]), "The sending side records the outgoing action required by the selected model.",
+              {
+                instruction: "Bank A accepts the payment instruction and prepares the ordinary interbank payment. Its core account records Alice’s pending debit.",
+                mirrored: "Bank A locks or burns the outgoing mirrored token and records the corresponding pending CBS position.",
+                native: "The on-chain Bank A claim enters the scheme’s explicit debtor-transformation and settlement process.",
+                stablecoin: "The stablecoin issuer prepares a direct transfer of the same issuer claim to Luca’s receiving wallet."
+              }),
+            step("Settlement completed", "SIC / SNB or issuer ledger", "Settles the institutional leg", "CHF 100 settlement asset", "Settlement evidence recorded", scene("settlement", "Settlement completed", [{ from: "settlement", to: "bankB", label: "CHF" }]), "The settlement mechanism records the CHF 100 institutional value movement.",
+              {
+                instruction: "SIC moves central-bank money from Bank A to Bank B for the accepted payment.",
+                mirrored: "SIC moves central-bank money to Bank B after Bank A’s outgoing mirrored claim reaches its required pending state.",
+                native: "SIC or the agreed settlement arrangement completes the institutional leg required for Bank B to create a new claim.",
+                stablecoin: "The issuer ledger transfers the same issuer claim to the receiving side. This direct issuer-liability flow does not require SIC."
+              }),
+            step("Receiving side accepts", "Bank B", "Accepts and records the incoming value", "Luca’s receiving position", "Luca’s claim created", scene(["bankB", "luca"], "Receiving side accepted", [{ from: "bankB", to: "luca", label: "CHF" }]), "Bank B accepts the incoming transfer and records the position available to Luca.",
+              { stablecoin: "The receiving wallet or institution accepts the transferred stablecoin issuer claim and makes it available to Luca." }),
+            step("Complete", "Both institutions", "Confirm final state", "Settlement and customer records", "Interbank transfer complete", scene(["settlement", "bankB", "luca"], "Transfer complete"), "The flow is complete after settlement evidence, Bank B acceptance and the customer records all show the same outcome.")
+          ]
+        },
+        conditional: {
+          name: "Conditional payment",
+          category: "domestic",
+          summary: "Lock value and release it after an agreed condition is verified.",
+          description: "Alice and Luca agree that CHF 100 will be paid only after an authorized verifier confirms a defined event or milestone. The bank or issuer checks the arrangement, locks Alice’s value, waits for valid evidence and releases the payment to Luca when the condition is approved.",
+          settlement: "Condition-triggered transfer",
+          steps: [
+            step("Terms agreed", "Alice and Luca", "Agree release condition", "CHF 100 and evidence rule", "Condition recorded", scene(["alice", "luca"], "Terms agreed"), "Alice and Luca agree the CHF 100 payment condition, the accepted evidence and the authorized verifier."),
+            step("Checks completed", "Bank or issuer", "Checks parties and workflow", "Customers, funds and condition", "Workflow approved", scene("bankA", "Workflow approved", [{ from: "alice", to: "bankA", label: "REQ" }]), "The bank or issuer checks both parties, their authority, the available value and the permitted conditional workflow."),
+            step("Funds locked", "Bank or issuer", "Locks CHF 100", "Alice’s pending position", "CHF 100 locked", scene(["bankA", "condition"], "Funds locked", [{ from: "bankA", to: "condition", label: "CHF" }]), "CHF 100 is locked against conflicting use while Alice remains the holder of the pending position."),
+            step("Evidence awaited", "Condition workflow", "Waits for the agreed event", "Milestone evidence", "Condition pending", scene("condition", "Condition pending"), "The workflow waits for the agreed evidence from the authorized source. The CHF 100 remains locked."),
+            step("Condition verified", "Authorized verifier", "Confirms the event", "Milestone evidence", "Release authorized", scene("condition", "Condition verified"), "The authorized verifier confirms that the agreed event occurred and records approval to release the payment."),
+            step("Payment released", "Bank or issuer", "Moves value to Luca", "CHF 100", "Luca credited", scene("luca", "Payment released", [{ from: "condition", to: "luca", label: "CHF" }]), "The bank or issuer releases CHF 100 to Luca and records the holder change under the selected model."),
+            step("Complete", "Conditional workflow", "Confirms aligned records", "Condition, payment and ledger records", "Conditional payment complete", scene(["condition", "luca"], "Payment complete"), "The conditional payment is complete after the verification, holder and authoritative records agree.")
+          ]
+        },
+        netting: {
+          name: "Gross versus net",
+          category: "domestic",
+          summary: "Compare separate gross payments with one net settlement position.",
+          description: "Bank A owes Bank B CHF 100 while Bank B owes Bank A CHF 60. The flow compares CHF 160 of separate gross settlement activity with a net cycle that produces one CHF 40 obligation from Bank A to Bank B, then settles and reconciles that result.",
+          settlement: "Gross or deferred net settlement",
+          steps: [
+            step("Obligations received", "Bank A and Bank B", "Submit opposing payments", "CHF 100 and CHF 60 obligations", "Two obligations queued", scene(["bankA", "bankB"], "Obligations received"), "Bank A submits a CHF 100 obligation and Bank B submits a CHF 60 obligation."),
+            step("Payments matched", "Payment queue", "Matches the obligations", "Two payment instructions", "Payments eligible for comparison", scene("queue", "Payments matched", [{ from: "bankA", to: "queue", label: "100" }, { from: "bankB", to: "settlement", label: "60" }]), "The queue validates and matches the two obligations as separate payments before calculating any offset."),
+            step("Gross result measured", "Settlement operator", "Measures gross activity", "CHF 160 total movement", "Gross requirement calculated", scene("netting", "Gross: CHF 160"), "Gross settlement would move CHF 100 and CHF 60 separately, producing CHF 160 of total settlement activity."),
+            step("Net position calculated", "Netting cycle", "Offsets obligations", "CHF 40 net position", "Bank A owes Bank B CHF 40", scene("netting", "Net: CHF 40"), "The agreed netting convention offsets the two obligations and calculates a CHF 40 position from Bank A to Bank B."),
+            step("Net amount settled", "SIC / scheme settlement", "Settles CHF 40", "Net institutional position", "CHF 40 settled", scene("settlement", "Net amount settled", [{ from: "netting", to: "settlement", label: "40" }]), "The settlement mechanism transfers the CHF 40 net amount at the agreed settlement point.",
+              { stablecoin: "The issuer scheme or participant arrangement settles the CHF 40 net obligation under its own rules." }),
+            step("Participant records posted", "Bank A and Bank B", "Post the settled result", "Customer, scheme and GL records", "Participant records aligned", scene(["bankA", "bankB"], "Participant records posted", [{ from: "settlement", to: "bankB", label: "40" }]), "Both participants post the settled result to their customer, scheme and general-ledger records."),
+            step("Complete", "Netting arrangement", "Confirms the cycle", "Gross obligations and net settlement", "Netting cycle complete", scene(["netting", "settlement"], "Cycle complete"), "The cycle is complete after the CHF 40 settlement and participant postings reconcile to the original gross obligations.")
+          ]
+        },
+        correspondent: {
+          name: "Agorá five-stage payment",
+          category: "crossborder",
+          summary: "Coordinate payee confirmation, routing, validation, locking and settlement.",
+          description: "A cross-border payment is coordinated across the receiving institution, participating banks, FX liquidity and connected settlement arrangements. The five-stage path confirms Luca, discovers a viable CHF-to-EUR route, validates each participant privately, locks the required balances, delegates limited authority and settles the payment.",
+          settlement: "Coordinated commercial and central-bank legs",
+          steps: [
+            step("Confirm payee", "Receiving institution", "Confirms the intended beneficiary", "Payee identity and account", "Payee confirmed", scene("payee", "Payee confirmed"), "The receiving institution confirms Luca and the intended receiving arrangement before route selection begins."),
+            step("Discover path", "Participating institutions", "Find a viable corridor", "Banks, FX liquidity and settlement rails", "Route selected", scene("route", "Route selected", [{ from: "payee", to: "route", label: "PATH" }]), "Participants identify a viable CHF-to-EUR route, including the banks, FX liquidity and settlement rails required for the payment."),
+            step("Validate", "Each participating institution", "Completes private checks", "Compliance, funding and readiness", "Validations endorsed", scene("validation", "Validations endorsed", [{ from: "route", to: "validation", label: "OK" }]), "Each institution privately validates compliance, amount, funding and operational readiness, then shares its endorsed outcome."),
+            step("Lock and delegate", "Participating institutions", "Lock balances and delegate authority", "Required currency legs", "Both legs committed", scene("lock", "Balances locked", [{ from: "validation", to: "lock", label: "LOCK" }]), "The required balances are locked and narrowly scoped settlement authority is delegated after every validation succeeds."),
+            step("Settle", "Coordinated settlement workflow", "Executes both payment legs", "Commercial and central-bank money legs", "Usable receiving value recorded", scene("settlement", "Coordinated settlement complete", [{ from: "lock", to: "settlement", label: "FX" }]), "The coordinated payment legs execute and the receiving institution records usable value after the agreed settlement conditions are met.")
+          ]
+        },
+        pvp: {
+          name: "Cross-border PvP",
+          category: "crossborder",
+          summary: "Exchange CHF and EUR so both currency legs complete together.",
+          description: "Two parties exchange CHF and EUR through their participating institutions under agreed trade and settlement terms. Each currency leg is checked and locked separately, then both legs are released as one coordinated outcome so neither party completes its payment without receiving the other currency.",
+          settlement: "Payment-versus-payment",
+          steps: [
+            step("Trade agreed", "Both parties", "Agree exchange terms", "CHF 100 and EUR 100 legs", "Trade terms recorded", scene(["chf", "eur"], "Trade agreed"), "The parties agree the currencies, amounts, exchange rate and settlement terms for the CHF and EUR legs."),
+            step("Parties checked", "Participating institutions", "Check both currency legs", "Parties, wallets and settlement eligibility", "Both legs approved", scene(["bankA", "bankB"], "Both legs approved"), "Both institutions complete identity, sanctions, wallet, currency and settlement-eligibility checks."),
+            step("Both legs locked", "Participating institutions", "Lock CHF and EUR", "Two currency positions", "Both legs unavailable for other use", scene(["bankA", "bankB", "pvp"], "Both legs locked", [{ from: "chf", to: "bankA", label: "CHF" }, { from: "eur", to: "bankB", label: "EUR" }]), "The CHF and EUR positions are locked so each remains available to the coordinated exchange."),
+            step("Atomic release authorized", "PvP coordinator", "Confirms simultaneous execution", "CHF and EUR settlement instructions", "Both legs ready", scene("pvp", "Atomic release ready", [{ from: "bankA", to: "pvp", label: "CHF" }, { from: "bankB", to: "pvp", label: "EUR" }]), "The PvP coordinator confirms that both settlement instructions can execute together."),
+            step("Both legs settle", "Connected settlement systems", "Release both currencies", "CHF and EUR legs", "Both currency movements recorded", scene(["pvp", "bankA", "bankB"], "Both legs settled", [{ from: "pvp", to: "bankB", label: "CHF" }, { from: "pvp", to: "bankA", label: "EUR" }]), "The connected systems release the CHF and EUR legs as one coordinated outcome."),
+            step("Recipients accept", "Receiving parties", "Accept new currency positions", "CHF and EUR claims", "Both recipients credited", scene(["chf", "eur"], "Recipients credited", [{ from: "bankB", to: "eur", label: "CHF" }, { from: "bankA", to: "chf", label: "EUR" }]), "Each recipient accepts the new currency position under the relevant bank or issuer rules."),
+            step("Complete", "PvP arrangement", "Confirms both legs", "Settlement and holder records", "PvP exchange complete", scene(["pvp", "chf", "eur"], "Exchange complete"), "The exchange is complete after both legs and all connected holder records show the coordinated result.")
+          ]
+        },
+        cbdc: {
+          name: "Wholesale CBDC",
+          category: "crossborder",
+          summary: "Settle the bank-to-bank obligation in wholesale central-bank money.",
+          description: "Bank A prepares a customer payment that will create a CHF 100 commercial-bank claim for Luca at Bank B. The banks settle their separate institutional obligation in wholesale central-bank money, then reconcile the wCBDC evidence with their customer, accounting and control records.",
+          settlement: "Wholesale central-bank money",
+          steps: [
+            step("Payment prepared", "Bank A", "Prepares customer and settlement legs", "Customer transfer and institutional obligation", "Payment package prepared", scene(["alice", "bankA"], "Payment prepared"), "Bank A prepares the customer transfer and identifies the related institutional settlement obligation."),
+            step("Banks validated", "Settlement service", "Checks participating banks", "Eligibility, instructions and liquidity access", "Banks eligible", scene(["bankA", "bankB"], "Banks validated"), "The service validates both banks, their instructions and their eligibility to use wholesale central-bank money."),
+            step("wCBDC reserved", "Bank A", "Reserves wholesale liquidity", "CHF 100 wCBDC", "Institutional liquidity ready", scene(["bankA", "wcbdc"], "wCBDC reserved", [{ from: "bankA", to: "wcbdc", label: "wCBDC" }]), "Bank A reserves CHF 100 of wholesale CBDC for the institutional settlement leg. The asset remains available only to eligible institutions."),
+            step("Institutional leg settled", "wCBDC rail", "Transfers central-bank money", "CHF 100 wCBDC", "Bank B receives wCBDC", scene(["wcbdc", "bankB"], "wCBDC settled", [{ from: "wcbdc", to: "bankB", label: "wCBDC" }]), "The wholesale-CBDC rail transfers CHF 100 of central-bank money from Bank A to Bank B."),
+            step("Records reconciled", "Both banks", "Match settlement evidence", "Customer, GL and wCBDC records", "Institutional records agree", scene(["bankA", "wcbdc", "bankB"], "Records reconciled"), "Both banks reconcile the customer instructions, general-ledger postings and wholesale-CBDC settlement evidence."),
+            step("Customer leg posted", "Bank B", "Records Luca’s position", "Customer-facing CHF 100 claim", "Luca credited", scene(["bankB", "luca"], "Customer leg posted", [{ from: "bankB", to: "luca", label: "CHF" }]), "Bank B accepts the customer-facing transfer and records CHF 100 for Luca after institutional settlement succeeds."),
+            step("Complete", "Both banks", "Confirm both layers", "Customer and central-bank-money records", "Wholesale settlement workflow complete", scene(["alice", "wcbdc", "luca"], "Workflow complete"), "The workflow is complete after the commercial-bank customer records and the wholesale central-bank-money records show the intended result.")
+          ]
+        },
+        bridge: {
+          name: "Bridge / wrapped token",
+          category: "infrastructure",
+          summary: "Lock source value and create a wrapped representation on another ledger.",
+          description: "Alice asks to make a CHF 100 source-ledger position usable on another network. The source value is locked, the bridge validates and relays proof across the trust boundary, and the destination ledger creates a wrapped representation that remains dependent on the original lock.",
+          settlement: "Lock-and-mint across ledgers",
+          steps: [
+            step("Transfer requested", "Alice", "Requests cross-ledger movement", "CHF 100 source position", "Bridge request received", scene("sourceWallet", "Request received"), "Alice asks to move CHF 100 from the source ledger to a destination network through the bridge."),
+            step("Source checked", "Bridge", "Checks both networks and the wallet", "Source asset, destination and contract version", "Bridge checks passed", scene(["sourceLedger", "bridge"], "Source checked", [{ from: "sourceWallet", to: "sourceLedger", label: "REQ" }]), "The bridge checks Alice’s wallet, the source position, destination network, contract version and transfer controls."),
+            step("Source value locked", "Source ledger", "Locks CHF 100", "Source-ledger position", "CHF 100 locked", scene("sourceLedger", "Source value locked", [{ from: "sourceWallet", to: "sourceLedger", label: "CHF" }]), "The source ledger locks CHF 100 so the value remains committed while the destination representation exists."),
+            step("Proof relayed", "Bridge", "Relays lock evidence", "Source-ledger proof or attestation", "Destination authorized to proceed", scene("bridge", "Proof relayed", [{ from: "sourceLedger", to: "bridge", label: "PROOF" }]), "The bridge validates and relays evidence of the source lock across the trust boundary."),
+            step("Representation created", "Destination ledger", "Creates wrapped value", "CHF 100 destination representation", "Wrapped position recorded", scene("destLedger", "Representation created", [{ from: "bridge", to: "destLedger", label: "WRAP" }]), "The destination ledger creates a CHF 100 wrapped representation against the confirmed source lock."),
+            step("Destination receives", "Destination wallet", "Receives wrapped value", "CHF 100 destination position", "Value available on destination", scene("destWallet", "Destination credited", [{ from: "destLedger", to: "destWallet", label: "CHF" }]), "The destination wallet receives the wrapped position under the destination and origin issuer rules."),
+            step("Complete", "Bridge arrangement", "Confirms both ledgers", "Lock, proof and destination records", "Cross-ledger movement complete", scene(["sourceLedger", "bridge", "destLedger"], "Bridge flow complete"), "The movement is complete after the source lock, bridge evidence and destination representation remain consistent.")
+          ]
+        },
+        mismatch: {
+          name: "Mismatch + recovery",
+          category: "infrastructure",
+          summary: "Detect, contain and repair records that describe one position differently.",
+          description: "Operations compares the bank, ledger and control records that should describe the same CHF 100 position. The flow introduces a CHF 10 difference, pauses affected movement, identifies the missing or duplicated event, repairs the authorized record and confirms that every system agrees again.",
+          settlement: "Reconciliation and controlled recovery",
+          steps: [
+            step("Records captured", "Operations", "Collects comparable records", "CHF 100 position across systems", "Records ready for comparison", scene("operations", "Records captured"), "Operations captures the bank, ledger and control records that should describe the same CHF 100 position."),
+            step("Comparison run", "Reconciliation control", "Compares expected and observed states", "Bank and ledger records", "Records initially matched", scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "CBS" }, { from: "ledgerRecord", to: "reconcile", label: "DLT" }]), "The reconciliation control compares amounts, holders, event identifiers and posting references. The records initially agree."),
+            step("Mismatch detected", "Reconciliation control", "Finds a CHF 10 difference", "Expected and observed positions", "Records disagree", scene(["bankRecord", "ledgerRecord", "reconcile"], "CHF 10 mismatch detected"), "The control detects a CHF 10 difference, leaving the systems without one consistent view of the position."),
+            step("Movement paused", "Control framework", "Contains further movement", "Affected customer position", "Outbound activity blocked", scene("reconcile", "Movement paused"), "Minting and outbound movement stop while the customer position remains held under the last valid state."),
+            step("Cause isolated", "Operations", "Traces the discrepancy", "Events, postings and replay evidence", "Source of break identified", scene(["operations", "reconcile"], "Cause isolated"), "Operations compares event identifiers, postings, contract events and replay evidence to locate the missing or duplicated record."),
+            step("Records repaired", "Authorized operations staff", "Repairs or replays the event", "Affected record set", "Records brought into agreement", scene(["bankRecord", "ledgerRecord"], "Records repaired", [{ from: "reconcile", to: "ledgerRecord", label: "FIX" }]), "Authorized staff repair or replay the required event under dual control and preserve the audit evidence."),
+            step("Resolved", "Reconciliation control", "Confirms restored agreement", "Bank, ledger and control records", "Normal movement restored", scene(["bankRecord", "reconcile", "ledgerRecord"], "Records matched"), "The records match again, the repair trail is retained and normal movement can resume.")
+          ]
+        }
+      };
+
+      const sceneLayouts = {
+        mint: [
+          { id: "alice", role: "alice", title: "Alice", note: "Requests conversion" },
+          { id: "issuer", role: "bank", title: "Bank / issuer", note: "Checks and reserves" },
+          { id: "ledger", role: "ledger", title: "Authorized ledger", note: "Creates and records" },
+          { id: "wallet", role: "wallet", title: "Alice’s wallet", note: "Usable position" }
+        ],
+        redeem: [
+          { id: "wallet", role: "wallet", title: "Alice’s wallet", note: "Digital position" },
+          { id: "issuer", role: "bank", title: "Bank / issuer", note: "Checks and releases" },
+          { id: "ledger", role: "ledger", title: "Authorized ledger", note: "Removes representation" },
+          { id: "account", role: "account", title: "Account / payout", note: "Released value" }
+        ],
+        same: [
+          { id: "alice", role: "alice", title: "Alice", note: "Originator" },
+          { id: "bankA", role: "bank", title: "Bank A / issuer", note: "Accounts and controls" },
+          { id: "ledger", role: "ledger", title: "Internal record", note: "Holder change" },
+          { id: "luca", role: "luca", title: "Luca", note: "Beneficiary" }
+        ],
+        interbank: [
+          { id: "alice", role: "alice", title: "Alice", note: "Bank A customer" },
+          { id: "bankA", role: "bank", title: "Bank A", note: "Sending bank" },
+          { id: "settlement", role: "sic", title: "SIC / SNB", note: "Central-bank money" },
+          { id: "bankB", role: "bank", title: "Bank B", note: "Receiving bank" },
+          { id: "luca", role: "luca", title: "Luca", note: "Bank B customer" }
+        ],
+        conditional: [
+          { id: "alice", role: "alice", title: "Alice", note: "Originator" },
+          { id: "bankA", role: "bank", title: "Bank / issuer", note: "Locks funds" },
+          { id: "condition", role: "condition", title: "Condition", note: "Evidence and approval" },
+          { id: "luca", role: "luca", title: "Luca", note: "Receives after release" }
+        ],
+        netting: [
+          { id: "bankA", role: "bank", title: "Bank A", note: "CHF 100 obligation" },
+          { id: "queue", role: "account", title: "Payment queue", note: "Matches obligations" },
+          { id: "netting", role: "netting", title: "Netting cycle", note: "CHF 40 result" },
+          { id: "settlement", role: "sic", title: "SIC / settlement", note: "Moves net position" },
+          { id: "bankB", role: "bank", title: "Bank B", note: "CHF 60 obligation" }
+        ],
+        correspondent: [
+          { id: "payee", role: "luca", title: "Payee", note: "Confirmed first" },
+          { id: "route", role: "route", title: "Route", note: "Banks, FX and rails" },
+          { id: "validation", role: "validation", title: "Validation", note: "Private endorsements" },
+          { id: "lock", role: "condition", title: "Lock and delegate", note: "Balances committed" },
+          { id: "settlement", role: "settlement", title: "Settlement", note: "Coordinated outcome" }
+        ],
+        pvp: [
+          { id: "chf", role: "wallet", title: "CHF party", note: "CHF leg" },
+          { id: "bankA", role: "bank", title: "CHF institution", note: "Checks and locks" },
+          { id: "pvp", role: "pvp", title: "PvP coordinator", note: "Atomic rule" },
+          { id: "bankB", role: "bank", title: "EUR institution", note: "Checks and locks" },
+          { id: "eur", role: "wallet", title: "EUR party", note: "EUR leg" }
+        ],
+        cbdc: [
+          { id: "alice", role: "alice", title: "Alice’s claim", note: "Commercial-bank money" },
+          { id: "bankA", role: "bank", title: "Bank A", note: "Sending institution" },
+          { id: "wcbdc", role: "sic", title: "Wholesale CBDC", note: "Central-bank money" },
+          { id: "bankB", role: "bank", title: "Bank B", note: "Receiving institution" },
+          { id: "luca", role: "luca", title: "Luca’s claim", note: "Commercial-bank money" }
+        ],
+        bridge: [
+          { id: "sourceWallet", role: "wallet", title: "Source wallet", note: "Starting position" },
+          { id: "sourceLedger", role: "ledger", title: "Source ledger", note: "Locks value" },
+          { id: "bridge", role: "bridge", title: "Bridge", note: "Relays evidence" },
+          { id: "destLedger", role: "ledger", title: "Destination ledger", note: "Creates representation" },
+          { id: "destWallet", role: "wallet", title: "Destination wallet", note: "Receives value" }
+        ],
+        mismatch: [
+          { id: "operations", role: "operations", title: "Operations", note: "Investigates and repairs" },
+          { id: "bankRecord", role: "account", title: "Bank record", note: "Expected position" },
+          { id: "reconcile", role: "reconciliation", title: "Reconciliation", note: "Compares states" },
+          { id: "ledgerRecord", role: "ledger", title: "Ledger record", note: "Observed position" }
+        ]
+      };
+
+      const failures = {
+        aml: {
+          name: "AML / sanctions rejection", trigger: 1,
+          summary: "An identity, sanctions or transaction-control check does not permit the requested action to proceed.",
+          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "bridge"],
+          targets: ["issuer", "bankA", "validation", "bridge"],
+          effects: {
+            instruction: "Compliance rejects the payment instruction before further value movement. Alice’s core-account claim remains in its last valid state.",
+            mirrored: "Compliance stops the mirrored-token action before final movement. The core-banking claim remains held for controlled review.",
+            native: "Compliance stops the on-chain action before the next authoritative transfer. The last confirmed DLT holder remains recorded.",
+            stablecoin: "Compliance rejects the issuer-side action before the next transfer. The last accepted issuer claim remains recorded."
+          }
+        },
+        dlt: {
+          name: "DLT unavailable", trigger: 3,
+          summary: "The ledger required to record or coordinate the selected digital object cannot accept or confirm the next event.",
+          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
+          targets: ["ledger", "sourceLedger", "destLedger", "bridge", "wcbdc", "reconcile", "bankA", "condition", "lock", "pvp"],
+          effects: {
+            instruction: "The DLT instruction record is unavailable, so the core deposit remains authoritative and any reservation stays pending.",
+            mirrored: "The mirrored DLT action cannot complete, so the core-banking claim remains reserved until availability and reconciliation are restored.",
+            native: "The authoritative DLT is unavailable, so the last confirmed holder state remains controlling during recovery.",
+            stablecoin: "The issuer’s token ledger is unavailable, so issuance, transfer or redemption pauses at the last accepted issuer state."
+          }
+        },
+        sic: {
+          name: "SIC unavailable", trigger: 4,
+          summary: "The Swiss interbank settlement rail cannot confirm the required movement of central-bank money between participating banks.",
+          applies: ["interbank", "netting"], targets: ["settlement"],
+          effects: {
+            instruction: "SIC cannot confirm the interbank CHF leg. Bank A keeps the payment pending and Bank B has no settlement evidence for a final customer credit.",
+            mirrored: "SIC cannot move central-bank money, so Bank A’s mirrored claim remains in its defined pending state and Bank B cannot create the final receiving claim.",
+            native: "SIC cannot complete the required institutional settlement leg, so the debtor transformation remains pending.",
+            stablecoin: "This direct issuer-liability flow does not use SIC, so the failure is unavailable for this model."
+          }
+        },
+        receiver: {
+          name: "Receiving bank rejects", trigger: 5,
+          summary: "The receiving institution does not accept the beneficiary, incoming position or associated payment after the sending workflow has begun.",
+          applies: ["interbank", "correspondent", "cbdc"], targets: ["bankB", "settlement", "luca"],
+          effects: {
+            instruction: "The receiving institution rejects the incoming payment before creating Luca’s deposit. The pending position follows the scheme’s return or repair process.",
+            mirrored: "Bank B rejects the incoming transfer before minting or recording Luca’s claim. Any completed settlement leg moves into the defined return or repair process.",
+            native: "Bank B rejects the debtor transformation before creating Luca’s Bank B claim. The scheme applies its controlled return rule.",
+            stablecoin: "The receiving institution rejects the corridor credit before making the issuer claim usable to Luca. The pending leg follows the issuer scheme’s return process."
+          }
+        },
+        reconciliation: {
+          name: "Reconciliation mismatch", trigger: 2,
+          summary: "Two records that should describe the same claim, supply or settlement position no longer agree.",
+          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
+          targets: ["reconcile", "ledger", "sourceLedger", "wcbdc", "settlement", "condition", "pvp"],
+          effects: {
+            instruction: "The instruction status and core-account posting disagree. Processing pauses while operations establish and restore the authoritative state.",
+            mirrored: "Token supply, the customer mirror subledger and the general-ledger control balance disagree. Movement remains held until dual-control repair restores agreement.",
+            native: "The DLT master record and bank reporting records disagree. The last confirmed authoritative DLT state remains controlling during investigation.",
+            stablecoin: "Issuer supply, reserve or guarantee records and customer entitlements disagree. Transfers and redemptions pause until the issuer restores a provable match."
+          }
+        },
+        key: {
+          name: "Key / contract pause", trigger: 3,
+          summary: "A required signing key or contract is paused, unavailable or no longer authorized for the next state transition.",
+          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
+          targets: ["ledger", "condition", "lock", "pvp", "bridge", "wcbdc", "reconcile", "bankA", "settlement"],
+          effects: {
+            instruction: "The instruction contract or signing key is paused. The core-account claim remains at the last valid state while the bank verifies authority and audit evidence.",
+            mirrored: "The token contract is paused. The core-banking claim remains held while key governance and reconciliation checks are completed.",
+            native: "The authoritative contract is paused. The last confirmed DLT holder remains recorded until the formally approved recovery process succeeds.",
+            stablecoin: "The issuer contract is paused. The existing issuer claim remains recorded while minting, transfer and redemption wait for controlled key recovery."
+          }
+        }
+      };
+
+      const state = {
+        model: null,
+        scenario: null,
+        pendingModel: null,
+        failure: null,
+        step: 0,
+        timer: null,
+        dialogReturnFocus: null
+      };
+
+      const actorVisuals = {
+        alice: visualSvg("<ellipse class='scene-shadow' cx='60' cy='140' rx='35' ry='7'></ellipse><path class='scene-ink' d='M34 31C34 11 46 1 62 1c19 0 29 14 27 36l-3 58-18-12-9 16-10-16-18 12 4-62Z'></path><circle class='scene-skin' cx='61' cy='34' r='20'></circle><path class='scene-ink' d='M41 26C45 10 54 4 67 6c11 1 18 9 20 20-12-8-29-10-46 0Z'></path><circle class='scene-ink' cx='54' cy='35' r='2'></circle><circle class='scene-ink' cx='69' cy='35' r='2'></circle><path class='scene-line' d='M56 44c4 3 8 3 12 0'></path><path class='scene-red' d='M42 61c5-9 11-13 19-13 9 0 15 4 20 13l-5 28 17 42H29l17-42Z'></path><path class='scene-skin' d='m43 63-21 35 10 7 22-31ZM79 63l20 35-10 7-21-31Z'></path><path class='scene-ink' d='M39 130h16l-3 12H35ZM68 130h16l4 12H71Z'></path><path class='scene-paper' d='M52 54h18l-9 13Z'></path>", "0 0 120 150"),
+        luca: visualSvg("<ellipse class='scene-shadow' cx='60' cy='140' rx='35' ry='7'></ellipse><circle class='scene-skin' cx='60' cy='34' r='20'></circle><path class='scene-ink' d='M39 34C37 13 47 3 62 3c17 0 26 12 22 31-8-10-19-15-34-15-1 8-4 13-11 15Z'></path><circle class='scene-ink' cx='53' cy='35' r='2'></circle><circle class='scene-ink' cx='68' cy='35' r='2'></circle><path class='scene-line' d='M55 44c4 3 8 3 12 0'></path><path class='scene-paper' stroke='#171717' stroke-width='3' d='M34 70c7-14 16-21 26-21 12 0 22 7 28 21l-7 44H41Z'></path><path class='scene-ink' d='m35 68 17-14 8 20 8-20 19 15-6 45H41Z'></path><path class='scene-paper' d='m52 52 8 22 8-22Z'></path><path class='scene-red' d='m60 61 6 10-6 25-6-25Z'></path><path class='scene-skin' d='m36 70-17 30 10 5 21-28ZM85 70l16 30-10 5-20-28Z'></path><path class='scene-ink' d='m43 111 14 1-5 28H37ZM78 111l-14 1 4 28h15Z'></path>", "0 0 120 150")
+      };
+
+      function roleVisual(role) {
+        if (actorVisuals[role]) return actorVisuals[role];
+        const visualByRole = {
+          bank: iconVisual("landmark"),
+          sic: iconVisual("landmark", "coins"),
+          wallet: modelVisuals[state.model],
+          account: iconVisual("receipt-text", "banknote-arrow-down"),
+          ledger: state.model === "instruction" ? iconVisual("receipt-text") : state.model === "mirrored" ? iconVisual("database", "refresh-cw") : state.model === "stablecoin" ? iconVisual("coins", "wallet-cards") : iconVisual("network", "badge-check"),
+          condition: iconVisual("lock-keyhole", "badge-check"),
+          netting: iconVisual("scale", "arrow-right-left"),
+          route: iconVisual("route", "workflow"),
+          validation: iconVisual("shield-alert", "badge-check"),
+          settlement: iconVisual("workflow", "coins"),
+          pvp: iconVisual("repeat-2", "coins"),
+          bridge: iconVisual("waypoints", "blocks"),
+          reconciliation: iconVisual("git-compare-arrows", "triangle-alert"),
+          operations: iconVisual("scan-line", "git-compare-arrows")
+        };
+        return visualByRole[role] || modelVisuals[state.model];
+      }
+
+      function resolvedLayout() {
+        return sceneLayouts[state.scenario].map((node) => {
+          if (state.model === "stablecoin" && state.scenario === "interbank" && node.id === "settlement") {
+            return { id: node.id, role: "ledger", title: "Issuer ledger", note: "Same issuer claim" };
+          }
+          if (state.model === "stablecoin" && state.scenario === "netting" && node.id === "settlement") {
+            return { id: node.id, role: "ledger", title: "Scheme settlement", note: "Issuer arrangement" };
+          }
+          if (state.model === "stablecoin" && node.role === "bank" && ["mint", "redeem", "conditional", "same"].includes(state.scenario)) {
+            return { id: node.id, role: "bank", title: "Stablecoin issuer", note: "Reserve and issuance controls" };
+          }
+          return node;
+        });
+      }
+
+      const $ = (selector) => document.querySelector(selector);
+      const elements = {
+        landing: $("#landing"), workspace: $("#workspace"), modelGrid: $("#model-grid"),
+        landingScenarios: $("#landing-scenarios"), landingScenarioGroups: $("#landing-scenario-groups"),
+        landingScenarioHelp: $("#landing-scenario-help"),
+        contextModel: $("#context-model"), contextScenario: $("#context-scenario"),
+        runModeSelect: $("#run-mode-select"), changeFlow: $("#change-flow"), backToOverview: $("#back-to-overview"),
+        scenarioHeading: $(".scenario-heading"), scenarioCategory: $("#scenario-category"), scenarioTitle: $("#scenario-title"),
+        scenarioDescription: $("#scenario-description"), failureSummary: $("#failure-summary"),
+        failureSummaryStatus: $("#failure-summary-status"), failureSummaryTitle: $("#failure-summary-title"), failureSummaryCopy: $("#failure-summary-copy"),
+        stepList: $("#step-list"), stageCaption: $("#stage-caption"),
+        stageObjectState: $("#stage-object-state"), journey: $("#journey"),
+        inspectorKicker: $("#inspector-kicker"), inspectorTitle: $("#inspector-title"),
+        inspectorCopy: $("#inspector-copy"), previous: $("#previous"), play: $("#play"), next: $("#next"),
+        detailClaim: $("#detail-claim"), detailAuthority: $("#detail-authority"),
+        detailSettlement: $("#detail-settlement"), detailRecord: $("#detail-record"),
+        announcement: $("#timeline-announcement"), dialog: $("#flow-dialog"),
+        dialogModelGrid: $("#dialog-model-grid"), scenarioGroups: $("#scenario-groups"),
+        closeDialog: $("#close-dialog")
+      };
+      const journeyTokenLayer = document.createElement("div");
+      journeyTokenLayer.className = "journey-token-layer";
+      journeyTokenLayer.setAttribute("aria-hidden", "true");
+      let renderedJourneyIdentity = "";
+      let journeyResizeFrame = null;
+
+      function makeButton(className, text, attributes = {}) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = className;
+        button.textContent = text;
+        Object.entries(attributes).forEach(([name, value]) => button.setAttribute(name, value));
+        return button;
+      }
+
+      function currentScenario() { return scenarios[state.scenario]; }
+      function currentStep() { return currentScenario().steps[state.step]; }
+      function triggerFor(failureId) {
+        if (state.scenario === "correspondent" && ["aml", "receiver"].includes(failureId)) return 2;
+        return failures[failureId].trigger;
+      }
+      function applicableFailureEntries(model = state.model, scenarioId = state.scenario) {
+        return Object.entries(failures).filter(([id, failure]) => {
+          if (!failure.applies.includes(scenarioId)) return false;
+          if (model === "stablecoin" && id === "sic") return false;
+          if (model === "stablecoin" && scenarioId === "interbank" && id === "receiver") return false;
+          return true;
+        });
+      }
+      function isBlocked() { return Boolean(state.failure && state.step >= Math.min(triggerFor(state.failure), currentScenario().steps.length - 1)); }
+
+      function validateDemoData() {
+        let explanationCount = 0;
+        let failureCombinationCount = 0;
+        Object.entries(models).forEach(([id, model]) => {
+          if (!scenarios[model.defaultScenario]) throw new Error("Unknown default scenario for " + id);
+          if (model.recommended.some((scenarioId) => !scenarios[scenarioId])) throw new Error("Unknown recommendation for " + id);
+          if (!modelVisuals[id]) throw new Error("Missing model visual for " + id);
+        });
+        Object.entries(scenarios).forEach(([scenarioId, scenarioData]) => {
+          const nodeIds = new Set(sceneLayouts[scenarioId].map((node) => node.id));
+          if (!categories[scenarioData.category]) throw new Error("Unknown category for " + scenarioId);
+          if (!scenarioData.summary) throw new Error("Missing scenario summary for " + scenarioId);
+          scenarioData.steps.forEach((stepData, index) => {
+            ["label", "actor", "action", "object", "result"].forEach((field) => {
+              if (!stepData[field]) throw new Error("Missing " + field + " for " + scenarioId + "/" + index);
+            });
+            if (!stepData.scene.focus.length || stepData.scene.focus.some((id) => !nodeIds.has(id))) throw new Error("Invalid scene focus for " + scenarioId + "/" + index);
+            stepData.scene.moves.forEach((move) => {
+              if (!nodeIds.has(move.from) || !nodeIds.has(move.to) || !move.label) throw new Error("Invalid movement for " + scenarioId + "/" + index);
+            });
+            modelIds.forEach((modelId) => {
+              const copy = stepData.explanations[modelId];
+              if (!copy) throw new Error("Missing explanation for " + modelId + "/" + scenarioId + "/" + index);
+              if ((copy.match(/[.!?](?:\s|$)/g) || []).length > 2) throw new Error("Explanation exceeds two sentences for " + modelId + "/" + scenarioId + "/" + index);
+              if (index && copy === scenarioData.steps[index - 1].explanations[modelId]) throw new Error("Repeated adjacent explanation for " + modelId + "/" + scenarioId);
+              explanationCount += 1;
+            });
+          });
+          modelIds.forEach((modelId) => {
+            const applicable = applicableFailureEntries(modelId, scenarioId);
+            applicable.forEach(([failureId, failure]) => {
+              if (!failure.summary) throw new Error("Missing failure summary for " + failureId);
+              if (!failure.effects[modelId]) throw new Error("Missing failure explanation for " + modelId + "/" + scenarioId + "/" + failureId);
+              if (!failure.targets.some((targetId) => nodeIds.has(targetId))) throw new Error("Missing failure scene target for " + scenarioId + "/" + failureId);
+              if (Math.min(failure.trigger, scenarioData.steps.length - 1) < 0) throw new Error("Invalid failure trigger for " + scenarioId + "/" + failureId);
+            });
+            failureCombinationCount += applicable.length;
+          });
+        });
+        const totalSteps = Object.values(scenarios).reduce((sum, scenarioData) => sum + scenarioData.steps.length, 0);
+        if (totalSteps !== 75 || explanationCount !== 300) throw new Error("Expected 75 steps and 300 explanations");
+        return { totalSteps, explanationCount, failureCombinationCount };
+      }
+
+      const validationStats = validateDemoData();
+
+      function renderModelCards() {
+        elements.modelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
+          const button = makeButton("model-card", "", {
+            "data-model": id,
+            "aria-label": model.name + ": " + model.summary,
+            "aria-pressed": String(state.pendingModel === id)
+          });
+          const number = document.createElement("span"); number.className = "model-number"; number.textContent = model.number;
+          const visual = document.createElement("span"); visual.className = "model-visual"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
+          const name = document.createElement("strong"); name.textContent = model.name;
+          const summary = document.createElement("span"); summary.textContent = model.summary;
+          button.append(number, visual, name, summary);
+          return button;
+        }));
+      }
+
+      function scenarioButton(id) {
+        const scenarioData = scenarios[id];
+        const recommended = models[state.pendingModel].recommended.includes(id);
+        const button = makeButton("scenario-option" + (recommended ? " is-recommended" : ""), "", {
+          "data-scenario": id,
+          "aria-pressed": String(state.scenario === id && state.pendingModel === state.model)
+        });
+        const visual = document.createElement("span"); visual.className = "scenario-thumbnail"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = scenarioVisuals[id];
+        const title = document.createElement("strong"); title.textContent = scenarioData.name;
+        const description = document.createElement("span"); description.textContent = scenarioData.summary;
+        button.append(visual, title, description);
+        return button;
+      }
+
+      function buildScenarioGroups() {
+        return Object.entries(categories).map(([categoryId, categoryName]) => {
+          const section = document.createElement("section"); section.className = "scenario-group";
+          const heading = document.createElement("h4"); heading.textContent = categoryName;
+          const grid = document.createElement("div"); grid.className = "scenario-grid";
+          Object.entries(scenarios).filter(([, scenarioData]) => scenarioData.category === categoryId).forEach(([id]) => grid.append(scenarioButton(id)));
+          section.append(heading, grid);
+          return section;
+        });
+      }
+
+      function renderLandingScenarios() {
+        elements.landingScenarioHelp.textContent = "Recommended for " + models[state.pendingModel].name + " are marked. Every scenario remains available for comparison.";
+        elements.landingScenarioGroups.replaceChildren(...buildScenarioGroups());
+      }
+
+      function renderFlowDialog() {
+        elements.dialogModelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
+          const button = makeButton("dialog-model-option", "", { "data-dialog-model": id, "aria-pressed": String(state.pendingModel === id) });
+          const visual = document.createElement("span"); visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
+          const label = document.createElement("strong"); label.textContent = model.name;
+          button.append(visual, label);
+          return button;
+        }));
+        elements.scenarioGroups.replaceChildren(...buildScenarioGroups());
+      }
+
+      function renderRunMode() {
+        const options = [{ id: "normal", label: "Normal run" }].concat(applicableFailureEntries().map(([id, failure]) => ({ id, label: "Failure · " + failure.name })));
+        elements.runModeSelect.replaceChildren(...options.map(({ id, label }) => {
+          const option = document.createElement("option"); option.value = id; option.textContent = label; return option;
+        }));
+        elements.runModeSelect.value = state.failure || "normal";
+      }
+
+      function renderStepList() {
+        elements.stepList.replaceChildren(...currentScenario().steps.map((stepData, index) => {
+          const item = document.createElement("li");
+          const button = makeButton("step-button", stepData.label, {
+            "data-step-index": String(index), "data-step": String(index + 1),
+            "aria-label": "Step " + (index + 1) + " of " + currentScenario().steps.length + ": " + stepData.label
+          });
+          button.classList.toggle("is-complete", index < state.step);
+          button.classList.toggle("is-blocked", index === state.step && isBlocked());
+          if (index === state.step) button.setAttribute("aria-current", "step");
+          item.append(button); return item;
+        }));
+        elements.stepList.querySelector("[aria-current='step']")?.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+
+      function failureTarget(layout) {
+        if (!state.failure) return null;
+        const preferred = failures[state.failure].targets;
+        return preferred.map((id) => layout.find((node) => node.id === id)).find(Boolean) || layout[layout.length - 1];
+      }
+
+      function journeyTokenPlan(stepIndex) {
+        const steps = currentScenario().steps;
+        const firstMoves = steps.find((entry) => entry.scene.moves.length)?.scene.moves || [];
+        let plan = firstMoves.length > 1
+          ? firstMoves.map((move) => ({ key: move.label, label: move.label, anchor: move.from, from: move.from }))
+          : [{
+              key: "primary",
+              label: firstMoves[0]?.label || "CHF",
+              anchor: firstMoves[0]?.from || steps[0].scene.focus[0],
+              from: firstMoves[0]?.from || steps[0].scene.focus[0]
+            }];
+
+        steps.slice(0, stepIndex + 1).forEach((entry) => {
+          if (!entry.scene.moves.length) return;
+          plan = entry.scene.moves.length > 1
+            ? entry.scene.moves.map((move) => ({ key: move.label, label: move.label, anchor: move.to, from: move.from }))
+            : [{ key: "primary", label: entry.scene.moves[0].label, anchor: entry.scene.moves[0].to, from: entry.scene.moves[0].from }];
+        });
+        return plan;
+      }
+
+      function journeyTokenPosition(item, plan, token) {
+        const node = elements.journey.querySelector('[data-node-id="' + item.anchor + '"] .node-glyph');
+        if (!node) return null;
+        const journeyRect = elements.journey.getBoundingClientRect();
+        const nodeRect = node.getBoundingClientRect();
+        const sameAnchor = plan.filter((entry) => entry.anchor === item.anchor);
+        const lane = sameAnchor.length
+          ? sameAnchor.findIndex((entry) => entry.key === item.key) - (sameAnchor.length - 1) / 2
+          : 0;
+        return {
+          x: nodeRect.left - journeyRect.left + nodeRect.width / 2 - token.offsetWidth / 2 + lane * 20,
+          y: nodeRect.top - journeyRect.top + nodeRect.height * 0.7 - token.offsetHeight / 2
+        };
+      }
+
+      function placeJourneyTokens(blocked, identityChanged) {
+        const planStep = blocked ? Math.max(0, state.step - 1) : state.step;
+        const plan = journeyTokenPlan(planStep);
+        const existing = new Map(Array.from(journeyTokenLayer.children).map((token) => [token.dataset.tokenKey, token]));
+        const activeKeys = new Set(plan.map((item) => item.key));
+
+        existing.forEach((token, key) => {
+          if (activeKeys.has(key)) return;
+          token.style.opacity = "0";
+          token.removeTimer = window.setTimeout(() => token.remove(), 180);
+        });
+
+        plan.forEach((item) => {
+          let token = existing.get(item.key);
+          const isNew = !token;
+          if (isNew) {
+            token = document.createElement("span");
+            token.className = "journey-token";
+            token.dataset.tokenKey = item.key;
+            journeyTokenLayer.append(token);
+          }
+          if (token.removeTimer) window.clearTimeout(token.removeTimer);
+          token.textContent = item.label;
+          token.classList.toggle("is-wide", item.label.length > 3);
+          token.classList.toggle("is-extra-wide", item.label.length > 4);
+          token.style.opacity = "1";
+          const destination = journeyTokenPosition(item, plan, token);
+          if (!destination) return;
+
+          if (isNew && !identityChanged) {
+            const startItem = { ...item, anchor: item.from };
+            const start = journeyTokenPosition(startItem, plan, token) || destination;
+            token.style.transition = "none";
+            token.style.transform = "translate3d(" + start.x + "px," + start.y + "px,0)";
+            token.getBoundingClientRect();
+            window.requestAnimationFrame(() => {
+              token.style.transition = "";
+              token.style.transform = "translate3d(" + destination.x + "px," + destination.y + "px,0)";
+            });
+          } else {
+            token.style.transition = identityChanged ? "none" : "";
+            token.style.transform = "translate3d(" + destination.x + "px," + destination.y + "px,0)";
+            if (identityChanged) window.requestAnimationFrame(() => { token.style.transition = ""; });
+          }
+        });
+      }
+
+      function renderJourney() {
+        const layout = resolvedLayout();
+        const stepData = currentStep();
+        const blocked = isBlocked();
+        const currentFocus = new Set(stepData.scene.focus);
+        const priorFocus = new Set(currentScenario().steps.slice(0, state.step).flatMap((entry) => entry.scene.focus));
+        const target = failureTarget(layout);
+        const children = [];
+
+        layout.forEach((node, index) => {
+          const nodeElement = document.createElement("div");
+          nodeElement.className = "journey-node";
+          nodeElement.dataset.nodeId = node.id;
+          nodeElement.classList.toggle("is-complete", priorFocus.has(node.id) && !currentFocus.has(node.id));
+          nodeElement.classList.toggle("is-active", currentFocus.has(node.id) && !blocked);
+          nodeElement.classList.toggle("is-blocked", currentFocus.has(node.id) && blocked);
+          if (blocked && target && target.id === node.id) nodeElement.classList.add("has-failure");
+
+          const glyph = document.createElement("span"); glyph.className = "node-glyph"; glyph.setAttribute("aria-hidden", "true"); glyph.innerHTML = roleVisual(node.role);
+          const title = document.createElement("strong"); title.textContent = node.title;
+          const note = document.createElement("span"); note.textContent = node.note;
+          nodeElement.append(glyph, title, note);
+
+          if (blocked && target && target.id === node.id) {
+            const marker = document.createElement("div"); marker.className = "scene-failure-marker is-triggered"; marker.setAttribute("aria-hidden", "true");
+            marker.innerHTML = failureVisuals[state.failure] + "<span>" + failures[state.failure].name + "</span>";
+            nodeElement.append(marker);
+          }
+          children.push(nodeElement);
+
+          if (index < layout.length - 1) {
+            const arrow = document.createElement("div"); arrow.className = "journey-arrow"; arrow.setAttribute("aria-hidden", "true");
+            const left = layout[index].id, right = layout[index + 1].id;
+            const currentMove = stepData.scene.moves.find((move) => (move.from === left && move.to === right) || (move.from === right && move.to === left));
+            const priorMoves = currentScenario().steps.slice(0, state.step).flatMap((entry) => entry.scene.moves);
+            arrow.classList.toggle("is-active", priorMoves.some((move) => [move.from, move.to].includes(left) && [move.from, move.to].includes(right)));
+            if (currentMove && !blocked) {
+              arrow.classList.add("is-moving", "is-active");
+              if (currentMove.from === right) arrow.classList.add("is-reverse");
+            }
+            children.push(arrow);
+          }
+        });
+        const identity = state.model + ":" + state.scenario;
+        const identityChanged = identity !== renderedJourneyIdentity;
+        if (identityChanged) journeyTokenLayer.replaceChildren();
+        if (!journeyTokenLayer.isConnected) elements.journey.append(journeyTokenLayer);
+        elements.journey.querySelectorAll(":scope > .journey-node, :scope > .journey-arrow").forEach((element) => element.remove());
+        elements.journey.prepend(...children);
+        elements.journey.dataset.model = state.model;
+        elements.journey.setAttribute("aria-label", models[state.model].name + ", " + currentScenario().name + ", " + stepData.label + ". " + stepData.explanations[state.model]);
+        placeJourneyTokens(blocked, identityChanged);
+        renderedJourneyIdentity = identity;
+      }
+
+      function renderWorkspace(announce = false) {
+        if (!state.model || !state.scenario) return;
+        const scenarioData = currentScenario();
+        const stepData = currentStep();
+        const blocked = isBlocked();
+        const failure = state.failure ? failures[state.failure] : null;
+
+        elements.contextModel.textContent = models[state.model].name;
+        elements.contextScenario.textContent = scenarioData.name;
+        elements.scenarioCategory.textContent = categories[scenarioData.category];
+        elements.scenarioTitle.textContent = scenarioData.name;
+        elements.scenarioDescription.textContent = scenarioData.description;
+        elements.stageCaption.textContent = scenarioData.name + " · " + stepData.actor;
+        elements.stageObjectState.textContent = stepData.scene.stateLabel;
+        elements.scenarioHeading.classList.toggle("has-failure", Boolean(failure));
+        elements.failureSummary.hidden = !failure;
+        if (failure) {
+          const triggerStep = scenarioData.steps[Math.min(triggerFor(state.failure), scenarioData.steps.length - 1)];
+          const target = failureTarget(resolvedLayout());
+          elements.failureSummaryStatus.textContent = blocked ? "Failure mode · Triggered" : "Failure mode · Armed";
+          elements.failureSummaryTitle.textContent = failure.name;
+          elements.failureSummaryCopy.textContent = failure.summary + " In this " + scenarioData.name + " flow, it affects " + (target?.title || "the selected workflow") + " during “" + triggerStep.label + "”; the transaction remains at its last confirmed state until the required evidence and recovery action are complete.";
+          elements.failureSummary.classList.toggle("is-triggered", blocked);
+        }
+
+        elements.inspectorKicker.textContent = blocked ? "Flow stopped · step " + (state.step + 1) + " of " + scenarioData.steps.length : "What happens now · step " + (state.step + 1) + " of " + scenarioData.steps.length;
+        elements.inspectorTitle.textContent = stepData.label;
+        elements.inspectorCopy.textContent = blocked ? failure.effects[state.model] : stepData.explanations[state.model];
+
+        elements.detailClaim.textContent = models[state.model].claim;
+        elements.detailAuthority.textContent = models[state.model].authority;
+        elements.detailSettlement.textContent = scenarioData.settlement;
+        elements.detailRecord.textContent = stepData.result;
+
+        elements.previous.disabled = state.step === 0;
+        elements.next.disabled = blocked;
+        elements.next.textContent = state.step === scenarioData.steps.length - 1 ? "Restart scenario" : "Next →";
+
+        renderRunMode();
+        renderStepList();
+        renderJourney();
+        if (announce) elements.announcement.textContent = scenarioData.name + ", step " + (state.step + 1) + ": " + stepData.label + (blocked ? ", stopped by " + failure.name : "") + ".";
+      }
+
+      function stopPlayback() {
+        if (state.timer) window.clearInterval(state.timer);
+        state.timer = null;
+        elements.play.textContent = "Play";
+        elements.play.setAttribute("aria-pressed", "false");
+      }
+
+      function setStep(nextStep, announce = true) {
+        stopPlayback();
+        state.step = Math.max(0, Math.min(nextStep, currentScenario().steps.length - 1));
+        renderWorkspace(announce);
+      }
+
+      function chooseLandingModel(modelId) {
+        state.pendingModel = modelId;
+        elements.modelGrid.querySelectorAll("[data-model]").forEach((card) => card.setAttribute("aria-pressed", String(card.dataset.model === modelId)));
+        renderLandingScenarios();
+        elements.landingScenarios.hidden = false;
+        window.requestAnimationFrame(() => elements.landingScenarios.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start"
+        }));
+      }
+
+      function startScenario(modelId, scenarioId) {
+        stopPlayback();
+        state.model = modelId;
+        state.scenario = scenarioId;
+        state.pendingModel = modelId;
+        state.failure = null;
+        state.step = 0;
+        elements.landing.hidden = true;
+        elements.workspace.hidden = false;
+        renderWorkspace();
+        window.scrollTo({ top: 0, behavior: "auto" });
+        elements.scenarioTitle.focus({ preventScroll: true });
+      }
+
+      function showOverview() {
+        stopPlayback();
+        elements.workspace.hidden = true;
+        elements.landing.hidden = false;
+        renderModelCards();
+        if (state.pendingModel) {
+          renderLandingScenarios();
+          elements.landingScenarios.hidden = false;
+        }
+        window.scrollTo({ top: 0, behavior: "auto" });
+        elements.landing.querySelector("#landing-title").focus({ preventScroll: true });
+      }
+
+      function openFlowDialog() {
+        stopPlayback();
+        state.pendingModel = state.model;
+        state.dialogReturnFocus = document.activeElement;
+        renderFlowDialog();
+        elements.dialog.showModal();
+      }
+
+      function commitFlow(scenarioId) {
+        startScenario(state.pendingModel, scenarioId);
+        elements.dialog.close();
+      }
+
+      renderModelCards();
+
+      elements.modelGrid.addEventListener("click", (event) => {
+        const card = event.target.closest("[data-model]");
+        if (card) chooseLandingModel(card.dataset.model);
+      });
+      elements.landingScenarioGroups.addEventListener("click", (event) => {
+        const scenarioCard = event.target.closest("[data-scenario]");
+        if (scenarioCard) startScenario(state.pendingModel, scenarioCard.dataset.scenario);
+      });
+
+      elements.changeFlow.addEventListener("click", openFlowDialog);
+      elements.backToOverview.addEventListener("click", showOverview);
+      elements.closeDialog.addEventListener("click", () => elements.dialog.close());
+      elements.dialog.addEventListener("click", (event) => {
+        const modelButton = event.target.closest("[data-dialog-model]");
+        if (modelButton) { state.pendingModel = modelButton.dataset.dialogModel; renderFlowDialog(); return; }
+        const scenarioButton = event.target.closest("[data-scenario]");
+        if (scenarioButton) commitFlow(scenarioButton.dataset.scenario);
+      });
+      elements.dialog.addEventListener("close", () => {
+        state.dialogReturnFocus?.focus({ preventScroll: true });
+        state.dialogReturnFocus = null;
+      });
+
+      elements.runModeSelect.addEventListener("change", () => {
+        stopPlayback();
+        state.failure = elements.runModeSelect.value === "normal" ? null : elements.runModeSelect.value;
+        state.step = 0;
+        renderWorkspace(true);
+      });
+
+      elements.stepList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-step-index]");
+        if (button) setStep(Number(button.dataset.stepIndex));
+      });
+
+      elements.previous.addEventListener("click", () => setStep(state.step - 1));
+      elements.next.addEventListener("click", () => {
+        const last = currentScenario().steps.length - 1;
+        setStep(state.step === last ? 0 : state.step + 1);
+      });
+      elements.play.addEventListener("click", () => {
+        if (state.timer) { stopPlayback(); return; }
+        if (state.step === currentScenario().steps.length - 1 || isBlocked()) state.step = 0;
+        elements.play.textContent = "Pause";
+        elements.play.setAttribute("aria-pressed", "true");
+        renderWorkspace(true);
+        state.timer = window.setInterval(() => {
+          if (isBlocked() || state.step >= currentScenario().steps.length - 1) { stopPlayback(); return; }
+          state.step += 1;
+          renderWorkspace(true);
+          if (isBlocked() || state.step >= currentScenario().steps.length - 1) stopPlayback();
+        }, 2400);
+      });
+
+      window.addEventListener("resize", () => {
+        if (elements.workspace.hidden || !state.scenario) return;
+        if (journeyResizeFrame) window.cancelAnimationFrame(journeyResizeFrame);
+        journeyResizeFrame = window.requestAnimationFrame(renderJourney);
+      });
+
+      window.TokenizedDepositDemo = Object.freeze({
+        models, scenarios, failures, validationStats,
+        getState: () => ({ ...state, timer: Boolean(state.timer) }),
+        getCurrentStep: () => ({ ...currentStep(), model: state.model, scenario: state.scenario, blocked: isBlocked() })
+      });
+    })();
+  </script>
+</body>
 </html>

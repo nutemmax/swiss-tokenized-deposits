@@ -83,6 +83,24 @@ The starting legal sources are FINMA's current [legal basis for banks](https://w
 
 The classification table should be read horizontally. A customer deposit, its token representation, and a custody service may appear in one product journey while remaining legally distinct objects or activities. The bank should document each row that applies rather than select a single label for the entire technical platform.
 
+### Material-claim evidence matrix for the recommended first pilot
+
+The following matrix prevents a general legal source from being used as if it settled the exact product. `Source` identifies the controlling framework or exact provision to be checked in the consolidated official text; `decision still required` identifies the conclusion that cannot be made by technology or a generic research note.
+
+| Material claim | Controlling source to verify | What the source establishes | Decision still required |
+|---|---|---|---|
+| Bank A owes the customer a CHF deposit | Banking Act/Banking Ordinance framework; account terms | The banking-law perimeter for an own-bank deposit and public-deposit activity | Whether the final terms preserve that direct claim at every token lifecycle point |
+| A token representation is not a second liability | Approved accounting policy, CBS/GL records, account terms | The relevant booking and evidence framework | Which record prevails and how a discrepancy is corrected |
+| Customer-held third-party cryptoassets may be segregated | Banking Act art. 16 no. 1bis and applicable insolvency rules | The statutory custody-asset framework | Whether a particular wallet/control chain satisfies segregation conditions |
+| Eligible deposits are aggregated and protected | Banking Act arts. 37a–37k; Banking Ordinance arts. 42a–44a; [esisuisse legal overview](https://www.esisuisse.ch/en/deposit-insurance/questions-and-answers-faq) | Statutory deposit-insurance and preference framework | Whether token-enabled balances, pending flows, and holder types qualify and aggregate as assumed |
+| A shared platform may enter the FMI perimeter | FinMIA/FinMIO consolidated text; participant rules and actual functions | The regulated-FMI framework | Whether the selected operator, admission, matching, clearing, or settlement activities meet the perimeter |
+| A blockchain payment needs payment-information controls | AMLA/AMLO; FINMA Guidance 02/2019; FATF Recommendation 16 | The applicable AML/CFT and payment-transparency framework | Exact Travel Rule, intermediary, wallet, sanctions, and corridor treatment |
+| The bank may outsource a ledger or key service but retains responsibility | FINMA Circular 2018/3 and Circular 2023/1 | Outsourcing and operational-resilience expectations | Whether the provider, data access, audit, exit, and concentration controls meet the bank's arrangement |
+| Shared-ledger data must preserve confidentiality and privacy | FADP and its implementing ordinance; Banking Act art. 47; contract and outsourcing controls | The governing privacy and bank-client confidentiality perimeter | Permitted data fields, foreign access, retention, disclosure, and regulator-access design |
+| A final ledger event discharges an obligation | FinMIA/system rules, customer terms, participant rulebook, Swiss counsel opinion | The framework in which protected settlement finality can arise | The legal effect and insolvency treatment of each event in the selected flow |
+
+This matrix is a control document, not legal advice. The product cannot move to an external pilot while a row that changes the debtor, customer balance, finality, or protection position lacks a named decision owner and linked evidence.
+
 ## 4. Banking law and customer terms
 
 The Banking Act and Banking Ordinance regulate banks, public deposits, organization, prudential safeguards, and insolvency. Using a permissioned ledger does not remove an own-bank repayable claim from that framework. Conversely, a token issued by a non-bank or backed by a separate asset pool is not a bank deposit merely because it targets CHF 1.
@@ -196,7 +214,7 @@ Its direct application to a bank's own tokenized deposit cannot be assumed. The 
 
 ## 8. Depositor protection and resolution
 
-Depositor protection follows the legally recognized claim and customer relationship, not the number of tokens or wallets. FINMA states that eligible deposits are protected up to the statutory limit per customer and authorized institution ([FINMA depositor protection](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/)). The product needs a written conclusion on eligibility, aggregation with ordinary deposits, accrued amounts, and any excluded holders.
+Depositor protection follows the legally recognized claim and customer relationship, not the number of tokens or wallets. The statutory framework is Banking Act arts. 37a–37k and Banking Ordinance arts. 42a–44a; FINMA and esisuisse provide explanatory material ([FINMA depositor protection](https://www.finma.ch/en/supervision/banks-and-securities-firms/depositor-protection/), [esisuisse FAQ](https://www.esisuisse.ch/en/deposit-insurance/questions-and-answers-faq)). The product needs a written conclusion on eligibility, aggregation with ordinary deposits, accrued amounts, and any excluded holders.
 
 For example, if Alice has CHF 70,000 in an ordinary account and CHF 40,000 in token-enabled form at the same bank, two interfaces or wallets do not create two separate protection limits. The bank must aggregate the legally eligible claims for the same customer and institution. A large corporate or financial institution may face different eligibility or exclusion questions, so wholesale documentation should not reproduce the retail explanation without confirming the holder's status.
 
@@ -226,7 +244,34 @@ Tokenization can expose identities, balances, counterparties, or behavioral data
 - rights, correction, and deletion constraints;
 - linkage risks even where addresses are pseudonymous.
 
-**Design recommendation:** put the minimum data necessary for deterministic settlement on the shared ledger. Keep customer identity, screening evidence, documents, and sensitive pricing in controlled off-ledger systems, linked through opaque references.
+The current Swiss baseline includes the Federal Act on Data Protection (FADP), its ordinance, Banking Act article 47, the outsourcing and operational-risk framework, other secrecy duties, and any applicable foreign law. Relevant FADP provisions include the processing principles, privacy by design/default, data security, processing by a processor, records of processing, disclosure abroad, information duties, access/correction rights, and breach handling. The exact provisions and exceptions must be applied to the selected role and data flow using the consolidated text ([FADP, SR 235.1](https://www.fedlex.admin.ch/eli/cc/2022/491/en); [Data Protection Ordinance, SR 235.11](https://www.fedlex.admin.ch/eli/cc/2022/568/en)).
+
+Banking Act article 47 separately addresses unauthorized disclosure of secrets learned through a banking role. Data that is pseudonymised, encrypted, hashed, committed to a ledger, or visible only to permissioned nodes can still disclose or permit inference of a client relationship or transaction. The product assessment must therefore test bank secrecy independently of the FADP analysis and use the current official-language consolidated Banking Act text ([Banking Act, SR 952.0, art. 47](https://www.fedlex.admin.ch/eli/cc/51/117_121_129/de#art_47)).
+
+| Privacy/secrecy decision | Question the bank must answer | Required design evidence |
+|---|---|---|
+| Purpose and minimization | Why is each field, event, log, and replica necessary for the approved product purpose? | Data catalogue mapping field → purpose → recipient → retention → legal basis |
+| Roles and accountability | Which bank, operator, node host, cloud provider, analytics service, or correspondent is controller, processor, joint participant, or independent recipient? | Role analysis and contracts consistent with actual technical access |
+| Shared-ledger content | Can the workflow settle using opaque party references, amounts/commitments, states, deadlines, and attestations instead of customer data? | Contract schema, node visibility test, metadata and re-identification assessment |
+| Foreign disclosure and access | Where are nodes, backups, keys, support staff, administrators, logs, and subpoenable entities located? | Country/access map, transfer assessment, safeguards, legal-access and resolution-access analysis |
+| Bank secrecy | Could another participant or provider learn or infer the bank-client relationship, balance, activity, pricing, purpose, or counterparty? | Article 47 opinion, need-to-know access, confidentiality controls and customer/authority basis where relevant |
+| Outsourcing and supervision | Can the bank, audit firm, and FINMA inspect the function and obtain information needed for Swiss recovery or resolution? | FINMA Circular 2018/3 mapping, subcontractor inventory, audit rights, Swiss-access and exit test |
+| Retention and rights | Which records must remain immutable for banking, AML, accounting, audit, disputes, or finality, and which identifiers can be corrected, restricted, or deleted? | Retention schedule, off-ledger correction process, wallet revocation and historical-evidence design |
+| Security and breach | How are confidentiality, integrity, availability, key compromise, unauthorized node access, and data leakage detected and handled? | Threat model, encryption/key controls, monitoring, incident and notification decision tree |
+| Regulatory and participant access | How can an authority obtain lawful evidence without making all participant data mutually visible? | Selective-disclosure procedure, evidence export, access logging and accountable approval |
+
+FINMA Circular 2018/3 requires the bank to preserve inspection/audit rights for foreign outsourcing and ensure access in Switzerland to information required for restructuring or resolution. Outsourcing responsibility remains with the regulated institution; a ledger operator's contractual confidentiality promise is therefore not a substitute for governance, access, audit, continuity, and exit evidence ([FINMA Circular 2018/3](https://www.finma.ch/en/~/media/finma/dokumente/rundschreiben-archiv/2018/rs-18-03/finma-rs-2018-03---20170921.pdf)).
+
+Technology choices change exposure but do not answer the legal questions:
+
+| Pattern | Privacy advantage | Principal limitation | First-pilot position |
+|---|---|---|---|
+| Transparent public chain | Broad verifiability and composability | Persistent transaction graph, public metadata, foreign replication, difficult correction and confidentiality perimeter | Do not place customer or transaction-identifying data on-chain; public anchoring requires separate approval |
+| Permissioned shared application | Restricted membership and enforceable access rules | Every authorized node may still observe more than it needs; operator and support access remain material | Accept only with field- and role-level minimization |
+| Privacy groups / private subledgers | Narrows transaction payload to relevant participants | Membership and timing metadata remain; state synchronization and supervisory access become harder | Evaluate for multi-bank flows after a full visibility test |
+| Commitments / zero-knowledge or attestation design | Can prove a condition without disclosing its underlying data | Key/setup, revocation, explainability, performance and long-term cryptographic dependencies | Use selectively where the reduced disclosure justifies the operational complexity |
+
+**Design recommendation:** use a bank-private identity and compliance domain connected to minimum shared workflow state through opaque references and signed outcomes. Customer names, account numbers, documents, screening rationale, source-of-funds evidence, and sensitive pricing remain off-ledger. Transaction amount or counterparty data should also remain private or committed where the shared participants do not need the clear value.
 
 ## 10. Material change and cross-border overlays
 

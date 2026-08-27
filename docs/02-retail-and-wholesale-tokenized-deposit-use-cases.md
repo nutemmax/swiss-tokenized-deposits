@@ -79,7 +79,7 @@ Wholesale users can operate richer mandates and technical integrations, but they
 | Cross-border treasury and FX | Correspondent chain creates funding and timing risk | Path discovery, amount agreement, locking, and PvP workflow | Multiple currencies, reserve settlement, FX providers, AML | Reduced failed payments and settlement exposure | No credible liquidity provider or legal-finality model |
 | Regulated digital-asset cash leg | Clients fund tokenized securities or other regulated digital assets through separate cash processes or non-bank instruments | Own-bank deposit supplies the approved cash leg or on/off-ramp | Venue connectivity, asset eligibility, custody, AML, settlement and FMI analysis | Faster funding; lower reconciliation; retained banking relationship | Venue cannot establish the legal effect or finality of the cash and asset legs |
 
-The 2025 SBA deposit-token proof of concept is relevant Swiss industry evidence for tokenized bank money and multi-bank workflows, but its results do not constitute regulatory approval ([SBA report](https://www.swissbanking.ch/_Resources/Persistent/7/9/e/a/79ea024daa9834c99fc299db5d5f69c4317525a2/20250916_Ergebnisbericht%20PoC%20Deposit%20Token_EN_FINAL.pdf)).
+The 2025 SBA Deposit Token PoC is relevant Swiss industry evidence for programmable payment instructions and multi-bank workflows. Its on-chain tokens triggered off-chain deposit and mirror-account movements; they were not the authoritative deposit record. The result therefore supports a payment-instruction architecture, not a conclusion that a native tokenized bank liability or production scheme was proven ([local SBA report, pp. 3, 5 and 32–35](sources/sba/deposit-token-poc-results-2025.pdf)).
 
 ### Worked wholesale journey: corporate conditional payment
 
@@ -106,7 +106,7 @@ Customer value and bank value are related but not identical. A product can impro
 - **Risk reduction:** locking, DvP, and PvP can shorten the interval in which one party has delivered while awaiting the counter-leg. They do not remove software, oracle, liquidity, replacement-cost, participant-default, or legal risk.
 - **Balance-sheet and liquidity management:** granular available, reserved, pending, and frozen positions can improve visibility and limit enforcement. Tokenization does not itself create funding, HQLA, central-bank reserves, or more favorable LCR/NSFR treatment; faster mobility can instead increase stress outflow and intraday funding needs.
 
-The bank should attribute every claimed benefit to a baseline, owner, measurement method, and time horizon. Benefits that depend on broad network adoption should be separated from those the first bank can realize in a closed pilot.
+The bank should attribute every claimed benefit to a baseline, owner, measurement method, and time horizon. Benefits that depend on broad network adoption should be separated from those the first bank can realize in a closed pilot. [Chapter 09's quantitative business-case framework](09-tokenized-deposit-implementation-roadmap-and-vendor-assessment.md#8-quantitative-business-case-and-evidence) defines the comparable metrics, cost boundary, and stop decision.
 
 ## 5. Retail and wholesale comparison
 

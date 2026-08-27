@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="An illustrated interactive presentation explaining tokenized-deposit product models and settlement flows.">
+    <title>Archived v1 — Tokenized deposits illustrated explorer</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main>
+      <section class="scene scene--intro" aria-labelledby="intro-title">
+        <header class="hero">
+          <p class="overline">SWISS BANKING · ILLUSTRATIVE PRESENTATION</p>
+          <h1 id="intro-title">A deposit is already digital.<br><span>Tokenisation changes how it moves.</span></h1>
+        </header>
+
+        <div class="primer" aria-label="How an ordinary deposit becomes tokenized">
+          <div class="primer-art" aria-hidden="true">
+            <svg viewBox="0 0 920 430">
+              <defs>
+                <pattern id="primer-dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#d8d1ca"></circle></pattern>
+                <filter id="primer-shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000" flood-opacity=".13"></feDropShadow></filter>
+              </defs>
+              <rect width="920" height="430" rx="24" fill="#f3eee8"></rect>
+              <rect x="18" y="18" width="884" height="394" rx="18" fill="url(#primer-dots)"></rect>
+
+              <g transform="translate(62 77)">
+                <ellipse cx="78" cy="292" rx="64" ry="10" fill="#d8d1ca"></ellipse>
+                <circle cx="80" cy="55" r="33" fill="#e5b999"></circle>
+                <path d="M47 55c0-48 66-52 69-3l-4 78-20-15V61c-13-3-23-12-31-25-2 15-7 27-14 35Z" fill="#171717"></path>
+                <path d="M51 101c18-15 49-15 66 0l25 125H34Z" fill="#d52f3a" stroke="#171717" stroke-width="3"></path>
+                <path d="M60 225 52 296M116 225l9 71" stroke="#171717" stroke-width="6"></path>
+                <path d="M40 300h28M111 300h26" stroke="#171717" stroke-width="8" stroke-linecap="round"></path>
+                <rect x="103" y="128" width="28" height="50" rx="7" fill="#171717"></rect>
+                <circle cx="117" cy="168" r="2" fill="#fff"></circle>
+                <text x="80" y="325" text-anchor="middle" class="primer-name">ALICE</text>
+                <text x="80" y="346" text-anchor="middle" class="primer-role">customer</text>
+              </g>
+
+              <g transform="translate(298 62)" filter="url(#primer-shadow)">
+                <path d="M18 102 162 24l144 78Z" fill="#171717"></path>
+                <rect x="35" y="102" width="254" height="203" rx="3" fill="#fff"></rect>
+                <rect x="55" y="128" width="100" height="150" rx="8" fill="#f5eeee" stroke="#d52f3a" stroke-width="3"></rect>
+                <text x="105" y="151" text-anchor="middle" class="primer-small-red">CBS / GL</text>
+                <rect x="72" y="169" width="67" height="11" rx="5" fill="#171717"></rect>
+                <rect x="72" y="192" width="54" height="8" rx="4" fill="#bbb2ab"></rect>
+                <rect x="72" y="215" width="67" height="8" rx="4" fill="#bbb2ab"></rect>
+                <rect x="72" y="241" width="67" height="22" rx="5" fill="#d52f3a"></rect>
+                <text x="105" y="256" text-anchor="middle" class="primer-white">CHF 1'000</text>
+                <path d="M182 132h78v146h-78Z" fill="#171717"></path>
+                <path d="M192 151h58M192 175h58M192 199h58M192 223h58" stroke="#fff" stroke-width="6" opacity=".7"></path>
+                <text x="162" y="335" text-anchor="middle" class="primer-name">BANK A</text>
+                <text x="162" y="356" text-anchor="middle" class="primer-role">debtor + record keeper</text>
+              </g>
+
+              <path d="M204 173C250 130 273 130 312 152" fill="none" stroke="#d52f3a" stroke-width="6" stroke-linecap="round"></path>
+              <path d="m302 141 14 11-17 5" fill="none" stroke="#d52f3a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <rect x="192" y="96" width="160" height="40" rx="20" fill="#d52f3a"></rect>
+              <text x="272" y="121" text-anchor="middle" class="primer-white primer-white--large">BANK A OWES ALICE</text>
+
+              <g transform="translate(688 82)" filter="url(#primer-shadow)">
+                <circle cx="92" cy="108" r="82" fill="#171717"></circle>
+                <path d="M92 43 150 78 133 145 92 176 51 145 34 78Z" fill="#d52f3a" stroke="#fff" stroke-width="3"></path>
+                <path d="m92 43 22 43-22 67-22-67Z" fill="#f06a72"></path>
+                <path d="m34 78 36 8 22-43-41 35m99 0-36 8-22-43 41 35M51 145l19-59 22 67-41-8m82 0-19-59-22 67 41-8" fill="#a71824"></path>
+                <path d="m65 68 20-14" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"></path>
+                <rect x="38" y="186" width="108" height="48" rx="8" fill="#fff" stroke="#d52f3a" stroke-width="3"></rect>
+                <text x="92" y="206" text-anchor="middle" class="primer-small-red">TOKEN</text>
+                <text x="92" y="222" text-anchor="middle" class="primer-role">digital representation</text>
+                <text x="92" y="276" text-anchor="middle" class="primer-name">TOKENISATION</text>
+                <text x="92" y="297" text-anchor="middle" class="primer-role">adds a new movement layer</text>
+              </g>
+              <path d="M608 170h86" stroke="#171717" stroke-width="3" stroke-dasharray="7 8"></path>
+            </svg>
+          </div>
+
+          <div class="primer-notes">
+            <article><span>01</span><div><h2>Ordinary deposit</h2><p>Alice's CHF 1,000 is money she can spend, but legally it is an amount Bank A owes her.</p></div></article>
+            <article><span>02</span><div><h2>Claim</h2><p>The debtor matters. Alice has a claim on Bank A—not on the app, wallet or payment network.</p></div></article>
+            <article><span>03</span><div><h2>CBS</h2><p>The core banking system and general ledger record the account and the bank's liability.</p></div></article>
+            <article><span>04</span><div><h2>Tokenisation</h2><p>A token adds a programmable representation. Its contract decides whether it is the claim, a mirror or only an instruction.</p></div></article>
+          </div>
+        </div>
+        <p class="primer-takeaway"><b>The question is not “is there a token?”</b> It is “what does the token represent, who owes it, and which record is authoritative?”</p>
+      </section>
+
+      <section class="scene scene--explorer" aria-labelledby="explorer-title">
+        <header class="section-title">
+          <p class="overline">INTERACTIVE EXPLORER</p>
+          <h2 id="explorer-title">Same CHF 100. Four different products.</h2>
+          <p>Choose the product first, then run a flow. The scene keeps the customer claim, token representation and settlement money visually separate.</p>
+        </header>
+
+        <div class="explorer-shell">
+          <div class="model-dock" role="tablist" aria-label="Product model">
+            <button class="model-tab is-selected" type="button" role="tab" aria-selected="true" data-model="instruction"><b>01</b><span><strong>Payment instruction</strong><small>Bank executes a request</small></span></button>
+            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="mirrored"><b>02</b><span><strong>Mirrored deposit</strong><small>CBS + token mirror</small></span></button>
+            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="native"><b>03</b><span><strong>Native on-chain</strong><small>DLT is authoritative</small></span></button>
+            <button class="model-tab" type="button" role="tab" aria-selected="false" data-model="stablecoin"><b>04</b><span><strong>Non-bank stablecoin</strong><small>Separate issuer</small></span></button>
+          </div>
+
+          <div class="flow-console">
+            <div class="core-flows" role="group" aria-label="Core flow">
+              <button type="button" class="flow-button is-selected" data-scenario="mint">Convert / mint</button>
+              <button type="button" class="flow-button" data-scenario="redeem">Redeem / burn</button>
+              <button type="button" class="flow-button" data-scenario="same">Same bank</button>
+              <button type="button" class="flow-button" data-scenario="interbank">Swiss interbank</button>
+              <button type="button" class="flow-button" data-scenario="conditional">Conditional payment</button>
+            </div>
+            <label class="more-flow"><span>More flows</span><select id="scenario-select"><option value="">Choose advanced…</option><option value="correspondent">Agorá five-stage payment</option><option value="netting">Gross vs net</option><option value="pvp">Cross-border PvP</option><option value="cbdc">Wholesale CBDC</option><option value="bridge">Bridge / wrapped token</option><option value="mismatch">Mismatch + recovery</option></select></label>
+          </div>
+
+          <div class="stage-header">
+            <div><span id="scenario-kicker">CONVERT / MINT</span><strong id="scenario-description">Move an ordinary bank balance into the selected representation.</strong></div>
+            <span id="stage-status">Illustrative simulation</span>
+          </div>
+
+          <div class="stage-layout">
+            <div class="stage-canvas">
+              <svg id="stage-svg" viewBox="0 0 1060 590" role="img" aria-labelledby="stage-title stage-desc">
+                <title id="stage-title">Tokenized deposit product and payment flow</title>
+                <desc id="stage-desc">An illustrated scene with customers, commercial banks, ledgers and settlement infrastructure.</desc>
+                <defs>
+                  <marker id="arrow-red" viewBox="0 0 10 10" markerWidth="11" markerHeight="11" refX="9.5" refY="5" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 .5 9.5 5 0 9.5Z" fill="#d52f3a"></path></marker>
+                  <filter id="object-shadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#000" flood-opacity=".16"></feDropShadow></filter>
+                  <pattern id="scene-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#ded7d1"></circle></pattern>
+                  <pattern id="warning-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#d52f3a" stroke-width="2" opacity=".35"></line></pattern>
+                </defs>
+                <g id="stage-background"></g>
+                <g id="stage-infrastructure"></g>
+                <g id="stage-routes"></g>
+                <g id="stage-actors"></g>
+                <g id="stage-funds" aria-hidden="true"></g>
+                <g id="stage-annotations"></g>
+              </svg>
+            </div>
+
+            <aside class="inspect-drawer">
+              <section class="actor-inspector" aria-label="Selected actor">
+                <div class="drawer-head"><span>INSPECT</span><strong id="drawer-title">Alice</strong></div>
+                <p id="drawer-summary">Alice owns the starting claim and initiates the selected flow.</p>
+                <dl id="drawer-details"></dl>
+              </section>
+              <section class="step-explainer" aria-labelledby="step-explainer-title" aria-live="polite">
+                <div class="step-explainer-head"><span id="step-position">CURRENT STEP · 1 / 7</span><strong id="step-explainer-title">REQUESTED</strong></div>
+                <span class="step-context" id="step-context">Payment instruction · Convert / mint</span>
+                <p id="step-explanation">Alice asks Bank A to create the selected representation; no balance or legal claim has changed yet.</p>
+                <div class="step-risk" id="step-risk" hidden><strong id="step-risk-title">⚠ Risk armed</strong><p id="step-risk-copy"></p></div>
+              </section>
+            </aside>
+          </div>
+
+          <div class="play-console" aria-label="Simulation controls">
+            <div class="transport">
+              <button class="control-button control-button--primary" id="step-button" type="button"><span aria-hidden="true">→</span> Step</button>
+              <button class="control-button" id="play-button" type="button"><span aria-hidden="true">▶</span> Play</button>
+              <button class="control-button" id="reset-button" type="button"><span aria-hidden="true">↺</span> Reset</button>
+            </div>
+            <label class="speed-control" for="speed-select"><span>Speed</span><select id="speed-select"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+          </div>
+
+          <div class="progress-row"><div class="timeline-track" id="timeline-track" aria-label="Scenario progress"></div><span id="step-label">Requested</span><span id="step-count">1 / 7</span></div>
+
+          <div class="result-ribbon" aria-live="polite">
+            <div><span>CLAIM</span><strong id="status-holder">Alice</strong></div>
+            <div><span>DEBTOR</span><strong id="status-debtor">Bank A</strong></div>
+            <div><span>WORKFLOW</span><strong id="status-workflow">Pending</strong></div>
+            <div><span>LEDGER</span><strong id="status-ledger">Not recorded</strong></div>
+            <div><span>ACCOUNTING</span><strong id="status-accounting">Not posted</strong></div>
+            <div><span>SETTLEMENT</span><strong id="status-settlement">Not required</strong></div>
+            <div><span>LEGAL EFFECT</span><strong id="status-legal">Not final</strong></div>
+            <div><span>RECONCILIATION</span><strong id="status-reconciliation">Matched</strong></div>
+          </div>
+
+          <div class="model-detail" aria-live="polite">
+            <div><span>CUSTOMER CLAIM</span><strong id="fact-claim">Payment instruction / ordinary account</strong></div>
+            <div><span>AUTHORITATIVE RECORD</span><strong id="fact-authority">CBS + ordinary account</strong></div>
+            <div><span>TRANSFER MECHANISM</span><strong id="fact-mechanism">Bank accepts instruction, then posts payment</strong></div>
+            <div><span>MAIN DIFFICULTY</span><strong id="fact-risk">Who owes the holder before acceptance?</strong></div>
+          </div>
+
+          <details class="risk-details"><summary>Advanced risk mode</summary><div class="risk-controls"><label for="failure-select">Inject one failure</label><select id="failure-select"><option value="none">No failure</option><option value="aml">AML / sanctions rejection</option><option value="dlt">DLT unavailable</option><option value="sic">SIC unavailable</option><option value="receiver">Receiving bank rejects</option><option value="mismatch">Reconciliation mismatch</option><option value="key">Key or contract pause</option></select><button id="apply-failure-button" type="button">Apply and reset</button></div><p id="risk-note">Failure paths are simulated and deterministic. They do not represent a legal conclusion.</p></details>
+        </div>
+      </section>
+
+      <section class="scene scene--conclusion" aria-labelledby="conclusion-title">
+        <header class="section-title"><p class="overline">WHAT TO REMEMBER</p><h2 id="conclusion-title">The technology is visible. The liability design is decisive.</h2></header>
+        <div class="takeaway-stage">
+          <div class="takeaway-core"><span>CHF 100</span><strong>One amount</strong><p>Its legal and operational meaning changes with the product model.</p></div>
+          <article><b>01</b><h3>Who owes it?</h3><p id="insight-debtor">The token may be an instruction before it becomes a direct deposit claim.</p></article>
+          <article><b>02</b><h3>Which record is final?</h3><p id="insight-ledger">CBS remains authoritative for the payment-instruction model.</p></article>
+          <article><b>03</b><h3>What settles?</h3><p>Between banks, SIC moves central-bank money. The retail token does not enter the SNB.</p></article>
+          <article><b>04</b><h3>What if it fails?</h3><p id="insight-failure">A safe design pauses value and repairs through explicit controlled actions.</p></article>
+        </div>
+        <p class="closing-line">Start with the product and legal claim. Then choose the ledger, settlement asset and technology.</p>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

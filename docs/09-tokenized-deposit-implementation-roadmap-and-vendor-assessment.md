@@ -59,6 +59,40 @@ Before building, approve:
 
 The output should be versioned. A change in transferable holder, external wallet access, record authority, interbank liability, or settlement asset reopens the relevant approvals.
 
+### Decision ledger
+
+The decision ledger is the approval spine of the project. An issue is not closed because a meeting occurred or code was built; it is closed when the named approver records the decision, assumptions, evidence, residual risk, effective product version, and review trigger.
+
+| Field | Required content |
+|---|---|
+| Decision ID and title | Stable identifier and one precise question |
+| Status | Open, evidence in progress, proposed, approved with conditions, rejected, or superseded |
+| Owner and approver | Person preparing the decision and function with authority to approve it |
+| Product/version and scope | Model, customers, wallets, flows, entities, currencies, and corridor affected |
+| Evidence required | Exact legal text/opinion, accounting memo, test, measurement, rulebook, or authority response |
+| Dependencies | Other decisions that must close first |
+| Decision and rationale | Selected position, rejected alternatives, and reason |
+| Residual risk and conditions | Remaining exposure, limits, monitoring, expiry, and stop trigger |
+| Dates | Opened, due, last reviewed, approved, and next review |
+| Links | Chapters, claims, source IDs, tests, minutes, and signed artefacts |
+
+Seed the ledger with the decisions that can invalidate the pilot:
+
+| ID | Decision | Owner | Approver | Blocks |
+|---|---|---|---|---|
+| DL-01 | Is the product a payment instruction, CBS-authoritative mirrored deposit, or platform-authoritative deposit? | Product and Swiss counsel | Executive sponsor / legal | Terms, architecture, accounting |
+| DL-02 | Which record and event change the creditor for each permitted flow? | Legal and operations | General counsel | Transfer, finality, recovery |
+| DL-03 | What are the approved recognition, suspense, correction, interest, fee, and disclosure treatments? | Finance policy | CFO / external auditor as applicable | Pilot accounting and reporting |
+| DL-04 | Which data may enter shared state, where may it be processed, and how are bank secrecy and foreign access controlled? | Privacy, legal, security | Data owner / general counsel | Network and provider design |
+| DL-05 | Who owns and operates the scheme, and who can admit, suspend, upgrade, pause, or terminate participants and contracts? | Strategy and network governance | Executive sponsor / governing body | Multi-party pilot |
+| DL-06 | What liquidity is reserved, available after hours, and funded during mass redemption or partial settlement? | Treasury and payments | Treasurer / ALCO | Interbank and 24/7 service |
+| DL-07 | How do depositor protection, recovery, resolution, and customer statements treat token-enabled balances? | Legal and finance | General counsel / CFO | External customer pilot |
+| DL-08 | Does the measured use case outperform CBS automation, API, SIC instant payment, or escrow after full operating cost and risk? | Product finance | Business sponsor | Continue, narrow, or stop |
+| DL-09 | What operator/FMI, outsourcing, AML, tax, and regulatory perimeter applies? | Legal, compliance, tax | Relevant accountable executives | External network and production |
+| DL-10 | Which party funds and owns every partial-failure state and participant default? | Operations, payments, legal | Scheme governing body | Interbank and cross-border pilot |
+
+The detailed open questions remain in [chapter 10](10-tokenized-deposit-sources-and-regulatory-watch.md#5-decision-ledger). Chapter 10 is the maintained control record; this chapter defines how decisions gate delivery.
+
 ## 4. Internal proof and pilot scenarios
 
 ### Internal ledger proof
@@ -108,7 +142,28 @@ This proves programmable business workflow without making SIC or another bank pa
 
 A representative journey has two corporate customers approve a conditional payment under current mandates, reserve liquidity, satisfy an objective milestone, and replay the complete evidence to their finance teams. The pilot also removes one signatory during a pending workflow and injects a failed release to prove that corporate entitlement and recovery do not depend solely on wallet keys.
 
-## 5. Vendor assessment method
+## 5. Scheme governance and operating model
+
+A multi-bank tokenized-deposit arrangement needs an identifiable operator and binding rules even if its execution logic is decentralized. Software can enforce a permitted transition, but it cannot approve participants, allocate an uninsured loss, answer a regulator, amend governing law, or fund a repair state by itself.
+
+| Governance domain | Decision required before interbank pilot | Minimum evidence |
+|---|---|---|
+| Legal form and ownership | Operator entity, owners, governing law, purpose, authority and regulatory perimeter | Formation documents, legal/FMI analysis, ownership and conflicts register |
+| Governing body | Board or committee composition, reserved matters, voting, quorum, public-interest and participant representation | Charter, delegation matrix, minutes and escalation route |
+| Participation | Eligibility, admission, due diligence, technical certification, limits, suspension, termination and re-entry | Participant rulebook, admission test and appeal process |
+| Money and liabilities | Permitted issuers, currencies, holder classes, authority model, redemption, settlement asset and debtor transformation | Product schedules, legal opinions and accounting policies by issuer |
+| Change and software governance | Proposal, testing, approval, notice, activation, emergency pause, rollback/migration and version support | Release policy, multi-party test evidence, signing/key ceremony and change log |
+| Risk and default | Limits, collateral/prefunding, liquidity shortfall, participant default, loss allocation, unwind/close-out and recovery | Default rules, funded resources, simulation and treasury approval |
+| Operations and service | Service hours, support, monitoring, incident command, repair ownership, RTO/RPO and degraded modes | Operating manual, service levels, rota, exercises and participant contacts |
+| Data and access | Shared fields, confidentiality, regulatory/audit access, node rights, logs, retention and foreign support | Data-governance schedule, access matrix, privacy/outsourcing assessment |
+| Assurance | Control ownership, independent review, audit rights, reporting, metrics and regulator engagement | Control framework, audit plan, evidence format and reporting calendar |
+| Commercial and exit | Fees, cost allocation, IP, vendor concentration, portability, participant exit and scheme wind-down | Financial model, contracts, export/rebuild test and wind-down plan |
+
+The CPMI identifies legal setup, ownership, operational structure, governing body and stakeholder engagement as core governance decisions for cross-border payment interlinking. Its tokenisation work likewise states that benefits depend on sound governance and risk management ([CPMI governance report](https://www.bis.org/cpmi/publ/d223.htm); [CPMI tokenisation report](https://www.bis.org/cpmi/publ/d225.htm)). These sources are not Swiss scheme approval; they provide a structured governance baseline to apply with Swiss law, FINMA expectations, system rules and participant contracts.
+
+The recommended first same-bank pilot can remain under the bank's existing product and technology governance, with named internal ownership. The table becomes a binding multi-party workstream when another bank, shared operator, external settlement asset, or common contract can affect customer value.
+
+## 6. Vendor assessment method
 
 Do not ask whether a vendor “supports blockchain” or “supports digital assets.” Ask the vendor to demonstrate the exact bank-liability workflow and provide evidence under failure.
 
@@ -138,7 +193,7 @@ The vendor demonstration should include prescribed tasks rather than a free-form
 5. export state, configuration, audit events, and keys or key-control evidence in a usable form;
 6. rebuild or migrate the service without relying on the provider's normal dashboard.
 
-## 6. Capability scorecard
+## 7. Capability scorecard
 
 Score each area from 0 to 4:
 
@@ -162,7 +217,31 @@ A weighted total cannot compensate for a critical zero. CBS integrity, unauthori
 
 The scorecard supports comparison; it does not replace judgment. A vendor with strong programmability but no credible state-rebuild or regulatory-access model is not suitable for the pilot. Scores should cite the demonstration, document, test result, contractual commitment, and limitation that support them.
 
-## 7. KPIs and evidence
+## 8. Quantitative business case and evidence
+
+The business case compares the complete service against the best non-token alternative. It should measure the same use case, volumes, service window, risk boundary and customer outcome before and during the pilot. No benefit is claimed until both baseline and pilot evidence exist.
+
+| Measure | Baseline to capture | Pilot target method | Do not omit |
+|---|---|---|---|
+| End-to-end completion | Median and tail time from accepted instruction to usable beneficiary value | Same timestamps and percentile definition | Time spent pending, under review, or in repair |
+| Cut-off and availability failures | Transactions delayed/rejected by operating hours or unavailable dependencies | Reduction attributable to the new workflow | Treasury, compliance, support and settlement-rail hours |
+| Exceptions and investigations | Rate, age, cause and staff minutes per case | Lower rate or faster controlled resolution | False positives, customer contacts and unresolved cases |
+| Reconciliation effort | Systems compared, breaks, manual touches and time to close | Event-level automated match and bounded breaks | New ledger, node, provider and cross-network reconciliations |
+| Liquidity usage | Peak and average prefunding, intraday credit, locked value and lock duration | Lower requirement or shorter lock without more settlement risk | Weekend buffers, FX legs, stress and participant-default funding |
+| Collateral usage | Amount, haircut, opportunity cost and substitutions | Reduction or improved mobilization | New margin, guarantee or scheme-default resources |
+| Fraud and operational loss | Loss, prevented attempts, recovery and customer reimbursement | No weaker outcome; quantified improvement if observed | Novel wallet, key, contract, bridge and social-engineering losses |
+| Operating capacity | FTE hours by operations, support, treasury, compliance, finance and technology | Net time removed after new controls and on-call duties | 24/7 coverage, incident exercises and specialist dependency |
+| Integration and run cost | Build, licences, nodes, vendors, controls, assurance and change cost | Total cost at pilot and credible scaled volumes | Duplicated infrastructure, exit, audit and regulatory work |
+| Customer/participant value | Success, comprehension, support demand, adoption, willingness to use and avoided delay | Pre-agreed improvement with no material protection regression | Selection bias and incentives used to recruit pilot users |
+
+Use a small number of transparent calculations:
+
+- **Net annual benefit** = avoided operational, failure, liquidity and collateral cost + evidenced revenue or loss reduction - incremental run and governance cost.
+- **Pilot investment case** = expected risk-adjusted benefit over the approved horizon - build, integration, assurance, migration and exit cost.
+- **Break-even volume** = fixed annual incremental cost / contribution or avoided cost per successful transaction.
+- **Liquidity benefit** = baseline peak or time-weighted liquidity cost - pilot result, measured under comparable stress and service hours.
+
+Each input needs an owner, source system, observation period, unit, population, confidence/limitation, baseline date and approval. Benefits should be reported as ranges where adoption, scale, loss avoidance or liquidity pricing is uncertain. Safety invariants—no duplicate value, unexplained supply, or lost claim—remain pass/fail conditions and are never monetized to excuse a control failure.
 
 ### Safety and correctness
 
@@ -196,7 +275,7 @@ Every value KPI needs a baseline. “Settlement completed in five seconds” is 
 
 A pilot can therefore be technically successful and commercially unsuccessful. If it preserves balances and recovers correctly but customers do not understand it, counterparties will not join, or operating cost exceeds the eliminated reconciliation cost, the appropriate gate decision may be to stop or narrow the use case.
 
-## 8. Production-readiness decision
+## 9. Production-readiness decision
 
 Production requires affirmative sign-off on:
 

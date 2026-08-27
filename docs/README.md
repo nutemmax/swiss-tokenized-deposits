@@ -8,7 +8,7 @@ This collection explains how a FINMA-supervised Swiss bank could issue and opera
 
 ## Reading order
 
-1. [Beginner summary](00-executive-summary.md)
+1. [Executive summary](00-executive-summary.md)
 2. [Foundations and product types](01-tokenized-bank-deposits-foundations-and-product-types.md)
 3. [Retail and wholesale use cases](02-retail-and-wholesale-tokenized-deposit-use-cases.md)
 4. [Swiss laws and FINMA rules](03-swiss-laws-and-finma-rules-for-tokenized-deposits.md)
@@ -45,6 +45,21 @@ The labels separate evidence from judgment. They should be read with the source 
 | **Open issue** | Requires confirmation from FINMA, Swiss counsel, the external auditor, the SNB, SIX, or a vendor. |
 
 Regulatory sources are also classified as **in force**, **future effective**, **consultation/proposal**, **supervisory guidance**, or **industry/prototype evidence**. An old publication is not assumed to be obsolete: for example, FINMA Guidance 02/2019 remains listed in FINMA's current crypto-services index.
+
+## How initiative maturity is labelled
+
+The same maturity vocabulary is used in chapters 00, 08, 09, and 10. A label describes the highest level supported by public evidence for the stated scope; it does not imply legal approval, general availability, or readiness for another bank.
+
+| Label | Meaning in this research |
+|---|---|
+| **Concept** | Published proposal, architecture, partnership, or research direction without an implemented end-to-end test. |
+| **PoC** | Implemented proof of selected functions using test or controlled data/value; production controls and service obligations are not established. |
+| **Sandbox** | Time-bounded live or near-live test under defined participants, limits, safeguards, and supervisory or institutional oversight. |
+| **Controlled real-value test** | Real value moved under a restricted test framework; stronger evidence than simulation, but not a generally available service. |
+| **Pilot** | An implemented service trial with named users or institutions and operational support; scope and duration remain limited. |
+| **Production** | A live service or infrastructure available for its approved scope with binding rules, operations, controls, and accountability. |
+
+Qualifiers remain necessary. “Pilot in production infrastructure” means that a pilot used live infrastructure; it does not promote the tested product itself to production. Likewise, a production securities infrastructure does not prove that tokenized deposits are production-ready.
 
 ## Editorial conventions
 

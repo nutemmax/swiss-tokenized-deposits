@@ -1,9 +1,11 @@
 # Complete Demo Factual, State, and UI Audit — 14 August 2026
 
-**Scope:** `demo/index.html`, `demo/app.js`, `demo/styles.css`, `demo/demo-spec.json`, the presenter script, and the demo-to-research claim map  
+**Scope:** archived v1 at `demo/deprecated/v1/index.html`, `demo/deprecated/v1/app.js`, `demo/deprecated/v1/styles.css`, `demo/deprecated/v1/demo-spec.json`, the presenter script, and the demo-to-research claim map
 **Research cut-off:** 14 August 2026  
 **Status:** independent audit of the current implementation; not a legal opinion, accounting policy, FINMA position, or production approval  
 **Supersedes for current demo work:** `demo-factual-audit-2026-08-14.md`; the archived detailed audit remains historical evidence
+
+> **Implementation update:** the P0/P1 correctness work was completed on 24 August 2026, and the M11 conditional-payment and Agorá five-stage alignment was completed on 27 August 2026. See the [high-priority implementation log](high-priority-implementation-log-2026-08-24.md) and [M11 implementation log](demo-m11-implementation-log-2026-08-27.md). This audit remains the baseline for the still-planned navigation, accessibility, responsive-layout, and presentation-polish work.
 
 ## 1. Audit conclusion
 
@@ -114,7 +116,7 @@ The active research chapters provide the product-specific interpretation. Curren
 ### F-01 — SIC failure still settles the SNB balances
 
 **Type:** confirmed inconsistency  
-**Where:** `demo/app.js`, interbank and netting mutations in `snapshot()`; failure overlay applied afterward
+**Where:** `demo/deprecated/v1/app.js`, interbank and netting mutations in `snapshot()`; failure overlay applied afterward
 
 At the `SIC unavailable` trigger, the UI says that interbank central-bank money is not final, but the stage has already changed:
 

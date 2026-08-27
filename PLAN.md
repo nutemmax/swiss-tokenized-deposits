@@ -3,7 +3,7 @@
 - **Plan date:** 24 August 2026
 - **Audience:** Swiss banks assessing whether and how to adopt tokenized deposits
 - **Initial delivery order:** documentation first, demo second
-- **Current status:** planned; no finding is considered resolved merely because it is recorded here
+- **Current status:** high-priority implementation completed on 24 August 2026; medium-priority M1–M6, M9–M11, and M14 completed; M12 and M13 were removed from scope by the project owner on 27 August 2026; remaining medium- and low-priority work remains planned. See [`docs/appendices/audits/high-priority-implementation-log-2026-08-24.md`](docs/appendices/audits/high-priority-implementation-log-2026-08-24.md), [`docs/appendices/audits/decision-ready-documentation-log-2026-08-24.md`](docs/appendices/audits/decision-ready-documentation-log-2026-08-24.md), and [`docs/appendices/audits/demo-m11-implementation-log-2026-08-27.md`](docs/appendices/audits/demo-m11-implementation-log-2026-08-27.md).
 
 ## 1. Objective
 
@@ -57,6 +57,8 @@ Apply these rules throughout the documentation:
 
 ### H1. Rebuild the executive narrative around a precise proposal
 
+**Status:** implemented — 24 August 2026
+
 **Primary files:** `docs/00-executive-summary.md`, `docs/01-tokenized-bank-deposits-foundations-and-product-types.md`, `docs/09-tokenized-deposit-implementation-roadmap-and-vendor-assessment.md`
 
 **Work:**
@@ -70,6 +72,8 @@ Apply these rules throughout the documentation:
 **Acceptance criteria:** a reader can describe the proposed product and its exclusions without consulting another chapter; the default demo model is either the proposed model or clearly labelled as a comparison.
 
 ### H2. Add a complete, current Swiss tokenized-money landscape
+
+**Status:** implemented — 24 August 2026
 
 **Primary files:** `docs/00-executive-summary.md`, `docs/02-retail-and-wholesale-tokenized-deposit-use-cases.md`, `docs/08-project-agora-and-cross-border-tokenized-deposits.md`, `docs/10-tokenized-deposit-sources-and-regulatory-watch.md`
 
@@ -85,6 +89,8 @@ Apply these rules throughout the documentation:
 **Acceptance criteria:** the executive summary and chapter 08 present the same current landscape; no initiative is described as more mature or legally conclusive than its source permits.
 
 ### H3. Update Project Agorá from the May report to the current project status
+
+**Status:** implemented — 24 August 2026
 
 **Primary files:** `docs/08-project-agora-and-cross-border-tokenized-deposits.md`, `docs/10-tokenized-deposit-sources-and-regulatory-watch.md`, relevant summaries and demo source notes
 
@@ -103,6 +109,8 @@ Apply these rules throughout the documentation:
 
 ### H4. Reframe the value proposition against the real Swiss payments baseline
 
+**Status:** implemented — 24 August 2026
+
 **Primary files:** `docs/00-executive-summary.md`, `docs/02-retail-and-wholesale-tokenized-deposit-use-cases.md`, `docs/06-tokenized-deposit-issuance-transfers-redemption-and-settlement.md`, `docs/08-project-agora-and-cross-border-tokenized-deposits.md`
 
 **Work:**
@@ -118,6 +126,8 @@ Apply these rules throughout the documentation:
 **Acceptance criteria:** no use case is justified by blockchain or tokenization alone; each shortlisted pilot has a measurable advantage over the non-tokenized baseline.
 
 ### H5. Upgrade legal claims to claim-level traceability
+
+**Status:** implemented — 24 August 2026
 
 **Primary files:** `docs/03-swiss-laws-and-finma-rules-for-tokenized-deposits.md`, `docs/06-tokenized-deposit-issuance-transfers-redemption-and-settlement.md`, `docs/10-tokenized-deposit-sources-and-regulatory-watch.md`
 
@@ -135,6 +145,8 @@ Apply these rules throughout the documentation:
 
 ### H6. Make accounting, prudential, liquidity, and depositor-protection analysis decision-grade
 
+**Status:** implemented — 24 August 2026
+
 **Primary files:** `docs/04-tokenized-deposit-accounting-prudential-treatment-and-customer-protection.md`, `docs/06-tokenized-deposit-issuance-transfers-redemption-and-settlement.md`, `docs/10-tokenized-deposit-sources-and-regulatory-watch.md`
 
 **Work:**
@@ -151,6 +163,8 @@ Apply these rules throughout the documentation:
 
 ### H7. Repair the source-freshness and provenance process
 
+**Status:** implemented — 24 August 2026
+
 **Primary files:** `docs/10-tokenized-deposit-sources-and-regulatory-watch.md`, `docs/sources/README.md`, all chapters with research-cutoff labels
 
 **Work:**
@@ -166,7 +180,9 @@ Apply these rules throughout the documentation:
 
 ### H8. Fix all demo P0 failures before any other demo enhancement
 
-**Primary files:** `demo/app.js`, `demo/demo-spec.json`, demo audit and future tests
+**Status:** implemented — 24 August 2026
+
+**Primary files:** `demo/deprecated/v1/app.js`, `demo/deprecated/v1/demo-spec.json`, demo audit and future tests
 
 **Work:**
 
@@ -176,13 +192,15 @@ Apply these rules throughout the documentation:
 - For DLT/key/contract failure, do not create the failed token, authoritative record, or wrapped destination object.
 - Apply the same semantics to interbank, netting, mint, CBDC comparison, and bridge scenarios.
 
-**Source of findings:** LOC-03 and the state transitions in `demo/app.js`.
+**Source of findings:** LOC-03 and the state transitions in `demo/deprecated/v1/app.js`.
 
 **Acceptance criteria:** every failure snapshot preserves the last valid state plus an explicit reservation, suspense, or repair position; no failed action produces the object or balance movement that failed.
 
 ### H9. Fix all demo P1 model and lifecycle inconsistencies
 
-**Primary files:** `demo/app.js`, `demo/demo-spec.json`, `demo/index.html`, presenter script and claim map
+**Status:** implemented — 24 August 2026
+
+**Primary files:** `demo/deprecated/v1/app.js`, `demo/deprecated/v1/demo-spec.json`, `demo/index.html`, presenter script and claim map
 
 **Work:**
 
@@ -200,7 +218,9 @@ Apply these rules throughout the documentation:
 
 ### H10. Add executable demo invariants and scenario acceptance tests
 
-**Primary files:** new test files in a clearly documented test location; `demo/demo-spec.json`; demo audit
+**Status:** implemented — 24 August 2026
+
+**Primary files:** new test files in a clearly documented test location; `demo/deprecated/v1/demo-spec.json`; demo audit
 
 **Work:**
 
@@ -216,9 +236,13 @@ Apply these rules throughout the documentation:
 
 ### M1. Make the SBA naming conflict prominent
 
+**Status:** implemented — 24 August 2026
+
 Explain early that the SBA's 2025 `Deposit Token` PoC used an on-chain payment instruction under Swiss contract law to trigger off-chain bank-account movements. Reserve `tokenized deposit` in the research for an actual representation of the commercial-bank liability, and label all SBA PoC diagrams accordingly.
 
 ### M2. Add monetary-system concepts missing from the foundations
+
+**Status:** implemented — 24 August 2026
 
 Add singleness of money, par convertibility, elasticity, integrity, fragmentation, settlement-anchor quality, and the relationship between commercial-bank money and central-bank money. Explain why interoperability is both technical and monetary—not merely an API or token-standard problem.
 
@@ -226,17 +250,25 @@ Add singleness of money, par convertibility, elasticity, integrity, fragmentatio
 
 ### M3. Add a quantitative business-case framework
 
+**Status:** implemented — 24 August 2026
+
 Define baseline and target measures for payment time, cut-off failures, investigations, repair rates, reconciliation effort, liquidity usage, collateral, fraud loss, operational staffing, integration cost, and duplicated infrastructure. Do not claim savings until a measured baseline and pilot result exist.
 
 ### M4. Expand scheme governance and operating-model analysis
+
+**Status:** implemented — 24 August 2026
 
 Cover operator/legal entity, participant eligibility, admission and suspension, rule changes, software upgrades, liability, loss allocation, default management, dispute resolution, data access, audit rights, participant exit, intellectual property, vendor concentration, and fee model.
 
 ### M5. Add a cross-border corridor matrix
 
+**Status:** implemented — 24 August 2026
+
 For each illustrative corridor, identify currency, issuer, debtor, jurisdiction, settlement asset, correspondent/FX provider, governing law, sanctions and Travel Rule duties, data-transfer basis, finality rule, insolvency forum, operating hours, and repair owner.
 
 ### M6. Strengthen privacy and bank-secrecy analysis
+
+**Status:** implemented — 24 August 2026
 
 Add exact FADP, ordinance, Banking Act article 47, outsourcing, foreign-access, metadata leakage, regulatory-access, data-retention, and deletion considerations. Compare transparent public-chain, permissioned application, privacy-group, and commitment-based designs.
 
@@ -252,9 +284,13 @@ Add UK tokenized-sterling/RLN work, HKMA Ensemble, and ECB Pontes/Appia. Compare
 
 ### M9. Convert the open-question register into a decision ledger
 
+**Status:** implemented — 24 August 2026
+
 Add status, owner, approver, required evidence, opened date, due date, dependencies, last review, decision, residual risk, and linked chapter/claim. Add questions for scheme governance, business case, privacy, cross-border corridors, SIC operating model, and demo model selection.
 
 ### M10. Add four cross-document visuals
+
+**Status:** implemented — 24 August 2026
 
 Create and reuse, rather than duplicate:
 
@@ -265,17 +301,25 @@ Create and reuse, rather than duplicate:
 
 ### M11. Align the demo, presenter script, and claim map
 
+**Status:** implemented — 27 August 2026
+
 Add the actual Agorá five-stage workflow and the conditional-payment example promised by the presenter script. Ensure every visible factual claim appears in the claim map with source, qualification, demo location, and research cutoff.
 
 ### M12. Add visible demo provenance and limitations
 
-Display the model definition, scenario assumptions, research cutoff, source route, illustrative status, and a concise `what this does not prove` note. Make source links accessible without leaving the current explanation context.
+**Status:** removed from demo scope by project owner — 27 August 2026
+
+The stakeholder-facing demo remains visually focused and illustrative. Research provenance, assumptions, sources, and limitations remain in the documentation, demo specification, claim map, and presenter material rather than being added as visible interface controls.
 
 ### M13. Complete failure coverage
 
-Add or explicitly exclude timeout, duplicate/out-of-order message, partial external settlement, stale sanctions data, oracle/reference-data error, participant insolvency, chain reorganization, privacy-service failure, reconciliation break, liquidity shortfall, and recovery replay.
+**Status:** removed from plan by project owner — 27 August 2026
+
+No additional exhaustive failure catalogue is planned. The implemented high-priority failure invariants and regression checks remain part of the demo.
 
 ### M14. Preserve controlled-test versus production boundaries
+
+**Status:** implemented — 24 August 2026
 
 Use a consistent maturity vocabulary: concept, simulation, PoC, sandbox, controlled real-value test, pilot in production infrastructure, limited production service, and production scheme. Apply it to SBA, UBS, Helvetia, BX Digital, Agorá, and the stablecoin sandbox.
 
@@ -350,7 +394,7 @@ The demo is ready for external use only when all of the following are true:
 - [ ] Stablecoin, deposit, and wCBDC roles are not conflated.
 - [ ] Each scenario exposes only applicable failures.
 - [ ] The default model matches or clearly contrasts with the recommended pilot.
-- [ ] Sources, cutoff, assumptions, and limitations are visible.
+- [ ] Sources, cutoff, assumptions, and limitations are maintained in the research pack, demo specification, claim map, and presenter material without cluttering the stakeholder-facing interface.
 - [ ] Presenter script, claim map, demo specification, code, and visible UI agree.
 - [ ] Responsive, keyboard, focus, text-size, and screen-reader checks pass.
 

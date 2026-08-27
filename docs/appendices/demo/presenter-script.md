@@ -1,7 +1,7 @@
-# Tokenized-Deposit Demo Presenter Script
+# Archived v1 Tokenized-Deposit Demo Presenter Script
 
-**Research alignment date:** 14 August 2026
-**Use with:** [`demo/index.html`](../../../demo/index.html)
+**Research alignment date:** 27 August 2026
+**Use with:** [`demo/deprecated/v1/index.html`](../../../demo/deprecated/v1/index.html)
 **Status:** presentation aid; the active research chapters control if the demo wording differs
 
 ## Opening
@@ -36,11 +36,11 @@ If the demo animates the token before the CBS, explain that animation order is i
 
 ## Conditional payment
 
-Show a lock and release condition.
+Select **Conditional payment**. Step through request, checks, funds lock, condition pending, condition verified, release, and final agreement.
 
 “Programmability is useful when two parties need shared assurance that funds are reserved and will release only under an agreed condition. It is not useful merely because an ordinary standing order could be redrawn as a smart contract.”
 
-Trigger expiry or failure if supported.
+If useful, arm a supported failure before replaying the flow.
 
 “Before the commit boundary, the safe result is cancellation and release. After an external settlement leg becomes final, the safe result may instead be controlled repair. Generic retries are not sufficient.”
 
@@ -60,13 +60,13 @@ Explain the alternatives:
 
 ## Cross-border and Project Agorá
 
-Show confirmation of payee, path discovery, validation, locking, and settlement.
+Choose **Agorá five-stage payment** under **More flows**. Step through confirmation of payee, path discovery, private validation, locking and delegation, and settlement.
 
 “This five-stage structure follows the useful pattern demonstrated by Project Agorá. Each bank keeps sensitive compliance, customer, path, and pricing logic in its own middleware. The shared workflow receives endorsed outcomes and coordinates settlement.”
 
 Add the key qualification:
 
-“Agorá's prototype treated its platform as the authoritative record for tokenized deposits. This demo's recommended starting model keeps the CBS authoritative. Agorá also did not prove production throughput, resilience, live CBS/RTGS integration, or a final legal rulebook.”
+“Agorá's report-era PoC treated its platform as the authoritative record for tokenized deposits, and its later phase reached controlled real-value testing. This demo's recommended starting model keeps the CBS authoritative. Neither Agorá phase proved production throughput, resilience, live CBS/RTGS integration, or a final legal rulebook.”
 
 ## Reconciliation and failures
 
@@ -88,4 +88,3 @@ Point out:
 “The bank should decide the claim, books, settlement point, and recovery model before choosing a blockchain vendor. A credible pilot is narrow, limited, reversible where legally possible, and continuously reconciled.”
 
 Direct follow-up questions to the [research index](../../README.md) and [implementation roadmap](../../09-tokenized-deposit-implementation-roadmap-and-vendor-assessment.md).
-

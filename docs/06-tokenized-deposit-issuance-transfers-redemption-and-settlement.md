@@ -263,6 +263,26 @@ A cross-border workflow adds:
 - time-zone and operating-hour mismatches;
 - governing law and dispute allocation.
 
+### Corridor decision matrix
+
+Cross-border approval belongs to a named corridor, not to “international token transfers” in general. The matrix below is the minimum decision record for each origin/destination and currency pair. The CHF/EUR column is an illustrative starting hypothesis only; it must be replaced by participant, system, and counsel-approved facts before a pilot.
+
+| Decision dimension | Required corridor record | Illustrative CHF/EUR starting hypothesis | Approval evidence |
+|---|---|---|---|
+| Origin and destination | Legal entities, branches, booking locations, customer segments | Swiss Bank A to an identified euro-area Bank B corporate customer | Entity and branch analysis; participant eligibility |
+| Claims and debtors | Creditor and debtor before, while pending, and after completion | Bank A CHF claim is locked; recipient ultimately receives a Bank B EUR claim | Product terms and bilateral/network legal opinion |
+| Currency and amounts | Send amount, receive amount, fees, rounding, expiry | CHF amount exchanged for a disclosed EUR amount under a time-bounded quote | FX policy, customer disclosure, quote and market-data controls |
+| Settlement assets and rails | Asset that discharges each institutional leg | SNB sight deposits/SIC for CHF; eligible euro central-bank-money rail for EUR | SNB/SIX and foreign-system participation and rule analysis |
+| FX and liquidity provider | Provider, principal/agent role, prefunding, limits, default handling | Named regulated provider reserves both currency positions | Credit, liquidity, outsourcing, collateral, and default approval |
+| AML, sanctions, and payment transparency | Originator/beneficiary data, screening ownership, alert and reject rules | Each regulated institution performs local duties; the shared layer carries only the agreed data/evidence | Swiss AML analysis, foreign advice, FATF Recommendation 16 mapping |
+| Data and bank secrecy | Data fields, controller/processor roles, locations, support access, transfer basis | Customer identity remains bank-private; shared workflow uses opaque references and minimum attestations | FADP, bank-secrecy, outsourcing, foreign-access and retention assessment |
+| Finality and insolvency | Finality event for every rail and claim; effect of participant default | Workflow commit is not sufficient; each rail and receiving credit needs its own evidence | System rules, governing law, insolvency and close-out opinion |
+| Operating hours and deadlines | Availability, quote window, cut-offs, timeout and holiday rules | Customer service may be 24/7 while one wholesale leg or repair team is not | Operating calendar, treasury coverage, customer-status design |
+| Repair and loss allocation | Owner, suspense account, funding, communication and deadline for each partial state | Participant completing the final external leg owns first containment; rulebook assigns completion or funded correction | Signed runbook, accounting policy, participant rulebook and tested scenario |
+| Tax and reporting | AEOI/CRS/CARF, withholding, VAT, local reports | Open until Swiss and destination-country specialists confirm the selected product | Written tax classification tied to product and corridor version |
+
+FATF Recommendation 16 supplies the international payment-transparency baseline, while Swiss implementation and each foreign jurisdiction determine the actual duties. The CPMI's cross-border fast-payment governance work reinforces that legal setup, ownership, operating structure, governance, and oversight must be explicit for a cross-border arrangement ([FATF Recommendations](https://www.fatf-gafi.org/en/publications/Fatfrecommendations/Fatf-recommendations.html); [CPMI final governance report](https://www.bis.org/cpmi/publ/d223.htm)).
+
 The workflow below uses an FX or liquidity provider to quote and reserve the two currency legs. “Lock” means the relevant participant has made the amount unavailable for conflicting use under agreed rules. The coordinator should commit only while the quote remains valid and every required bank, compliance, and settlement dependency reports readiness.
 
 ```mermaid
@@ -290,6 +310,19 @@ From the payer's perspective, the desired result is a known amount, fee, expiry,
 ## 8. Four kinds of finality
 
 “Final” is useful only when the speaker identifies what has become final and under which rule. The four layers below can occur at different times and be evidenced by different systems.
+
+The timeline below uses the recommended interbank burn-settle-issue model. It follows the economic claim through its authoritative records and settlement evidence; the arrows mean dependency, not that every event occurs in one technical transaction.
+
+```mermaid
+flowchart LR
+    C["Claim: Bank A owes the payer"] --> R["Authoritative record: Bank A CBS reserves or locks the claim"]
+    R --> W["Workflow: controls pass and the sending representation is locked or retired"]
+    W --> S["Settlement asset: SNB sight deposits move through SIC"]
+    S --> A["Acceptance and record: Bank B posts the recipient claim"]
+    A --> L["Legal finality: system rules and product terms determine discharge and creditor change"]
+```
+
+For a same-bank transfer, the settlement-asset node is “not required”: Bank A reallocates one liability between customers. For a continued-issuer model, the recipient may still hold a claim on Bank A and the Bank B credit node does not occur. The visual must therefore be read with the selected liability model, not as a universal token path.
 
 | Kind | Meaning | Evidence |
 |---|---|---|

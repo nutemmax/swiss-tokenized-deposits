@@ -59,17 +59,29 @@ Tokenized deposits must prove a benefit beyond an already capable Swiss payments
 
 It must instead demonstrate a measurable advantage in programmable shared state, conditional reservation/release, synchronized cash-and-asset or FX exchange, cross-border path coordination, or reduction of a specific reconciliation problem that SIC, an account API, card authorization, or ordinary escrow cannot address as well.
 
-| Initiative | What it is testing or operating | What it does **not** prove for this project |
-|---|---|---|
-| SIC / SIC Instant Payments | Existing Swiss central-bank-money settlement and 24/7 customer instant-payment baseline | A customer's tokenized deposit or a DLT cash leg |
-| SBA Deposit Token work | Industry models; 2025 PoC of on-chain payment instructions triggering off-chain bank-account payments | A native on-chain deposit liability or production multi-bank scheme |
-| UBS Digital Cash / UBS–Ant | Multi-currency corporate payment, treasury, and tokenized-deposit exploration | A public Swiss multi-bank deposit-token service |
-| Project Helvetia / BX Digital | wCBDC and synchronized SIC settlement for tokenized securities; BX Digital's RTGS link in production infrastructure | A retail CBDC or approval of a commercial-bank tokenized deposit |
-| SNB digital repos | Feasibility of DLT repo settlement with wCBDC and the resulting fragmentation/collateral challenges | A general production readiness conclusion |
-| Project Agorá | Controlled, multi-currency wholesale cross-border workflows with tokenized deposits and reserves | Swiss production rulebook, resilience, or bank-specific legal approval |
-| CHF stablecoin sandbox | An adjacent issuer/reserve model being tested by Swiss banks and Swiss Stablecoin AG | A deposit-token model; holders may face a different debtor and protection structure |
+| Initiative | Maturity at cut-off | What it is testing or operating | What it does **not** prove for this project |
+|---|---|---|---|
+| SIC / SIC Instant Payments | **Production** | Existing Swiss central-bank-money settlement and 24/7 customer instant-payment baseline | A customer's tokenized deposit or a DLT cash leg |
+| SBA Deposit Token work | **Concept** (2023) and **PoC** (2025) | On-chain payment instructions triggering off-chain bank-account and mirror-account movements | A native on-chain deposit liability or production multi-bank scheme |
+| UBS Digital Cash / UBS–Ant | **Pilot** / **concept collaboration** | Multi-currency corporate payment, treasury, and tokenized-deposit exploration | A public Swiss multi-bank deposit-token service |
+| Project Helvetia / BX Digital | **Pilot in production infrastructure** / **production securities infrastructure** | wCBDC and synchronized SIC settlement for tokenized securities; BX Digital's RTGS link | A retail CBDC or approval of a commercial-bank tokenized deposit |
+| SNB digital repos | **PoC / experiment** | Feasibility of DLT repo settlement with wCBDC and the resulting fragmentation/collateral challenges | A general production-readiness conclusion |
+| Project Agorá | **Controlled real-value test** | Restricted multi-currency wholesale cross-border workflows with tokenized deposits and reserves | Swiss production rulebook, resilience, or bank-specific legal approval |
+| CHF stablecoin sandbox | **Sandbox** | An adjacent issuer/reserve model being tested by Swiss banks and Swiss Stablecoin AG | A deposit-token model; holders may face a different debtor and protection structure |
 
 The SBA's 2025 PoC, UBS Digital Cash, the CHF stablecoin sandbox, Helvetia, BX Digital, and Agorá should be compared as distinct initiatives, not treated as one Swiss tokenized-money product. The dedicated [Agorá chapter](08-project-agora-and-cross-border-tokenized-deposits.md) contains the current cross-border analysis.
+
+### What the evidence permits the bank to say
+
+This matrix is the executive evidence boundary. “Demonstrated” means a named mechanism worked in the stated test; it does not mean the proposed bank product is approved or commercially justified.
+
+| **Proven in existing infrastructure** | **Demonstrated in controlled work** | **Proposed for this bank** | **Still unresolved before an external pilot** |
+|---|---|---|---|
+| SIC provides established CHF interbank settlement; SIC Instant Payments provide the domestic speed and availability baseline. | The SBA PoC coordinated on-chain payment instructions with off-chain account movements and SIC settlement. | A CBS-authoritative mirrored CHF deposit for identified customers, beginning with same-bank conditional payment. | Exact legal transfer effect, accounting recognition points, depositor-protection treatment, and any FINMA material-change expectations. |
+| Swiss banking, AML, privacy, outsourcing, accounting, prudential, and FMI frameworks already apply according to the product and activities. | Helvetia/BX demonstrate central-bank-money settlement patterns for tokenized securities; Agorá demonstrated restricted cross-border programmable workflows and later controlled real-value transfers. | Bank-managed recoverable wallets, low limits, continuous reconciliation, deterministic failure states, and SIC for a later interbank leg. | Multi-bank rulebook, operator and FMI perimeter, loss allocation, 24/7 liquidity, privacy design, participant default, and production resilience. |
+| Ordinary CBS automation, APIs, escrow, and instant payments remain viable alternatives. | UBS and other initiatives provide pilot or exploratory evidence for corporate treasury and digital-money use cases. | Proceed only if the pilot beats the non-token baseline on a measured coordination or programmability problem. | Sustainable economics, customer demand, scale, corridor-specific law, tax reporting, and production operating model. |
+
+The detailed [Swiss initiative landscape](08-project-agora-and-cross-border-tokenized-deposits.md#12-swiss-tokenized-money-and-settlement-landscape) and the [business-case framework](09-tokenized-deposit-implementation-roadmap-and-vendor-assessment.md#8-quantitative-business-case-and-evidence) turn these boundaries into implementation decisions.
 
 ## What is actually tokenized?
 
@@ -174,7 +186,7 @@ An interbank token transfer could use burn-settle-issue, a coordinated pending i
 
 ## Project Agorá: useful evidence, not a production template
 
-The BIS Project Agorá prototype connects tokenized commercial-bank deposits on a unifying ledger with tokenized central-bank reserves on jurisdictional ledgers. It demonstrates coordinated validation, locking, and settlement workflows, privacy techniques, and cross-border path discovery.
+The BIS Project Agorá report-era **PoC** connects tokenized commercial-bank deposits on a unifying ledger with tokenized central-bank reserves on jurisdictional ledgers. It demonstrated coordinated validation, locking, and settlement workflows, privacy techniques, and cross-border path discovery; the later project phase reached a **controlled real-value test**. Neither maturity label means production deployment.
 
 It also differs from this research's starting architecture: Agorá treats platform balances and transactions as the authoritative “golden source” for tokenized deposits. The report explicitly does not validate production cybersecurity, resilience, throughput, latency, failover, live CBS/RTGS integration, or a complete legal rulebook. See [the dedicated Agorá chapter](08-project-agora-and-cross-border-tokenized-deposits.md).
 
