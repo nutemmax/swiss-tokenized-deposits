@@ -43,7 +43,8 @@
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
@@ -53,10 +54,15 @@
 
     button:focus-visible,
     input:focus-visible,
-    dialog:focus-visible {
-      outline: none;
+    select:focus-visible,
+    summary:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
       box-shadow: var(--focus);
     }
+
+    h1[tabindex="-1"]:focus { outline: none; }
 
     [hidden] { display: none !important; }
 
@@ -70,23 +76,19 @@
     }
 
     .landing {
-      width: min(1380px, calc(100% - 48px));
+      width: min(1180px, calc(100% - 48px));
       min-height: 100vh;
       margin: 0 auto;
-      padding: 42px 0 64px;
+      padding: 36px 0 64px;
       display: grid;
       align-content: start;
-      gap: 52px;
+      gap: 44px;
     }
 
     .landing-header {
       width: 100%;
-      min-height: min(820px, 92vh);
-      padding: 42px 0 56px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 34px;
-      align-content: center;
+      max-width: 940px;
+      padding: 52px 0 18px;
     }
 
     .landing-hero-kicker {
@@ -99,206 +101,37 @@
     }
 
     .landing h1 {
-      max-width: none;
+      max-width: 860px;
       margin: 0 0 18px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(38px, 5.8vw, 74px);
+      font-size: clamp(40px, 5.4vw, 68px);
       font-weight: 500;
       letter-spacing: -0.045em;
-      line-height: 0.98;
-    }
-
-    .landing-definition {
-      max-width: none;
-      margin: 0 0 20px;
-      padding: 14px 0 14px 22px;
-      border-left: 5px solid var(--red);
-      color: var(--ink);
-      font-size: clamp(18px, 1.8vw, 23px);
-      line-height: 1.48;
+      line-height: 1;
     }
 
     .landing-intro {
-      max-width: none;
+      max-width: 900px;
       margin: 0;
       color: var(--ink);
-      font-size: 18px;
-      line-height: 1.55;
+      font-size: clamp(18px, 1.8vw, 22px);
+      line-height: 1.5;
     }
 
-    .hero-architecture {
-      padding-top: 26px;
-      border-top: 1px solid var(--line);
+    .landing-actions {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .hero-architecture-heading {
-      margin: 0 0 15px;
-    }
+    .landing-actions .button { min-height: 48px; padding-inline: 20px; }
 
-    .hero-architecture-heading h2 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
-      font-weight: 500;
-      letter-spacing: -.025em;
-      line-height: 1.08;
-    }
-
-    .hero-architecture-heading span {
-      display: block;
-      margin-top: 7px;
+    .run-metadata {
+      margin: 16px 0 0;
       color: var(--muted);
       font-size: 14px;
-    }
-
-    .hero-architecture-flow {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 28px;
-    }
-
-    .hero-flow-item {
-      position: relative;
-      min-height: 132px;
-      padding: 21px 28px 20px 22px;
-      display: grid;
-      grid-template-columns: 48px minmax(0, 1fr);
-      column-gap: 14px;
-      align-content: center;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-small);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .hero-flow-item:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      z-index: 2;
-      top: 50%;
-      right: -15px;
-      width: 28px;
-      height: 28px;
-      border-top: 1px solid var(--line);
-      border-right: 1px solid var(--line);
-      background: var(--card);
-      transform: translateY(-50%) rotate(45deg);
-    }
-
-    .hero-flow-icon {
-      display: grid;
-      width: 48px;
-      height: 48px;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--red-soft);
-    }
-
-    .hero-flow-icon svg {
-      width: 25px;
-      height: 25px;
-      color: var(--red-dark);
-    }
-
-    .hero-flow-copy span,
-    .hero-flow-copy strong {
-      display: block;
-    }
-
-    .hero-flow-copy > span {
-      margin-bottom: 3px;
-      color: var(--red-dark);
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: .06em;
-    }
-
-    .hero-flow-copy strong {
-      color: var(--ink);
-      font-size: 17px;
-      line-height: 1.2;
-    }
-
-    .hero-flow-copy small {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.3;
-    }
-
-    .landing-lens-panel {
-      display: grid;
-      grid-template-columns: minmax(260px, .38fr) minmax(0, .62fr);
-      gap: 46px;
-      align-items: start;
-      padding: 30px;
-      border-radius: var(--radius);
-      color: #fff;
-      background: var(--ink);
-      box-shadow: 0 20px 42px rgba(23, 23, 23, 0.2), 0 2px 8px rgba(23, 23, 23, 0.12);
-    }
-
-    .landing-lens-heading > p {
-      margin: 0 0 8px;
-      padding-left: 10px;
-      border-left: 3px solid var(--red);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .landing-lens-panel h2 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
-      font-weight: 500;
-      letter-spacing: -.025em;
-      line-height: 1.08;
-    }
-
-    .landing-lenses {
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
-      list-style: none;
-    }
-
-    .landing-lenses li {
-      padding: 16px 0;
-      display: grid;
-      grid-template-columns: 50px minmax(0, 1fr);
-      gap: 12px;
-      border-top: 1px solid #45413d;
-      color: #d0d0d0;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .landing-lenses li > span {
-      display: grid;
-      width: 36px;
-      height: 36px;
-      margin: 0;
-      place-items: center;
-      border-radius: 50%;
-      color: #fff;
-      background: var(--red);
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: .06em;
-    }
-
-    .landing-lenses strong {
-      display: block;
-      margin-bottom: 3px;
-      color: #fff;
-      font-size: 16px;
+      font-weight: 750;
     }
 
     .landing-choice-section,
@@ -336,289 +169,44 @@
       margin-top: 28px;
     }
 
-    .landing-report,
-    .landing-conclusion {
-      padding: 44px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .landing-report-header {
-      max-width: 1080px;
-      margin-bottom: 24px;
-    }
-
-    .landing-report h2,
-    .landing-conclusion h2 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(32px, 4.2vw, 54px);
-      font-weight: 500;
-      letter-spacing: -0.04em;
-      line-height: 1.02;
-    }
-
-    .landing-report-header > p:last-child,
-    .landing-conclusion-header > p:last-child {
-      max-width: 1050px;
-      margin: 16px 0 0;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.58;
-    }
-
-    .landing-report-grid {
+    .model-groups {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
       gap: 16px;
+      align-items: stretch;
     }
 
-    .landing-report-grid article {
-      min-height: 262px;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      color: var(--ink);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-report-grid h3,
-    .landing-recommendation h3 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      line-height: 1.18;
-    }
-
-    .landing-card-icon {
-      display: grid;
-      width: 82px;
-      height: 78px;
-      margin-bottom: 18px;
-      place-items: center;
-    }
-
-    .landing-card-icon svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .landing-report-grid p,
-    .landing-recommendation p,
-    .landing-landscape-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-card-key {
-      display: block;
-      margin-top: 15px;
-      padding-top: 13px;
-      border-top: 1px solid var(--line);
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .landing-landscape {
-      margin-top: 42px;
-      padding-top: 38px;
-      border-top: 1px solid var(--line);
-    }
-
-    .landing-landscape-header {
-      max-width: 960px;
-      margin-bottom: 22px;
-    }
-
-    .landing-landscape-header h3 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
-      font-weight: 500;
-      letter-spacing: -0.025em;
-      line-height: 1.08;
-    }
-
-    .landing-landscape-header > p:last-child {
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    .landing-landscape-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .landing-landscape-card {
-      min-height: 230px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-landscape-card h4 {
-      margin: 0 0 9px;
-      font-size: 18px;
-      line-height: 1.22;
-    }
-
-    .landing-landscape-card > .landing-card-top {
-      display: flex;
-      min-height: 112px;
-      margin-bottom: 16px;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-card-icon {
-      width: 58px;
-      height: 54px;
-      margin: 0;
-      flex: 0 0 58px;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-maturity {
-      margin: 3px 0 0;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-maturity-list {
+    .model-group {
       min-width: 0;
-      margin: 0;
-    }
-
-    .landing-maturity {
-      display: inline-flex;
-      min-height: 28px;
-      margin-bottom: 16px;
-      padding: 4px 9px;
-      align-items: center;
-      border: 1px solid rgba(227, 38, 46, 0.32);
-      border-radius: 999px;
-      color: #b51f26;
-      background: var(--red-soft);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .landing-maturity-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .landing-maturity-list .landing-maturity {
-      margin-bottom: 0;
-    }
-
-    .maturity-dot {
-      width: 8px;
-      height: 8px;
-      margin-right: 7px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .maturity-dot.is-production { background: #3b8c5a; }
-    .maturity-dot.is-exploratory { background: #d18a00; }
-
-    .landing-report-link {
-      margin: 16px 0 0;
-      padding: 17px 20px;
-      border-left: 4px solid var(--red);
-      color: var(--ink);
-      background: var(--card);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-conclusion {
-      margin-top: 54px;
-      padding-bottom: 10px;
-    }
-
-    .landing-conclusion-header {
-      max-width: 1080px;
-      margin-bottom: 24px;
-    }
-
-    .landing-conclusion-layout {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .landing-recommendation {
-      min-height: 220px;
-      padding: 22px;
+      padding: 18px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      color: var(--ink);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.55);
     }
 
-    .landing-recommendation .eyebrow { color: var(--red-dark); }
-    .landing-recommendation h3 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; }
-    .landing-recommendation p { color: var(--muted); }
-
-    .landing-decision-list {
-      margin: 0;
-      display: contents;
-    }
-
-    .landing-decision-list div {
-      min-height: 220px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-decision-list dt {
-      margin-bottom: 7px;
-      color: var(--ink);
+    .model-group h3 {
+      margin: 0 0 4px;
       font-size: 15px;
-      font-weight: 850;
     }
 
-    .landing-decision-list dd {
-      margin: 0;
+    .model-group > p {
+      min-height: 42px;
+      margin: 0 0 14px;
       color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-conclusion-outcome {
-      margin: 16px 0 0;
-      padding: 18px 20px;
-      border-left: 4px solid var(--red);
-      color: var(--ink);
-      background: var(--card);
-      font-size: 16px;
-      line-height: 1.55;
+      font-size: 14px;
+      line-height: 1.4;
     }
 
     .model-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(var(--model-columns, 1), minmax(0, 1fr));
+      gap: 10px;
     }
 
     .model-card {
       position: relative;
-      min-height: 280px;
-      padding: 24px;
+      min-height: 240px;
+      padding: 18px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -642,23 +230,11 @@
       box-shadow: inset 0 0 0 1px var(--red), var(--shadow);
     }
 
-    .model-number {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      margin-bottom: 12px;
-      border-radius: 50%;
-      color: #fff;
-      background: var(--red);
-      font-weight: 850;
-    }
-
     .model-visual {
       display: grid;
-      width: 92px;
-      height: 82px;
-      margin: 0 0 16px;
+      width: 72px;
+      height: 66px;
+      margin: 0 0 14px;
       place-items: center;
       color: var(--ink);
     }
@@ -673,7 +249,7 @@
       display: block;
       max-width: 220px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: 25px;
+      font-size: 22px;
       font-weight: 600;
       letter-spacing: -0.02em;
       line-height: 1.06;
@@ -685,6 +261,66 @@
       margin-top: 12px;
       color: var(--muted);
       font-size: 15px;
+    }
+
+    .scenario-library-control {
+      margin: 18px 0 0;
+    }
+
+    .swiss-context {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .swiss-context summary {
+      padding: 20px 4px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .swiss-context-body {
+      padding: 0 4px 24px;
+    }
+
+    .swiss-context-body > p {
+      max-width: 820px;
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .swiss-reference-list {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      list-style: none;
+    }
+
+    .swiss-reference-list li {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-small);
+      background: var(--card);
+    }
+
+    .swiss-reference-list strong,
+    .swiss-reference-list span { display: block; }
+
+    .swiss-reference-list span {
+      margin: 8px 0;
+      color: var(--red-dark);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .swiss-reference-list p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .workspace {
@@ -1822,12 +1458,7 @@
     }
 
     @media (max-width: 1100px) {
-      .hero-architecture-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .hero-flow-item:nth-child(2)::after { display: none; }
-      .landing-report-grid,
-      .landing-landscape-grid,
-      .landing-conclusion-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .swiss-reference-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .model-card { min-height: 240px; }
       .context-actions { grid-column: 1 / -1; justify-content: flex-end; }
       .failure-bar { padding-left: 0; }
@@ -1835,7 +1466,8 @@
     }
 
     @media (max-width: 900px) {
-      .landing-lens-panel { grid-template-columns: 1fr; }
+      .model-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .model-group:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
       .scenario-heading.has-failure { grid-template-columns: 1fr; }
       .stage-layout { grid-template-columns: 1fr; }
       .inspector { min-height: 250px; }
@@ -1855,20 +1487,14 @@
         align-content: start;
       }
 
-      .landing-header { min-height: auto; padding: 34px 0 44px; }
-      .landing-lens-panel { padding: 24px; }
-      .hero-architecture-heading { display: block; }
-      .hero-architecture-heading span { display: block; margin-top: 5px; }
-      .hero-architecture-flow { grid-template-columns: 1fr; gap: 12px; }
-      .hero-flow-item::after { display: none !important; }
-      .landing-report-grid,
-      .landing-landscape-grid,
-      .landing-conclusion-layout { grid-template-columns: 1fr; }
-      .landing-report,
-      .landing-conclusion { padding-block: 38px; }
+      .landing-header { padding: 34px 0 10px; }
+      .landing-actions { display: grid; }
+      .landing-actions .button { width: 100%; }
+      .model-groups { grid-template-columns: 1fr; }
+      .model-group:nth-child(2) { grid-column: auto; grid-row: auto; }
       .model-grid { grid-template-columns: 1fr; }
-      .model-card { min-height: 210px; }
-      .model-number { margin-bottom: 24px; }
+      .model-card { min-height: 196px; }
+      .swiss-reference-list { grid-template-columns: 1fr; }
 
       .context-bar,
       .failure-bar,
@@ -2248,187 +1874,54 @@
   <main>
     <section class="landing" id="landing" aria-labelledby="landing-title">
       <header class="landing-header">
-        <div class="landing-hero-copy">
-          <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
-          <h1 id="landing-title" tabindex="-1">Tokenized deposits: how architecture changes a payment.</h1>
-          <p class="landing-definition">A tokenized deposit is a claim on a commercial bank represented or operated through token or distributed-ledger technology.</p>
-          <p class="landing-intro">Tokenization can coordinate bank money with conditions, assets, currencies and institutions. Its value must be demonstrated against core-banking automation, account APIs, SIC Instant Payments and ordinary escrow.</p>
+        <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
+        <h1 id="landing-title" tabindex="-1">See what changes when a deposit moves on DLT.</h1>
+        <p class="landing-intro">The bank remains the debtor for a tokenized deposit. The design changes how the claim is represented and transferred, which CBS, DLT, or GL record is authoritative, where finality occurs, and how reconciliation and control work inside the issuer perimeter.</p>
+        <div class="landing-actions">
+          <button class="button button-primary" id="open-featured-flow" type="button">Open mirrored conditional payment</button>
+          <a class="button" href="#landing-models">Choose a model and scenario</a>
         </div>
-
-        <section class="hero-architecture" aria-labelledby="hero-architecture-title">
-          <header class="hero-architecture-heading">
-            <h2 id="hero-architecture-title">Four alternative structures</h2>
-            <span>Compared across the same payment scenarios—not a maturity sequence</span>
-          </header>
-          <div class="hero-architecture-flow">
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="receipt-text" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>01</span><strong>Payment instruction</strong><small>Bank executes a request</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="database" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>02</span><strong>Mirrored deposit</strong><small>CBS + token mirror</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="network" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>03</span><strong>Native on-chain</strong><small>DLT is authoritative</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="coins" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>04</span><strong>Non-bank stablecoin</strong><small>Separate issuer claim</small></div>
-            </article>
-          </div>
-        </section>
-
-        <aside class="landing-lens-panel" aria-labelledby="landing-lens-title">
-          <div class="landing-lens-heading">
-            <p>How to read the explorer</p>
-            <h2 id="landing-lens-title">Four questions follow every payment.</h2>
-          </div>
-          <ol class="landing-lenses" aria-label="Questions examined by the demonstration">
-            <li><span>01</span><div><strong>Claim</strong>Who owes the value to the holder?</div></li>
-            <li><span>02</span><div><strong>Authority</strong>Which record defines ownership?</div></li>
-            <li><span>03</span><div><strong>Settlement</strong>Which asset completes the payment?</div></li>
-            <li><span>04</span><div><strong>Control</strong>Who can issue, transfer, pause and recover?</div></li>
-          </ol>
-        </aside>
+        <p class="run-metadata">Mirrored deposit · Conditional payment · 7 steps · Normal and failure runs</p>
       </header>
 
-      <section class="landing-report" aria-labelledby="landing-context-title">
-        <header class="landing-report-header">
-          <p class="eyebrow">Before the explorer</p>
-          <h2 id="landing-context-title">Understand the money before choosing the technology.</h2>
-          <p>A tokenized deposit remains a commercial-bank liability. Tokenization may change its representation and workflow, while the product must still define the debtor, authoritative record, settlement arrangement and legal effect.</p>
-        </header>
-
-        <div class="landing-report-grid">
-          <article>
-            <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="coins" aria-hidden="true"></span>
-            <h3>It remains bank money</h3>
-            <p>The issuing bank owes the value to the holder. The token does not create a second asset or turn the deposit into central-bank money.</p>
-            <span class="landing-card-key">Define the debtor and holder</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="badge-check" aria-hidden="true"></span>
-            <h3>The record model matters</h3>
-            <p>The CBS, DLT and general ledger may record related facts. The design must state which record prevails and how disagreements are repaired.</p>
-            <span class="landing-card-key">Name the authoritative record</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="lock-keyhole" aria-hidden="true"></span>
-            <h3>Tokenization adds coordination</h3>
-            <p>Shared state can support conditional release, synchronized asset or FX exchange and workflows involving several institutions.</p>
-            <span class="landing-card-key">Prove value beyond ordinary payments</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="git-compare-arrows" data-guide-badge="network" aria-hidden="true"></span>
-            <h3>Architectures change the risk</h3>
-            <p>An instruction, CBS mirror, authoritative on-chain deposit and separate stablecoin place authority, recovery and issuer risk differently.</p>
-            <span class="landing-card-key">Compare the same flow across models</span>
-          </article>
-        </div>
-
-        <section class="landing-landscape" aria-labelledby="landing-landscape-title">
-          <header class="landing-landscape-header">
-            <p class="eyebrow">Swiss landscape</p>
-            <h3 id="landing-landscape-title">Related initiatives test different parts of the system.</h3>
-            <p>Maturity labels show what each initiative has demonstrated or put into operation. They distinguish production infrastructure, pilots, proofs of concept and sandboxes; none is approval for a bank-specific tokenized deposit.</p>
-          </header>
-
-          <div class="landing-landscape-grid">
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="arrow-right-left" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>Production</span>
-              </div>
-              <h4>SIC and Instant Payments</h4>
-              <p>CHF interbank settlement in SNB money and the domestic benchmark for fast, continuously available account payments.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="receipt-text" data-guide-badge="workflow" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Concept · PoC · pilot</span>
-              </div>
-              <h4>SBA and bank initiatives</h4>
-              <p>The SBA PoC used on-chain instructions with off-chain account movements. Bank pilots examine treasury and programmable-payment uses.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="network" data-guide-badge="landmark" aria-hidden="true"></span>
-                <div class="landing-maturity-list" aria-label="Maturity by initiative">
-                  <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Helvetia · Pilot</span>
-                  <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>BX · Production scope</span>
-                  <span class="landing-maturity"><span class="maturity-dot" aria-hidden="true"></span>Agorá · Controlled test</span>
-                </div>
-              </div>
-              <h4>Helvetia, BX and Agorá</h4>
-              <p>These initiatives examine tokenized central-bank settlement, DLT securities infrastructure and cross-border workflows at different stages of deployment.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="wallet-cards" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Sandbox</span>
-              </div>
-              <h4>CHF stablecoin work</h4>
-              <p>An adjacent private-money model with a separate issuer and reserve arrangement rather than a deposit claim on the customer’s bank.</p>
-            </article>
-          </div>
-        </section>
-
-        <p class="landing-report-link"><strong>Next:</strong> choose one architecture and one scenario. The explorer will show how the claim, authority, settlement and controls change at every step.</p>
-      </section>
-
-      <section class="landing-choice-section" aria-labelledby="landing-model-title">
+      <section class="landing-choice-section" id="landing-models" aria-labelledby="landing-model-title">
         <header class="landing-choice-heading">
-          <p class="eyebrow">Step 1 of 2</p>
-          <h2 id="landing-model-title">Choose the money architecture</h2>
-          <p>The architecture determines the holder’s claim, the authoritative record and the role of the bank or issuer throughout the selected flow.</p>
+          <h2 id="landing-model-title">Choose the model</h2>
+          <p>Compare the baseline mechanism, two tokenized-deposit designs, and a non-bank comparator across the same flows.</p>
         </header>
-        <div class="model-grid" id="model-grid" aria-label="Money architectures"></div>
+        <div class="model-groups" id="model-grid" aria-label="Money models"></div>
       </section>
 
       <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title" hidden>
         <header class="landing-choice-heading">
-          <p class="eyebrow">Step 2 of 2</p>
-          <h2 id="landing-scenario-title">Choose the scenario to examine</h2>
-          <p id="landing-scenario-help">Recommended scenarios are marked, while the complete library remains available.</p>
+          <h2 id="landing-scenario-title">Choose a scenario</h2>
+          <p id="landing-scenario-help"></p>
         </header>
         <div class="landing-scenario-groups" id="landing-scenario-groups"></div>
+        <p class="scenario-library-control">
+          <button class="button" id="scenario-library-toggle" type="button" aria-controls="landing-scenario-groups" aria-expanded="false">Show all 11 scenarios</button>
+        </p>
       </section>
 
-      <section class="landing-conclusion" aria-labelledby="landing-conclusion-title">
-          <header class="landing-conclusion-header">
-            <p class="eyebrow">Decision perspective</p>
-            <h2 id="landing-conclusion-title">Use the explorer to narrow a bank proposition—not to select a ledger.</h2>
-            <p>A technical flow demonstrates a mechanism. Adoption also requires product, legal, financial, risk and operating evidence.</p>
-          </header>
-
-          <div class="landing-conclusion-layout">
-            <article class="landing-recommendation">
-              <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="refresh-cw" aria-hidden="true"></span>
-              <p class="eyebrow">Starting hypothesis</p>
-              <h3>A narrow CBS-authoritative pilot</h3>
-              <p>Bank-issued CHF mirror, identified customers, recoverable wallets, low limits, one conditional flow and continuous CBS, GL and token reconciliation.</p>
-            </article>
-
-            <dl class="landing-decision-list">
-              <div><span class="landing-card-icon" data-guide-icon="scale" data-guide-badge="badge-check" aria-hidden="true"></span><dt>Business fit</dt><dd>Beat APIs, SIC or escrow on measured value.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="database" aria-hidden="true"></span><dt>Claim and authority</dt><dd>Approve the debtor, transfer effect and prevailing record.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="arrow-right-left" aria-hidden="true"></span><dt>Settlement and liquidity</dt><dd>Define finality, anchor asset and funding obligations.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="shield-alert" data-guide-badge="lock-keyhole" aria-hidden="true"></span><dt>Controls and privacy</dt><dd>Test AML, secrecy, reconciliation and recovery.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="key-round" aria-hidden="true"></span><dt>Governance and evidence</dt><dd>Name owners, pause rights, exit paths and gates.</dd></div>
-            </dl>
-          </div>
-
-          <p class="landing-conclusion-outcome"><strong>Valid outcomes: proceed, narrow, postpone or use ordinary payments.</strong> Stop while creditor, liability, finality or customer-value recovery remains unresolved.</p>
-      </section>
+      <details class="swiss-context" id="swiss-context">
+        <summary>Swiss market reference points</summary>
+        <div class="swiss-context-body">
+          <p>These are reference points, not interchangeable blueprints or approval for a bank-specific tokenized deposit.</p>
+          <ul class="swiss-reference-list">
+            <li><strong>SIC and Instant Payments</strong><span>Production</span><p>CHF interbank settlement in SNB money and the domestic reference for instant account payments.</p></li>
+            <li><strong>Project Agorá</strong><span>Controlled test</span><p>A multi-jurisdiction test of tokenized cross-border wholesale payments.</p></li>
+            <li><strong>Project Helvetia</strong><span>Pilot</span><p>Settlement of tokenized assets in central bank money on DLT.</p></li>
+            <li><strong>BX Digital</strong><span>Production scope</span><p>DLT trading and settlement infrastructure for tokenized securities.</p></li>
+          </ul>
+        </div>
+      </details>
     </section>
 
     <section class="workspace" id="workspace" hidden aria-labelledby="scenario-title">
       <div class="context-shell">
         <nav class="context-bar" aria-label="Current flow and controls">
           <div class="context-current">
-            <button class="overview-button" id="back-to-overview" type="button" aria-label="Back to research overview">Overview</button>
+            <button class="overview-button" id="back-to-overview" type="button" aria-label="Back to overview">Overview</button>
             <div class="swiss-mark" aria-hidden="true">+</div>
             <div class="context-copy">
               <span class="context-label">Current flow</span>
@@ -2562,7 +2055,7 @@
         },
         native: {
           number: "03",
-          name: "Native on-chain",
+          name: "Ledger-native deposit",
           summary: "DLT is authoritative",
           defaultScenario: "same",
           recommended: ["same", "pvp", "bridge", "mismatch"],
@@ -2583,6 +2076,12 @@
           context: "The token gives its holder a claim on a separate issuer. Reserve, redemption, and issuer-governance arrangements determine how the value is issued, transferred, and converted."
         }
       };
+
+      const modelGroups = [
+        { id: "baseline", label: "Baseline", description: "Payment instruction without a tokenized deposit.", modelIds: ["instruction"] },
+        { id: "tokenized", label: "Tokenized deposit", description: "Mirrored and ledger-native structures for a bank deposit claim.", modelIds: ["mirrored", "native"] },
+        { id: "comparator", label: "Comparator", description: "A separate non-bank issuer claim.", modelIds: ["stablecoin"] }
+      ];
 
       const visualSvg = (content, viewBox = "0 0 150 150") => `<svg viewBox="${viewBox}" aria-hidden="true">${content}</svg>`;
 
@@ -2606,14 +2105,6 @@
         native: iconVisual("network", "badge-check"),
         stablecoin: iconVisual("coins", "wallet-cards")
       };
-
-      document.querySelectorAll?.("[data-hero-icon]").forEach((visual) => {
-        visual.innerHTML = lucideSvg(visual.dataset.heroIcon);
-      });
-
-      document.querySelectorAll?.("[data-guide-icon]").forEach((visual) => {
-        visual.innerHTML = iconVisual(visual.dataset.guideIcon, visual.dataset.guideBadge || "");
-      });
 
       const scenarioVisuals = {
         mint: iconVisual("banknote-arrow-up", "badge-check"),
@@ -3038,7 +2529,8 @@
       const state = {
         model: null,
         scenario: null,
-        pendingModel: null,
+        landing: { model: null, scenarioScope: "suggested" },
+        dialogModel: null,
         failure: null,
         step: 0,
         timer: null,
@@ -3090,7 +2582,8 @@
       const elements = {
         landing: $("#landing"), workspace: $("#workspace"), modelGrid: $("#model-grid"),
         landingScenarios: $("#landing-scenarios"), landingScenarioGroups: $("#landing-scenario-groups"),
-        landingScenarioHelp: $("#landing-scenario-help"),
+        landingScenarioHelp: $("#landing-scenario-help"), scenarioLibraryToggle: $("#scenario-library-toggle"),
+        openFeaturedFlow: $("#open-featured-flow"),
         contextModel: $("#context-model"), contextScenario: $("#context-scenario"),
         runModeSelect: $("#run-mode-select"), changeFlow: $("#change-flow"), backToOverview: $("#back-to-overview"),
         scenarioHeading: $(".scenario-heading"), scenarioCategory: $("#scenario-category"), scenarioTitle: $("#scenario-title"),
@@ -3140,9 +2633,12 @@
       function validateDemoData() {
         let explanationCount = 0;
         let failureCombinationCount = 0;
+        const groupedModelIds = modelGroups.flatMap((group) => group.modelIds);
+        if (groupedModelIds.length !== modelIds.length || new Set(groupedModelIds).size !== modelIds.length || groupedModelIds.some((id) => !models[id])) throw new Error("Model taxonomy must include each model once");
         Object.entries(models).forEach(([id, model]) => {
           if (!scenarios[model.defaultScenario]) throw new Error("Unknown default scenario for " + id);
           if (model.recommended.some((scenarioId) => !scenarios[scenarioId])) throw new Error("Unknown recommendation for " + id);
+          if (model.recommended.length !== 4 || new Set(model.recommended).size !== 4) throw new Error("Expected four unique suggestions for " + id);
           if (!modelVisuals[id]) throw new Error("Missing model visual for " + id);
         });
         Object.entries(scenarios).forEach(([scenarioId, scenarioData]) => {
@@ -3183,28 +2679,49 @@
 
       const validationStats = validateDemoData();
 
+      function scenarioIdsFor(modelId, scope) {
+        return scope === "suggested" ? [...models[modelId].recommended] : Object.keys(scenarios);
+      }
+
+      function scenarioGroupsFor(ids) {
+        const selectedIds = new Set(ids);
+        return Object.entries(categories).map(([id, label]) => ({
+          id,
+          label,
+          scenarioIds: Object.keys(scenarios).filter((scenarioId) => selectedIds.has(scenarioId) && scenarios[scenarioId].category === id)
+        })).filter((group) => group.scenarioIds.length);
+      }
+
       function renderModelCards() {
-        elements.modelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
-          const button = makeButton("model-card", "", {
-            "data-model": id,
-            "aria-label": model.name + ": " + model.summary,
-            "aria-pressed": String(state.pendingModel === id)
-          });
-          const number = document.createElement("span"); number.className = "model-number"; number.textContent = model.number;
-          const visual = document.createElement("span"); visual.className = "model-visual"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
-          const name = document.createElement("strong"); name.textContent = model.name;
-          const summary = document.createElement("span"); summary.textContent = model.summary;
-          button.append(number, visual, name, summary);
-          return button;
+        elements.modelGrid.replaceChildren(...modelGroups.map((group) => {
+          const section = document.createElement("section"); section.className = "model-group"; section.dataset.modelGroup = group.id;
+          const heading = document.createElement("h3"); heading.textContent = group.label;
+          const description = document.createElement("p"); description.textContent = group.description;
+          const grid = document.createElement("div"); grid.className = "model-grid"; grid.style.setProperty("--model-columns", String(group.modelIds.length));
+          grid.append(...group.modelIds.map((id) => {
+            const model = models[id];
+            const button = makeButton("model-card", "", {
+              "data-model": id,
+              "aria-label": model.name + ": " + model.summary,
+              "aria-pressed": String(state.landing.model === id)
+            });
+            const visual = document.createElement("span"); visual.className = "model-visual"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
+            const name = document.createElement("strong"); name.textContent = model.name;
+            const summary = document.createElement("span"); summary.textContent = model.summary;
+            button.append(visual, name, summary);
+            return button;
+          }));
+          section.append(heading, description, grid);
+          return section;
         }));
       }
 
-      function scenarioButton(id) {
+      function scenarioButton(id, { modelId, markRecommended }) {
         const scenarioData = scenarios[id];
-        const recommended = models[state.pendingModel].recommended.includes(id);
+        const recommended = markRecommended && models[modelId].recommended.includes(id);
         const button = makeButton("scenario-option" + (recommended ? " is-recommended" : ""), "", {
           "data-scenario": id,
-          "aria-pressed": String(state.scenario === id && state.pendingModel === state.model)
+          "aria-pressed": String(state.scenario === id && modelId === state.model)
         });
         const visual = document.createElement("span"); visual.className = "scenario-thumbnail"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = scenarioVisuals[id];
         const title = document.createElement("strong"); title.textContent = scenarioData.name;
@@ -3213,31 +2730,44 @@
         return button;
       }
 
-      function buildScenarioGroups() {
-        return Object.entries(categories).map(([categoryId, categoryName]) => {
-          const section = document.createElement("section"); section.className = "scenario-group";
-          const heading = document.createElement("h4"); heading.textContent = categoryName;
+      function renderScenarioGroups(target, { modelId, scenarioIds, markRecommended }) {
+        target.replaceChildren(...scenarioGroupsFor(scenarioIds).map((group) => {
+          const section = document.createElement("section"); section.className = "scenario-group"; section.dataset.scenarioGroup = group.id;
+          const heading = document.createElement("h4"); heading.textContent = group.label;
           const grid = document.createElement("div"); grid.className = "scenario-grid";
-          Object.entries(scenarios).filter(([, scenarioData]) => scenarioData.category === categoryId).forEach(([id]) => grid.append(scenarioButton(id)));
+          grid.append(...group.scenarioIds.map((id) => scenarioButton(id, { modelId, markRecommended })));
           section.append(heading, grid);
           return section;
-        });
+        }));
       }
 
       function renderLandingScenarios() {
-        elements.landingScenarioHelp.textContent = "Recommended for " + models[state.pendingModel].name + " are marked. Every scenario remains available for comparison.";
-        elements.landingScenarioGroups.replaceChildren(...buildScenarioGroups());
+        const { model, scenarioScope } = state.landing;
+        const scenarioIds = scenarioIdsFor(model, scenarioScope);
+        elements.landingScenarioHelp.textContent = scenarioScope === "suggested"
+          ? "Four suggested scenarios for " + models[model].name + "."
+          : "All 11 scenarios for " + models[model].name + ".";
+        elements.scenarioLibraryToggle.textContent = scenarioScope === "suggested" ? "Show all 11 scenarios" : "Show 4 suggested scenarios";
+        elements.scenarioLibraryToggle.setAttribute("aria-expanded", String(scenarioScope === "all"));
+        renderScenarioGroups(elements.landingScenarioGroups, { modelId: model, scenarioIds, markRecommended: false });
       }
 
       function renderFlowDialog() {
         elements.dialogModelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
-          const button = makeButton("dialog-model-option", "", { "data-dialog-model": id, "aria-pressed": String(state.pendingModel === id) });
+          const button = makeButton("dialog-model-option", "", {
+            "data-dialog-model": id,
+            "aria-pressed": String(state.dialogModel === id)
+          });
           const visual = document.createElement("span"); visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
           const label = document.createElement("strong"); label.textContent = model.name;
           button.append(visual, label);
           return button;
         }));
-        elements.scenarioGroups.replaceChildren(...buildScenarioGroups());
+        renderScenarioGroups(elements.scenarioGroups, {
+          modelId: state.dialogModel,
+          scenarioIds: scenarioIdsFor(state.dialogModel, "all"),
+          markRecommended: true
+        });
       }
 
       function renderRunMode() {
@@ -3465,7 +2995,8 @@
       }
 
       function chooseLandingModel(modelId) {
-        state.pendingModel = modelId;
+        state.landing.model = modelId;
+        state.landing.scenarioScope = "suggested";
         elements.modelGrid.querySelectorAll("[data-model]").forEach((card) => card.setAttribute("aria-pressed", String(card.dataset.model === modelId)));
         renderLandingScenarios();
         elements.landingScenarios.hidden = false;
@@ -3479,7 +3010,7 @@
         stopPlayback();
         state.model = modelId;
         state.scenario = scenarioId;
-        state.pendingModel = modelId;
+        state.landing.model = modelId;
         state.failure = null;
         state.step = 0;
         elements.landing.hidden = true;
@@ -3494,7 +3025,7 @@
         elements.workspace.hidden = true;
         elements.landing.hidden = false;
         renderModelCards();
-        if (state.pendingModel) {
+        if (state.landing.model) {
           renderLandingScenarios();
           elements.landingScenarios.hidden = false;
         }
@@ -3504,15 +3035,17 @@
 
       function openFlowDialog() {
         stopPlayback();
-        state.pendingModel = state.model;
+        state.dialogModel = state.model;
         state.dialogReturnFocus = document.activeElement;
         renderFlowDialog();
         elements.dialog.showModal();
       }
 
       function commitFlow(scenarioId) {
-        startScenario(state.pendingModel, scenarioId);
+        const modelId = state.dialogModel;
+        state.dialogReturnFocus = null;
         elements.dialog.close();
+        startScenario(modelId, scenarioId);
       }
 
       renderModelCards();
@@ -3523,7 +3056,12 @@
       });
       elements.landingScenarioGroups.addEventListener("click", (event) => {
         const scenarioCard = event.target.closest("[data-scenario]");
-        if (scenarioCard) startScenario(state.pendingModel, scenarioCard.dataset.scenario);
+        if (scenarioCard) startScenario(state.landing.model, scenarioCard.dataset.scenario);
+      });
+      elements.openFeaturedFlow.addEventListener("click", () => startScenario("mirrored", "conditional"));
+      elements.scenarioLibraryToggle.addEventListener("click", () => {
+        state.landing.scenarioScope = state.landing.scenarioScope === "suggested" ? "all" : "suggested";
+        renderLandingScenarios();
       });
 
       elements.changeFlow.addEventListener("click", openFlowDialog);
@@ -3531,7 +3069,7 @@
       elements.closeDialog.addEventListener("click", () => elements.dialog.close());
       elements.dialog.addEventListener("click", (event) => {
         const modelButton = event.target.closest("[data-dialog-model]");
-        if (modelButton) { state.pendingModel = modelButton.dataset.dialogModel; renderFlowDialog(); return; }
+        if (modelButton) { state.dialogModel = modelButton.dataset.dialogModel; renderFlowDialog(); return; }
         const scenarioButton = event.target.closest("[data-scenario]");
         if (scenarioButton) commitFlow(scenarioButton.dataset.scenario);
       });
@@ -3578,8 +3116,8 @@
       });
 
       window.TokenizedDepositDemo = Object.freeze({
-        models, scenarios, failures, validationStats,
-        getState: () => ({ ...state, timer: Boolean(state.timer) }),
+        models, modelGroups, scenarios, failures, validationStats,
+        getState: () => ({ ...state, landing: { ...state.landing }, timer: Boolean(state.timer) }),
         getCurrentStep: () => ({ ...currentStep(), model: state.model, scenario: state.scenario, blocked: isBlocked() })
       });
     })();

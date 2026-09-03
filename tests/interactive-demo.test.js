@@ -8,9 +8,9 @@ const html = fs.readFileSync(demoPath, 'utf8');
 let source = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 assert.ok(source, 'demo script must exist');
 source = source.slice(source.indexOf('"use strict";'));
-const marker = 'const validationStats = validateDemoData();';
-source = source.slice(0, source.indexOf(marker) + marker.length)
-  .concat('\nglobalThis.__demoData = { models, scenarios, sceneLayouts, failures, validationStats };');
+const marker = 'function renderModelCards() {';
+source = source.slice(0, source.indexOf(marker))
+  .concat('\nglobalThis.__demoData = { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioIdsFor, scenarioGroupsFor };');
 
 const sandbox = {
   document: {
@@ -19,16 +19,41 @@ const sandbox = {
   }
 };
 vm.runInNewContext(source, sandbox, { filename: demoPath });
-const { models, scenarios, sceneLayouts, failures, validationStats } = sandbox.__demoData;
+const { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioIdsFor, scenarioGroupsFor } = sandbox.__demoData;
+const plain = (value) => JSON.parse(JSON.stringify(value));
 
 assert.equal(Object.keys(models).length, 4, 'four money models must remain available');
 assert.equal(Object.keys(scenarios).length, 11, 'all eleven scenarios must remain available');
 assert.equal(Object.keys(models).length * Object.keys(scenarios).length, 44, 'all model/scenario combinations must remain addressable');
-assert.deepEqual(JSON.parse(JSON.stringify(validationStats)), {
+assert.equal(models.native.name, 'Ledger-native deposit', 'native model must use the visible taxonomy name');
+assert.deepEqual(plain(modelGroups.map(({ id, label, modelIds }) => ({ id, label, modelIds }))), [
+  { id: 'baseline', label: 'Baseline', modelIds: ['instruction'] },
+  { id: 'tokenized', label: 'Tokenized deposit', modelIds: ['mirrored', 'native'] },
+  { id: 'comparator', label: 'Comparator', modelIds: ['stablecoin'] }
+], 'models must use the baseline, tokenized-deposit and comparator taxonomy');
+assert.deepEqual(plain(validationStats), {
   totalSteps: 75,
   explanationCount: 300,
   failureCombinationCount: 169
 });
+
+for (const modelId of Object.keys(models)) {
+  const suggested = Array.from(scenarioIdsFor(modelId, 'suggested'));
+  const all = Array.from(scenarioIdsFor(modelId, 'all'));
+  assert.equal(suggested.length, 4, `${modelId} must expose four suggestions`);
+  assert.equal(new Set(suggested).size, 4, `${modelId} suggestions must be unique`);
+  assert.deepEqual(suggested, Array.from(models[modelId].recommended), `${modelId} suggestions must come from the model registry`);
+  assert.equal(all.length, 11, `${modelId} full library must expose all scenarios`);
+  assert.equal(new Set(all).size, 11, `${modelId} full library must not duplicate scenarios`);
+  for (const ids of [suggested, all]) {
+    const groups = plain(scenarioGroupsFor(ids));
+    assert.ok(groups.every((group) => group.scenarioIds.length > 0), `${modelId} must not render empty scenario groups`);
+    const groupedIds = groups.flatMap((group) => group.scenarioIds);
+    assert.equal(new Set(groupedIds).size, groupedIds.length, `${modelId} scenario groups must not duplicate scenarios`);
+    assert.deepEqual(groupedIds.slice().sort(), ids.slice().sort(), `${modelId} scenario groups must contain exactly the selected scenarios`);
+  }
+}
+assert.deepEqual(plain(scenarioGroupsFor([])), [], 'empty scenario selections must not create headings');
 
 for (const [scenarioId, scenario] of Object.entries(scenarios)) {
   const expectedSteps = scenarioId === 'correspondent' ? 5 : 7;
@@ -53,14 +78,35 @@ for (const [scenarioId, scenario] of Object.entries(scenarios)) {
 assert.match(html, /id="change-flow"/, 'workspace must use one Change flow control');
 assert.match(html, /id="run-mode-select"/, 'workspace must use one run-mode control');
 assert.match(html, /id="step-list"/, 'workspace must include the consolidated step navigator');
-assert.match(html, /class="landing-lenses"/, 'landing page must introduce the claim, authority and settlement questions');
-assert.match(html, /id="landing-context-title"/, 'landing page must explain the tokenized-deposit research context');
-assert.match(html, /id="landing-conclusion-title"/, 'landing page must provide a decision-oriented conclusion');
+assert.match(html, /Mirrored deposit · Conditional payment · 7 steps · Normal and failure runs/, 'hero must show compact run metadata');
+assert.match(html, /id="open-featured-flow"[\s\S]*?Open mirrored conditional payment/, 'hero must expose the featured walkthrough action');
+assert.match(html, /openFeaturedFlow\.addEventListener\("click", \(\) => startScenario\("mirrored", "conditional"\)\)/, 'featured action must open the mirrored conditional flow directly');
+assert.match(html, /href="#landing-models"/, 'hero must link to model and scenario selection');
 assert.match(html, /id="landing-scenarios"[\s\S]*?hidden/, 'scenario choice must follow architecture choice on the landing page');
+assert.match(html, /id="scenario-library-toggle"[\s\S]*?aria-expanded="false"/, 'landing page must keep one progressive library toggle mounted');
+assert.match(html, /landing: \{ model: null, scenarioScope: "suggested" \}/, 'landing selection and scenario scope must share an explicit state object');
+assert.match(html, /function scenarioIdsFor\(modelId, scope\)/, 'scenario scope selection must remain pure');
+assert.match(html, /function scenarioGroupsFor\(ids\)/, 'scenario grouping must remain pure');
+assert.equal((html.match(/function renderScenarioGroups\(/g) || []).length, 1, 'landing and dialog must share one scenario-group renderer');
+assert.match(html, /renderScenarioGroups\(elements\.landingScenarioGroups,[\s\S]*?markRecommended: false/, 'landing suggestions must not carry Recommended badges');
+assert.match(html, /scenarioIds: scenarioIdsFor\(state\.dialogModel, "all"\)/, 'Change flow dialog must retain the full scenario library');
+assert.match(html, /function commitFlow\(scenarioId\)[\s\S]*?state\.dialogReturnFocus = null;[\s\S]*?elements\.dialog\.close\(\);[\s\S]*?startScenario\(modelId, scenarioId\)/, 'dialog commit must keep focus on the new scenario heading');
+assert.match(html, /elements\.dialog\.addEventListener\("close"[\s\S]*?state\.dialogReturnFocus\?\.focus/, 'dialog cancellation must restore focus to Change flow');
 assert.match(html, /function chooseLandingModel\(/, 'landing model selection must reveal scenario navigation');
 assert.match(html, /function startScenario\(modelId, scenarioId\)/, 'workspace must open only after both landing choices are known');
+assert.match(html, /function startScenario\(modelId, scenarioId\)[\s\S]*?state\.landing\.model = modelId/, 'every opened flow must become the selected Overview model');
 assert.match(html, /id="back-to-overview"/, 'workspace must provide a visible route back to the research overview');
-assert.match(html, /function showOverview\(/, 'return navigation must restore the landing report');
+assert.match(html, /function showOverview\([\s\S]*?if \(state\.landing\.model\)[\s\S]*?renderLandingScenarios\(\)/, 'return navigation must restore the landing selection');
+assert.doesNotMatch(html.slice(html.indexOf('function showOverview()'), html.indexOf('function openFlowDialog()')), /state\.landing\.(?:model|scenarioScope)\s*=/, 'return navigation must preserve landing state');
+assert.doesNotMatch(html.slice(html.indexOf('elements.scenarioLibraryToggle.addEventListener'), html.indexOf('elements.changeFlow.addEventListener')), /\.focus\(/, 'scenario library toggling must not move focus');
+assert.match(html, /h1\[tabindex="-1"\]:focus \{ outline: none; \}/, 'programmatically focused page headings must suppress the browser outline');
+for (const control of ['button', 'select', 'summary', 'a']) assert.match(html, new RegExp(`${control}:focus-visible`), `${control} must retain visible keyboard focus`);
+assert.match(html, /<details class="swiss-context"[\s\S]*?<summary>Swiss market reference points<\/summary>/, 'Swiss context must use a native disclosure');
+for (const [name, status] of [['SIC and Instant Payments', 'Production'], ['Project Agorá', 'Controlled test'], ['Project Helvetia', 'Pilot'], ['BX Digital', 'Production scope']]) {
+  assert.match(html, new RegExp(`<strong>${name}</strong><span>${status}</span>`), `${name} must retain its status`);
+}
+assert.match(html, /reference points, not interchangeable blueprints or approval/, 'Swiss initiatives must not imply a blueprint or approval');
+assert.doesNotMatch(html, /hero-architecture|landing-lenses|landing-report|landing-conclusion|landing-landscape|data-hero-icon|data-guide-icon/, 'redundant landing sections and their initialization hooks must be removed');
 assert.match(html, /id="failure-summary"/, 'selected failure modes must receive a contextual scenario panel');
 assert.doesNotMatch(html, /id="run-indicator"/, 'failure context must replace the former small status tag');
 assert.match(html, /<div class="stage-topline">[\s\S]*?<div class="stage-controls" aria-label="Step controls">/, 'playback controls must stay in the stage header');
