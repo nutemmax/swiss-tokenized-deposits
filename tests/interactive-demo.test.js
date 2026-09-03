@@ -10,7 +10,7 @@ assert.ok(source, 'demo script must exist');
 source = source.slice(source.indexOf('"use strict";'));
 const marker = 'function renderModelCards() {';
 source = source.slice(0, source.indexOf(marker))
-  .concat('\nglobalThis.__demoData = { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioIdsFor, scenarioGroupsFor };');
+  .concat('\nglobalThis.__demoData = { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioGroupsFor };');
 
 const sandbox = {
   document: {
@@ -19,7 +19,7 @@ const sandbox = {
   }
 };
 vm.runInNewContext(source, sandbox, { filename: demoPath });
-const { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioIdsFor, scenarioGroupsFor } = sandbox.__demoData;
+const { models, modelGroups, scenarios, sceneLayouts, failures, validationStats, scenarioGroupsFor } = sandbox.__demoData;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
 assert.equal(Object.keys(models).length, 4, 'four money models must remain available');
@@ -37,22 +37,13 @@ assert.deepEqual(plain(validationStats), {
   failureCombinationCount: 169
 });
 
-for (const modelId of Object.keys(models)) {
-  const suggested = Array.from(scenarioIdsFor(modelId, 'suggested'));
-  const all = Array.from(scenarioIdsFor(modelId, 'all'));
-  assert.equal(suggested.length, 4, `${modelId} must expose four suggestions`);
-  assert.equal(new Set(suggested).size, 4, `${modelId} suggestions must be unique`);
-  assert.deepEqual(suggested, Array.from(models[modelId].recommended), `${modelId} suggestions must come from the model registry`);
-  assert.equal(all.length, 11, `${modelId} full library must expose all scenarios`);
-  assert.equal(new Set(all).size, 11, `${modelId} full library must not duplicate scenarios`);
-  for (const ids of [suggested, all]) {
-    const groups = plain(scenarioGroupsFor(ids));
-    assert.ok(groups.every((group) => group.scenarioIds.length > 0), `${modelId} must not render empty scenario groups`);
-    const groupedIds = groups.flatMap((group) => group.scenarioIds);
-    assert.equal(new Set(groupedIds).size, groupedIds.length, `${modelId} scenario groups must not duplicate scenarios`);
-    assert.deepEqual(groupedIds.slice().sort(), ids.slice().sort(), `${modelId} scenario groups must contain exactly the selected scenarios`);
-  }
-}
+const allScenarioIds = Object.keys(scenarios);
+const allScenarioGroups = plain(scenarioGroupsFor(allScenarioIds));
+assert.equal(allScenarioIds.length, 11, 'the full scenario library must keep all eleven scenarios');
+assert.ok(allScenarioGroups.every((group) => group.scenarioIds.length > 0), 'the full library must not render empty scenario groups');
+const groupedScenarioIds = allScenarioGroups.flatMap((group) => group.scenarioIds);
+assert.equal(new Set(groupedScenarioIds).size, groupedScenarioIds.length, 'the full library must not duplicate scenarios');
+assert.deepEqual(groupedScenarioIds.slice().sort(), allScenarioIds.slice().sort(), 'the full library must contain every scenario');
 assert.deepEqual(plain(scenarioGroupsFor([])), [], 'empty scenario selections must not create headings');
 
 for (const [scenarioId, scenario] of Object.entries(scenarios)) {
@@ -82,14 +73,16 @@ assert.match(html, /Mirrored deposit · Conditional payment · 7 steps · Normal
 assert.match(html, /id="open-featured-flow"[\s\S]*?Open mirrored conditional payment/, 'hero must expose the featured walkthrough action');
 assert.match(html, /openFeaturedFlow\.addEventListener\("click", \(\) => startScenario\("mirrored", "conditional"\)\)/, 'featured action must open the mirrored conditional flow directly');
 assert.match(html, /href="#landing-models"/, 'hero must link to model and scenario selection');
-assert.match(html, /id="landing-scenarios"[\s\S]*?hidden/, 'scenario choice must follow architecture choice on the landing page');
-assert.match(html, /id="scenario-library-toggle"[\s\S]*?aria-expanded="false"/, 'landing page must keep one progressive library toggle mounted');
-assert.match(html, /landing: \{ model: null, scenarioScope: "suggested" \}/, 'landing selection and scenario scope must share an explicit state object');
-assert.match(html, /function scenarioIdsFor\(modelId, scope\)/, 'scenario scope selection must remain pure');
+assert.match(html, /<section class="landing-orientation"[\s\S]*?Compare four money models/, 'the landing page must orient readers before the simulator');
+assert.match(html, /A payment instruction is the baseline[\s\S]*?Mirrored and ledger-native designs are bank-issued tokenized deposits[\s\S]*?stablecoin is a comparator/, 'the orientation must distinguish the four comparison models');
+assert.match(html, /id="landing-scenarios" aria-labelledby="landing-scenario-title">/, 'the scenario library must be visible without a prior model selection');
+assert.doesNotMatch(html, /scenario-library-toggle|scenarioScope|scenarioIdsFor/, 'the landing page must not hide scenarios behind a suggested-library mode');
+assert.match(html, /landing: \{ model: "mirrored" \}/, 'mirrored deposit must be the default landing model');
 assert.match(html, /function scenarioGroupsFor\(ids\)/, 'scenario grouping must remain pure');
 assert.equal((html.match(/function renderScenarioGroups\(/g) || []).length, 1, 'landing and dialog must share one scenario-group renderer');
-assert.match(html, /renderScenarioGroups\(elements\.landingScenarioGroups,[\s\S]*?markRecommended: false/, 'landing suggestions must not carry Recommended badges');
-assert.match(html, /scenarioIds: scenarioIdsFor\(state\.dialogModel, "all"\)/, 'Change flow dialog must retain the full scenario library');
+assert.match(html, /renderScenarioGroups\(elements\.landingScenarioGroups,[\s\S]*?scenarioIds: Object\.keys\(scenarios\)[\s\S]*?markRecommended: false/, 'the landing must show every scenario without Recommended badges');
+assert.match(html, /renderModelCards\(\);\s*renderLandingScenarios\(\);/, 'the full scenario library must render on the initial landing page');
+assert.match(html, /scenarioIds: Object\.keys\(scenarios\)/, 'Change flow dialog must retain the full scenario library');
 assert.match(html, /function commitFlow\(scenarioId\)[\s\S]*?state\.dialogReturnFocus = null;[\s\S]*?elements\.dialog\.close\(\);[\s\S]*?startScenario\(modelId, scenarioId\)/, 'dialog commit must keep focus on the new scenario heading');
 assert.match(html, /elements\.dialog\.addEventListener\("close"[\s\S]*?state\.dialogReturnFocus\?\.focus/, 'dialog cancellation must restore focus to Change flow');
 assert.match(html, /function chooseLandingModel\(/, 'landing model selection must reveal scenario navigation');
@@ -97,15 +90,19 @@ assert.match(html, /function startScenario\(modelId, scenarioId\)/, 'workspace m
 assert.match(html, /function startScenario\(modelId, scenarioId\)[\s\S]*?state\.landing\.model = modelId/, 'every opened flow must become the selected Overview model');
 assert.match(html, /id="back-to-overview"/, 'workspace must provide a visible route back to the research overview');
 assert.match(html, /function showOverview\([\s\S]*?if \(state\.landing\.model\)[\s\S]*?renderLandingScenarios\(\)/, 'return navigation must restore the landing selection');
-assert.doesNotMatch(html.slice(html.indexOf('function showOverview()'), html.indexOf('function openFlowDialog()')), /state\.landing\.(?:model|scenarioScope)\s*=/, 'return navigation must preserve landing state');
-assert.doesNotMatch(html.slice(html.indexOf('elements.scenarioLibraryToggle.addEventListener'), html.indexOf('elements.changeFlow.addEventListener')), /\.focus\(/, 'scenario library toggling must not move focus');
+assert.doesNotMatch(html.slice(html.indexOf('function showOverview()'), html.indexOf('function openFlowDialog()')), /state\.landing\.model\s*=/, 'return navigation must preserve landing state');
 assert.match(html, /h1\[tabindex="-1"\]:focus \{ outline: none; \}/, 'programmatically focused page headings must suppress the browser outline');
-for (const control of ['button', 'select', 'summary', 'a']) assert.match(html, new RegExp(`${control}:focus-visible`), `${control} must retain visible keyboard focus`);
-assert.match(html, /<details class="swiss-context"[\s\S]*?<summary>Swiss market reference points<\/summary>/, 'Swiss context must use a native disclosure');
-for (const [name, status] of [['SIC and Instant Payments', 'Production'], ['Project Agorá', 'Controlled test'], ['Project Helvetia', 'Pilot'], ['BX Digital', 'Production scope']]) {
+for (const control of ['button', 'select', 'a']) assert.match(html, new RegExp(`${control}:focus-visible`), `${control} must retain visible keyboard focus`);
+assert.match(html, /<section class="swiss-context" id="swiss-context" aria-labelledby="swiss-context-title">/, 'Swiss context must be visible before scenario selection');
+assert.ok(html.indexOf('id="swiss-context"') < html.indexOf('id="landing-models"'), 'Swiss context must appear before model choice');
+for (const [name, status] of [['SIC and Instant Payments', 'Production'], ['Project Agorá', 'Controlled real-value test'], ['Project Helvetia', 'Pilot in production infrastructure'], ['BX Digital', 'Production for approved DLT-securities scope']]) {
   assert.match(html, new RegExp(`<strong>${name}</strong><span>${status}</span>`), `${name} must retain its status`);
 }
-assert.match(html, /reference points, not interchangeable blueprints or approval/, 'Swiss initiatives must not imply a blueprint or approval');
+assert.match(html, /unifying ledger for platform-authoritative tokenized commercial-bank deposits[\s\S]*?jurisdictional ledgers for tokenized central-bank reserves/, 'Agorá must explain its wholesale tokenized-deposit architecture');
+assert.match(html, /platform-as-record model differs from a CBS-authoritative mirrored deposit/, 'Agorá must distinguish its authority model from a mirrored deposit');
+assert.match(html, /wholesale CBDC on SIX Digital Asset Platform[\s\S]*?synchronizes a DLT transaction with an RTGS payment in SIC/, 'Helvetia must explain its two settlement approaches');
+assert.match(html, /links securities transfers on its DLT infrastructure with RTGS settlement in central-bank money through SIC/, 'BX Digital must explain its securities settlement link');
+assert.match(html, /do not approve or prescribe a bank-specific tokenized deposit/, 'Swiss initiatives must not imply a blueprint or approval');
 assert.doesNotMatch(html, /hero-architecture|landing-lenses|landing-report|landing-conclusion|landing-landscape|data-hero-icon|data-guide-icon/, 'redundant landing sections and their initialization hooks must be removed');
 assert.match(html, /id="failure-summary"/, 'selected failure modes must receive a contextual scenario panel');
 assert.doesNotMatch(html, /id="run-indicator"/, 'failure context must replace the former small status tag');

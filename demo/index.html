@@ -134,6 +134,33 @@
       font-weight: 750;
     }
 
+    .landing-orientation {
+      max-width: 940px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    .landing-orientation h2,
+    .swiss-context h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 3.2vw, 40px);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .landing-orientation p,
+    .swiss-context-header p {
+      max-width: 860px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
     .landing-choice-section,
     .landing-scenario-section {
       scroll-margin-top: 24px;
@@ -263,38 +290,19 @@
       font-size: 15px;
     }
 
-    .scenario-library-control {
-      margin: 18px 0 0;
-    }
-
     .swiss-context {
+      padding: 34px 0;
       border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
     }
 
-    .swiss-context summary {
-      padding: 20px 4px;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .swiss-context-body {
-      padding: 0 4px 24px;
-    }
-
-    .swiss-context-body > p {
-      max-width: 820px;
-      margin: 0 0 18px;
-      color: var(--muted);
-    }
+    .swiss-context-header { margin-bottom: 20px; }
 
     .swiss-reference-list {
       margin: 0;
       padding: 0;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
       list-style: none;
     }
 
@@ -320,8 +328,10 @@
       margin: 0;
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
+
+    .swiss-reference-list p + p { margin-top: 10px; }
 
     .workspace {
       min-height: 100vh;
@@ -1875,7 +1885,7 @@
     <section class="landing" id="landing" aria-labelledby="landing-title">
       <header class="landing-header">
         <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
-        <h1 id="landing-title" tabindex="-1">See what changes when a deposit moves on DLT.</h1>
+        <h1 id="landing-title" tabindex="-1">Trace a tokenized deposit through payment and settlement.</h1>
         <p class="landing-intro">The bank remains the debtor for a tokenized deposit. The design changes how the claim is represented and transferred, which CBS, DLT, or GL record is authoritative, where finality occurs, and how reconciliation and control work inside the issuer perimeter.</p>
         <div class="landing-actions">
           <button class="button button-primary" id="open-featured-flow" type="button">Open mirrored conditional payment</button>
@@ -1884,37 +1894,39 @@
         <p class="run-metadata">Mirrored deposit · Conditional payment · 7 steps · Normal and failure runs</p>
       </header>
 
+      <section class="landing-orientation" aria-labelledby="landing-orientation-title">
+        <h2 id="landing-orientation-title">Compare four money models</h2>
+        <p>Each run uses the same payment flow and changes the money model. A payment instruction is the baseline. Mirrored and ledger-native designs are bank-issued tokenized deposits. The stablecoin is a comparator with a different debtor, reserve arrangement, and issuer perimeter. The question is where the liability and authoritative record sit.</p>
+      </section>
+
+      <section class="swiss-context" id="swiss-context" aria-labelledby="swiss-context-title">
+        <header class="swiss-context-header">
+          <h2 id="swiss-context-title">Swiss reference points</h2>
+          <p>These initiatives cover payment infrastructure, securities settlement, and wholesale cross-border coordination. They show useful technical patterns. They do not approve or prescribe a bank-specific tokenized deposit.</p>
+        </header>
+        <ul class="swiss-reference-list">
+          <li><strong>SIC and Instant Payments</strong><span>Production</span><p>SIC is Switzerland's domestic CHF payment infrastructure. Eligible participants settle interbank obligations in sight deposits at the SNB. SIC Instant Payments adds 24/7 account-to-account payments.</p><p>Neither system creates or runs a customer tokenized deposit. They remain the settlement baseline for a bank that keeps the CBS and GL authoritative.</p></li>
+          <li><strong>Project Agorá</strong><span>Controlled real-value test</span><p>Agorá tests cross-border wholesale payments with a unifying ledger for platform-authoritative tokenized commercial-bank deposits and jurisdictional ledgers for tokenized central-bank reserves. Participant middleware keeps confirmation of payee, route choice, pricing, and compliance checks private.</p><p>Shared contracts coordinate validation, locks, delegated authority, and settlement. Its platform-as-record model differs from a CBS-authoritative mirrored deposit. Controlled real-value testing does not establish production resilience, a final rulebook, or a Swiss bank product approval.</p></li>
+          <li><strong>Project Helvetia</strong><span>Pilot in production infrastructure</span><p>Helvetia tests tokenized-asset settlement in central-bank money through two paths. One uses wholesale CBDC on SIX Digital Asset Platform. The other synchronizes a DLT transaction with an RTGS payment in SIC.</p><p>It examines the wholesale settlement leg between eligible institutions. It does not issue a retail CBDC, define the customer's deposit claim, or commit the SNB to permanent wholesale CBDC.</p></li>
+          <li><strong>BX Digital</strong><span>Production for approved DLT-securities scope</span><p>BX Digital is a DLT trading and settlement infrastructure for its approved securities scope. It links securities transfers on its DLT infrastructure with RTGS settlement in central-bank money through SIC.</p><p>The cash movement remains between eligible institutions' SNB accounts. This is a production example of DLT securities settlement connected to SIC, not a tokenized-deposit scheme or approval for one.</p></li>
+        </ul>
+      </section>
+
       <section class="landing-choice-section" id="landing-models" aria-labelledby="landing-model-title">
         <header class="landing-choice-heading">
-          <h2 id="landing-model-title">Choose the model</h2>
-          <p>Compare the baseline mechanism, two tokenized-deposit designs, and a non-bank comparator across the same flows.</p>
+          <h2 id="landing-model-title">Choose a money model</h2>
+          <p>Each card names the debtor, the authoritative record, and the controls that follow. Select one, then open any of the 11 scenarios below.</p>
         </header>
         <div class="model-groups" id="model-grid" aria-label="Money models"></div>
       </section>
 
-      <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title" hidden>
+      <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title">
         <header class="landing-choice-heading">
           <h2 id="landing-scenario-title">Choose a scenario</h2>
           <p id="landing-scenario-help"></p>
         </header>
         <div class="landing-scenario-groups" id="landing-scenario-groups"></div>
-        <p class="scenario-library-control">
-          <button class="button" id="scenario-library-toggle" type="button" aria-controls="landing-scenario-groups" aria-expanded="false">Show all 11 scenarios</button>
-        </p>
       </section>
-
-      <details class="swiss-context" id="swiss-context">
-        <summary>Swiss market reference points</summary>
-        <div class="swiss-context-body">
-          <p>These are reference points, not interchangeable blueprints or approval for a bank-specific tokenized deposit.</p>
-          <ul class="swiss-reference-list">
-            <li><strong>SIC and Instant Payments</strong><span>Production</span><p>CHF interbank settlement in SNB money and the domestic reference for instant account payments.</p></li>
-            <li><strong>Project Agorá</strong><span>Controlled test</span><p>A multi-jurisdiction test of tokenized cross-border wholesale payments.</p></li>
-            <li><strong>Project Helvetia</strong><span>Pilot</span><p>Settlement of tokenized assets in central bank money on DLT.</p></li>
-            <li><strong>BX Digital</strong><span>Production scope</span><p>DLT trading and settlement infrastructure for tokenized securities.</p></li>
-          </ul>
-        </div>
-      </details>
     </section>
 
     <section class="workspace" id="workspace" hidden aria-labelledby="scenario-title">
@@ -2034,7 +2046,7 @@
         instruction: {
           number: "01",
           name: "Payment instruction",
-          summary: "Bank executes a request",
+          summary: "An on-chain request. The CBS account remains the deposit and authoritative record.",
           defaultScenario: "interbank",
           recommended: ["interbank", "same", "conditional", "correspondent"],
           claim: "Claim remains on the bank",
@@ -2045,7 +2057,7 @@
         mirrored: {
           number: "02",
           name: "Mirrored deposit",
-          summary: "CBS + token mirror",
+          summary: "A bank deposit represented on DLT. CBS and GL control the liability and reconcile to token state.",
           defaultScenario: "conditional",
           recommended: ["conditional", "mint", "interbank", "mismatch"],
           claim: "Deposit plus synchronized token record",
@@ -2056,7 +2068,7 @@
         native: {
           number: "03",
           name: "Ledger-native deposit",
-          summary: "DLT is authoritative",
+          summary: "A bank deposit whose holder record lives on the authority DLT, with issuer controls and recovery rules.",
           defaultScenario: "same",
           recommended: ["same", "pvp", "bridge", "mismatch"],
           claim: "On-chain bank deposit claim",
@@ -2067,7 +2079,7 @@
         stablecoin: {
           number: "04",
           name: "Non-bank stablecoin",
-          summary: "Separate issuer",
+          summary: "A comparator with a separate issuer, reserve arrangement, redemption process, and issuer risk.",
           defaultScenario: "mint",
           recommended: ["mint", "redeem", "bridge", "pvp"],
           claim: "Claim on a separate issuer",
@@ -2529,7 +2541,7 @@
       const state = {
         model: null,
         scenario: null,
-        landing: { model: null, scenarioScope: "suggested" },
+        landing: { model: "mirrored" },
         dialogModel: null,
         failure: null,
         step: 0,
@@ -2582,7 +2594,7 @@
       const elements = {
         landing: $("#landing"), workspace: $("#workspace"), modelGrid: $("#model-grid"),
         landingScenarios: $("#landing-scenarios"), landingScenarioGroups: $("#landing-scenario-groups"),
-        landingScenarioHelp: $("#landing-scenario-help"), scenarioLibraryToggle: $("#scenario-library-toggle"),
+        landingScenarioHelp: $("#landing-scenario-help"),
         openFeaturedFlow: $("#open-featured-flow"),
         contextModel: $("#context-model"), contextScenario: $("#context-scenario"),
         runModeSelect: $("#run-mode-select"), changeFlow: $("#change-flow"), backToOverview: $("#back-to-overview"),
@@ -2679,10 +2691,6 @@
 
       const validationStats = validateDemoData();
 
-      function scenarioIdsFor(modelId, scope) {
-        return scope === "suggested" ? [...models[modelId].recommended] : Object.keys(scenarios);
-      }
-
       function scenarioGroupsFor(ids) {
         const selectedIds = new Set(ids);
         return Object.entries(categories).map(([id, label]) => ({
@@ -2742,14 +2750,9 @@
       }
 
       function renderLandingScenarios() {
-        const { model, scenarioScope } = state.landing;
-        const scenarioIds = scenarioIdsFor(model, scenarioScope);
-        elements.landingScenarioHelp.textContent = scenarioScope === "suggested"
-          ? "Four suggested scenarios for " + models[model].name + "."
-          : "All 11 scenarios for " + models[model].name + ".";
-        elements.scenarioLibraryToggle.textContent = scenarioScope === "suggested" ? "Show all 11 scenarios" : "Show 4 suggested scenarios";
-        elements.scenarioLibraryToggle.setAttribute("aria-expanded", String(scenarioScope === "all"));
-        renderScenarioGroups(elements.landingScenarioGroups, { modelId: model, scenarioIds, markRecommended: false });
+        const { model } = state.landing;
+        elements.landingScenarioHelp.textContent = "All 11 scenarios for " + models[model].name + ".";
+        renderScenarioGroups(elements.landingScenarioGroups, { modelId: model, scenarioIds: Object.keys(scenarios), markRecommended: false });
       }
 
       function renderFlowDialog() {
@@ -2765,7 +2768,7 @@
         }));
         renderScenarioGroups(elements.scenarioGroups, {
           modelId: state.dialogModel,
-          scenarioIds: scenarioIdsFor(state.dialogModel, "all"),
+          scenarioIds: Object.keys(scenarios),
           markRecommended: true
         });
       }
@@ -2996,7 +2999,6 @@
 
       function chooseLandingModel(modelId) {
         state.landing.model = modelId;
-        state.landing.scenarioScope = "suggested";
         elements.modelGrid.querySelectorAll("[data-model]").forEach((card) => card.setAttribute("aria-pressed", String(card.dataset.model === modelId)));
         renderLandingScenarios();
         elements.landingScenarios.hidden = false;
@@ -3049,6 +3051,7 @@
       }
 
       renderModelCards();
+      renderLandingScenarios();
 
       elements.modelGrid.addEventListener("click", (event) => {
         const card = event.target.closest("[data-model]");
@@ -3059,10 +3062,6 @@
         if (scenarioCard) startScenario(state.landing.model, scenarioCard.dataset.scenario);
       });
       elements.openFeaturedFlow.addEventListener("click", () => startScenario("mirrored", "conditional"));
-      elements.scenarioLibraryToggle.addEventListener("click", () => {
-        state.landing.scenarioScope = state.landing.scenarioScope === "suggested" ? "all" : "suggested";
-        renderLandingScenarios();
-      });
 
       elements.changeFlow.addEventListener("click", openFlowDialog);
       elements.backToOverview.addEventListener("click", showOverview);
