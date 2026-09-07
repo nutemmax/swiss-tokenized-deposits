@@ -76,6 +76,8 @@ assert.match(html, /href="#landing-models"/, 'hero must link to model and scenar
 assert.match(html, /--red: #E60000;/, 'the landing page must use the requested red accent');
 assert.match(html, /<section class="landing-orientation"[\s\S]*?The deposit stays a bank liability. Its operating record changes./, 'the landing page must explain tokenized deposits before the simulator');
 assert.match(html, /class="claim-map"[\s\S]*?Claim[\s\S]*?Representation[\s\S]*?Authority[\s\S]*?Settlement[\s\S]*?Control/, 'the claim map must separate the core bank design questions');
+assert.match(html, /<section class="representation-rail"[\s\S]*?The token can mean four different things.[\s\S]*?Payment instruction[\s\S]*?Mirrored deposit[\s\S]*?Ledger-native deposit[\s\S]*?Non-bank stablecoin/, 'the landing page must introduce all four representations before the simulator');
+assert.ok(html.indexOf('class="representation-rail"') < html.indexOf('class="landing-explainer"'), 'the representation rail must appear before workflow choices');
 assert.match(html, /<section class="landing-explainer"[\s\S]*?Use a token only when the workflow changes.[\s\S]*?Shared workflow state[\s\S]*?Conditional cash[\s\S]*?Coordinated settlement/, 'the landing page must explain when a tokenized workflow earns its place');
 assert.match(html, /<section class="bank-decisions"[\s\S]*?Who is the debtor\?[\s\S]*?Which record decides a dispute\?[\s\S]*?What creates finality\?[\s\S]*?How does the bank recover\?/, 'the landing page must introduce bank design choices before model selection');
 assert.match(html, /id="landing-scenarios" aria-labelledby="landing-scenario-title">/, 'the scenario library must be visible without a prior model selection');
@@ -100,9 +102,17 @@ assert.match(html, /<section class="swiss-context" id="swiss-context" aria-label
 assert.ok(html.indexOf('id="swiss-context"') < html.indexOf('id="landing-models"'), 'Swiss context must appear before model choice');
 assert.ok(html.indexOf('class="bank-decisions"') < html.indexOf('id="swiss-context"'), 'bank design choices must lead into the Swiss reference map');
 for (const [name, status] of [['SIC and Instant Payments', 'Production'], ['Project Agorá', 'Controlled real-value test'], ['Project Helvetia', 'Pilot in production infrastructure'], ['BX Digital', 'Production for approved DLT-securities scope']]) {
-  assert.match(html, new RegExp(`<strong>${name}</strong>[\\s\\S]*?<span>${status}</span>`), `${name} must retain its status`);
+  assert.match(html, new RegExp(`<strong>${name}</strong>[\\s\\S]*?<span class="reference-status">${status}</span>`), `${name} must retain its status`);
 }
-assert.match(html, /reference-sigil/, 'Swiss reference points must have visible in-page identifiers');
+assert.match(html, /class="reference-logo-bay"/, 'Swiss reference points must use common logo bays');
+assert.doesNotMatch(html, /reference-sigil/, 'Swiss reference points must not use placeholder monograms');
+for (const source of ['SIX', 'BIS', 'SNB', 'BX Digital']) {
+  assert.match(html, new RegExp(`data-logo-source="${source}" src="data:image/svg\\+xml;base64,[A-Za-z0-9+/=]+"`), `${source} must use its official mark as an embedded SVG image`);
+}
+assert.match(html, /alt="" data-logo-source="SIX"/, 'SIX mark must remain decorative because the card title names SIC and Instant Payments');
+assert.match(html, /alt="" data-logo-source="BIS"/, 'BIS mark must remain decorative because the card title names Project Agorá');
+assert.match(html, /alt="" data-logo-source="SNB"/, 'SNB mark must remain decorative because the card title names Project Helvetia');
+assert.match(html, /alt="" data-logo-source="BX Digital"/, 'BX Digital mark must remain decorative because the card title names BX Digital');
 assert.doesNotMatch(html, /landing-scenario-help|All 11 scenarios for/, 'the landing page must not repeat the scenario count after model selection');
 assert.match(html, /unifying ledger for platform-authoritative tokenized commercial-bank deposits[\s\S]*?jurisdictional ledgers for tokenized central-bank reserves/, 'Agorá must explain its wholesale tokenized-deposit architecture');
 assert.match(html, /platform-as-record model differs from a CBS-authoritative mirrored deposit/, 'Agorá must distinguish its authority model from a mirrored deposit');
