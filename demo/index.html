@@ -8,12 +8,12 @@
     :root {
       --ink: #000;
       --muted: #4d4d4d;
-      --paper: #eeeae4;
-      --paper-deep: #dedbd6;
+      --paper: #eee8de;
+      --paper-deep: #dfd6c8;
       --card: #fff;
       --line: #bcbcbc;
-      --red: #e3262e;
-      --red-dark: #e3262e;
+      --red: #E60000;
+      --red-dark: #E60000;
       --red-soft: #ededed;
       --green: #000;
       --green-soft: #ededed;
@@ -22,7 +22,7 @@
       --shadow: 0 18px 54px rgba(0, 0, 0, 0.14);
       --radius: 22px;
       --radius-small: 14px;
-      --focus: 0 0 0 4px rgba(227, 38, 46, 0.3);
+      --focus: 0 0 0 4px rgba(230, 0, 0, 0.28);
     }
 
     * { box-sizing: border-box; }
@@ -37,13 +37,13 @@
       min-height: 100vh;
       overflow-x: hidden;
       color: var(--ink);
-      background:
-        linear-gradient(180deg, #faf8f4 0, var(--paper) 34rem);
+      background: linear-gradient(180deg, #f8f3ea 0, var(--paper) 44rem);
       font: 16px/1.5 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
@@ -53,10 +53,15 @@
 
     button:focus-visible,
     input:focus-visible,
-    dialog:focus-visible {
-      outline: none;
+    select:focus-visible,
+    summary:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
       box-shadow: var(--focus);
     }
+
+    h1[tabindex="-1"]:focus { outline: none; }
 
     [hidden] { display: none !important; }
 
@@ -70,28 +75,56 @@
     }
 
     .landing {
-      width: min(1380px, calc(100% - 48px));
+      width: min(1180px, calc(100% - 48px));
       min-height: 100vh;
       margin: 0 auto;
-      padding: 42px 0 64px;
+      padding: 28px 0 72px;
       display: grid;
       align-content: start;
-      gap: 52px;
+      gap: 64px;
     }
 
     .landing-header {
+      position: relative;
       width: 100%;
-      min-height: min(820px, 92vh);
-      padding: 42px 0 56px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 34px;
-      align-content: center;
+      min-height: 470px;
+      padding: clamp(32px, 5vw, 70px);
+      overflow: hidden;
+      border-radius: 30px;
+      color: #fff;
+      background: #080808;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.2);
+      isolation: isolate;
+    }
+
+    .landing-header::before {
+      position: absolute;
+      top: -180px;
+      right: -110px;
+      z-index: -1;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 50%;
+      box-shadow: 0 0 0 76px rgba(255, 255, 255, 0.04), 0 0 0 152px rgba(255, 255, 255, 0.025);
+      content: "";
+    }
+
+    .landing-header::after {
+      position: absolute;
+      top: 0;
+      right: 20%;
+      z-index: -1;
+      width: 4px;
+      height: 100%;
+      background: var(--red);
+      content: "";
     }
 
     .landing-hero-kicker {
       margin: 0 0 18px;
-      color: var(--red-dark);
+      color: #fff;
+      opacity: 0.72;
       font-size: 14px;
       font-weight: 850;
       letter-spacing: .1em;
@@ -99,207 +132,288 @@
     }
 
     .landing h1 {
-      max-width: none;
+      max-width: 760px;
       margin: 0 0 18px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(38px, 5.8vw, 74px);
+      font-size: clamp(42px, 5.4vw, 72px);
       font-weight: 500;
       letter-spacing: -0.045em;
-      line-height: 0.98;
-    }
-
-    .landing-definition {
-      max-width: none;
-      margin: 0 0 20px;
-      padding: 14px 0 14px 22px;
-      border-left: 5px solid var(--red);
-      color: var(--ink);
-      font-size: clamp(18px, 1.8vw, 23px);
-      line-height: 1.48;
+      line-height: 1;
     }
 
     .landing-intro {
-      max-width: none;
+      max-width: 670px;
       margin: 0;
-      color: var(--ink);
-      font-size: 18px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: clamp(18px, 1.8vw, 21px);
       line-height: 1.55;
     }
 
-    .hero-architecture {
-      padding-top: 26px;
-      border-top: 1px solid var(--line);
+    .landing-actions {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .hero-architecture-heading {
-      margin: 0 0 15px;
+    .landing-actions .button { min-height: 48px; padding-inline: 20px; }
+    .landing-header .landing-actions .button:not(.button-primary) {
+      border-color: rgba(255, 255, 255, 0.6);
+      color: #fff;
+    }
+    .landing-header .landing-actions .button:not(.button-primary):hover {
+      color: var(--ink);
+      background: #fff;
     }
 
-    .hero-architecture-heading h2 {
+    .run-metadata {
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .landing-orientation {
+      display: grid;
+      grid-template-columns: minmax(0, 0.88fr) minmax(360px, 1.12fr);
+      gap: clamp(32px, 6vw, 92px);
+      align-items: center;
+    }
+
+    .landing-orientation h2,
+    .swiss-context h2 {
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
+      font-size: clamp(28px, 3.2vw, 40px);
       font-weight: 500;
-      letter-spacing: -.025em;
+      letter-spacing: -0.03em;
       line-height: 1.08;
     }
 
-    .hero-architecture-heading span {
-      display: block;
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 14px;
+    .landing-orientation > div > p {
+      max-width: 860px;
+      margin: 12px 0 0;
+      color: #3f3a34;
+      font-size: 16px;
+      line-height: 1.55;
     }
 
-    .hero-architecture-flow {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 28px;
+    .swiss-context-header p {
+      max-width: 860px;
+      margin: 12px 0 0;
+      color: rgba(255, 255, 255, 0.96);
+      font-size: 16px;
+      line-height: 1.55;
     }
 
-    .hero-flow-item {
-      position: relative;
-      min-height: 132px;
-      padding: 21px 28px 20px 22px;
-      display: grid;
-      grid-template-columns: 48px minmax(0, 1fr);
-      column-gap: 14px;
-      align-content: center;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-small);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .hero-flow-item:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      z-index: 2;
-      top: 50%;
-      right: -15px;
-      width: 28px;
-      height: 28px;
-      border-top: 1px solid var(--line);
-      border-right: 1px solid var(--line);
-      background: var(--card);
-      transform: translateY(-50%) rotate(45deg);
-    }
-
-    .hero-flow-icon {
-      display: grid;
-      width: 48px;
-      height: 48px;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--red-soft);
-    }
-
-    .hero-flow-icon svg {
-      width: 25px;
-      height: 25px;
-      color: var(--red-dark);
-    }
-
-    .hero-flow-copy span,
-    .hero-flow-copy strong {
-      display: block;
-    }
-
-    .hero-flow-copy > span {
-      margin-bottom: 3px;
-      color: var(--red-dark);
-      font-size: 14px;
+    .section-kicker {
+      margin: 0 0 12px;
+      color: var(--red);
+      font-size: 12px;
       font-weight: 850;
-      letter-spacing: .06em;
-    }
-
-    .hero-flow-copy strong {
-      color: var(--ink);
-      font-size: 17px;
-      line-height: 1.2;
-    }
-
-    .hero-flow-copy small {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.3;
-    }
-
-    .landing-lens-panel {
-      display: grid;
-      grid-template-columns: minmax(260px, .38fr) minmax(0, .62fr);
-      gap: 46px;
-      align-items: start;
-      padding: 30px;
-      border-radius: var(--radius);
-      color: #fff;
-      background: var(--ink);
-      box-shadow: 0 20px 42px rgba(23, 23, 23, 0.2), 0 2px 8px rgba(23, 23, 23, 0.12);
-    }
-
-    .landing-lens-heading > p {
-      margin: 0 0 8px;
-      padding-left: 10px;
-      border-left: 3px solid var(--red);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: .08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
-    .landing-lens-panel h2 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
-      font-weight: 500;
-      letter-spacing: -.025em;
-      line-height: 1.08;
+    .claim-map {
+      position: relative;
+      min-height: 288px;
+      padding: 28px;
+      overflow: hidden;
+      border: 1px solid #171717;
+      border-radius: 22px;
+      color: #fff;
+      background: #171717;
     }
 
-    .landing-lenses {
-      width: 100%;
+    .claim-map::after {
+      position: absolute;
+      right: -48px;
+      bottom: -62px;
+      width: 210px;
+      height: 210px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .claim-map svg { width: 100%; height: 176px; }
+    .claim-map text { font-family: Inter, ui-sans-serif, sans-serif; }
+
+    .representation-rail {
+      padding: clamp(28px, 4vw, 46px);
+      border: 1px solid #171717;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+    }
+
+    .representation-rail-header {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(300px, 1.15fr);
+      gap: 26px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .representation-rail h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(29px, 3.3vw, 42px);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.04;
+    }
+
+    .representation-rail-header > p:last-child {
+      max-width: 590px;
+      margin: 0;
+      color: #3f3a34;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .deposit-types {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       margin: 0;
       padding: 0;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      border-top: 1px solid #171717;
       list-style: none;
     }
 
-    .landing-lenses li {
-      padding: 16px 0;
-      display: grid;
-      grid-template-columns: 50px minmax(0, 1fr);
-      gap: 12px;
-      border-top: 1px solid #45413d;
-      color: #d0d0d0;
-      font-size: 14px;
-      line-height: 1.4;
+    .deposit-type {
+      min-width: 0;
+      min-height: 186px;
+      padding: 18px 18px 0;
+      border-right: 1px solid #d0cbc3;
     }
 
-    .landing-lenses li > span {
+    .deposit-type:first-child { padding-left: 0; }
+    .deposit-type:last-child { padding-right: 0; border-right: 0; }
+    .deposit-type b,
+    .deposit-type strong,
+    .deposit-type span { display: block; }
+    .deposit-type b { margin-bottom: 26px; color: var(--red); font-size: 12px; letter-spacing: .12em; }
+    .deposit-type strong { max-width: 180px; font-size: 17px; line-height: 1.2; }
+    .deposit-type span { margin-top: 9px; color: var(--muted); font-size: 14px; line-height: 1.47; }
+
+    .landing-explainer {
       display: grid;
-      width: 36px;
-      height: 36px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+      gap: 22px;
+      align-items: stretch;
+      padding: clamp(28px, 4vw, 48px);
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .landing-explainer h2,
+    .bank-decisions h2 {
+      max-width: 510px;
       margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(31px, 3.7vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+    }
+
+    .landing-explainer > div > p {
+      max-width: 500px;
+      margin: 14px 0 0;
+      color: #3f3a34;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .workflow-sequence {
+      display: grid;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .workflow-sequence li {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 15px 0;
+      border-top: 1px solid #b9b0a4;
+    }
+
+    .workflow-sequence li:last-child { border-bottom: 1px solid #b9b0a4; }
+    .workflow-sequence b {
+      display: grid;
+      width: 30px;
+      height: 30px;
       place-items: center;
       border-radius: 50%;
       color: #fff;
-      background: var(--red);
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: .06em;
+      background: #171717;
+      font-size: 13px;
+    }
+    .workflow-sequence li:last-child b { background: var(--red); }
+    .workflow-sequence strong,
+    .workflow-sequence span { display: block; }
+    .workflow-sequence strong { font-size: 16px; }
+    .workflow-sequence span { margin-top: 2px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+    .bank-decisions {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(250px, .76fr) minmax(0, 1.24fr);
+      gap: clamp(30px, 6vw, 94px);
+      align-items: start;
+      padding: clamp(30px, 5vw, 58px);
+      overflow: hidden;
+      border: 1px solid #171717;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
     }
 
-    .landing-lenses strong {
-      display: block;
-      margin-bottom: 3px;
-      color: #fff;
-      font-size: 16px;
+    .bank-decisions::before {
+      position: absolute;
+      top: 0;
+      left: clamp(30px, 5vw, 58px);
+      width: 116px;
+      height: 5px;
+      background: var(--red);
+      content: "";
     }
+
+    .bank-decisions > div > p {
+      max-width: 480px;
+      margin: 14px 0 0;
+      color: #3f3a34;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .decision-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 26px;
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid #171717;
+      list-style: none;
+    }
+
+    .decision-list li {
+      min-height: 158px;
+      padding: 24px 0 25px;
+      border-bottom: 1px solid #c8c0b4;
+    }
+
+    .decision-list b,
+    .decision-list strong,
+    .decision-list span { display: block; }
+    .decision-list b { margin-bottom: 18px; color: var(--red); font-size: 13px; letter-spacing: .1em; }
+    .decision-list strong { font-size: 18px; }
+    .decision-list span { margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.45; }
 
     .landing-choice-section,
     .landing-scenario-section {
@@ -328,7 +442,7 @@
     }
 
     .landing-scenario-section {
-      padding-top: 42px;
+      padding-top: 52px;
       border-top: 1px solid var(--line);
     }
 
@@ -336,289 +450,44 @@
       margin-top: 28px;
     }
 
-    .landing-report,
-    .landing-conclusion {
-      padding: 44px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .landing-report-header {
-      max-width: 1080px;
-      margin-bottom: 24px;
-    }
-
-    .landing-report h2,
-    .landing-conclusion h2 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(32px, 4.2vw, 54px);
-      font-weight: 500;
-      letter-spacing: -0.04em;
-      line-height: 1.02;
-    }
-
-    .landing-report-header > p:last-child,
-    .landing-conclusion-header > p:last-child {
-      max-width: 1050px;
-      margin: 16px 0 0;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.58;
-    }
-
-    .landing-report-grid {
+    .model-groups {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
     }
 
-    .landing-report-grid article {
-      min-height: 262px;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      color: var(--ink);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-report-grid h3,
-    .landing-recommendation h3 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      line-height: 1.18;
-    }
-
-    .landing-card-icon {
-      display: grid;
-      width: 82px;
-      height: 78px;
-      margin-bottom: 18px;
-      place-items: center;
-    }
-
-    .landing-card-icon svg {
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .landing-report-grid p,
-    .landing-recommendation p,
-    .landing-landscape-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-card-key {
-      display: block;
-      margin-top: 15px;
-      padding-top: 13px;
-      border-top: 1px solid var(--line);
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .landing-landscape {
-      margin-top: 42px;
-      padding-top: 38px;
-      border-top: 1px solid var(--line);
-    }
-
-    .landing-landscape-header {
-      max-width: 960px;
-      margin-bottom: 22px;
-    }
-
-    .landing-landscape-header h3 {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(27px, 3vw, 38px);
-      font-weight: 500;
-      letter-spacing: -0.025em;
-      line-height: 1.08;
-    }
-
-    .landing-landscape-header > p:last-child {
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    .landing-landscape-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .landing-landscape-card {
-      min-height: 230px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-landscape-card h4 {
-      margin: 0 0 9px;
-      font-size: 18px;
-      line-height: 1.22;
-    }
-
-    .landing-landscape-card > .landing-card-top {
-      display: flex;
-      min-height: 112px;
-      margin-bottom: 16px;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-card-icon {
-      width: 58px;
-      height: 54px;
-      margin: 0;
-      flex: 0 0 58px;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-maturity {
-      margin: 3px 0 0;
-    }
-
-    .landing-landscape-card > .landing-card-top > .landing-maturity-list {
+    .model-group {
       min-width: 0;
-      margin: 0;
-    }
-
-    .landing-maturity {
-      display: inline-flex;
-      min-height: 28px;
-      margin-bottom: 16px;
-      padding: 4px 9px;
-      align-items: center;
-      border: 1px solid rgba(227, 38, 46, 0.32);
-      border-radius: 999px;
-      color: #b51f26;
-      background: var(--red-soft);
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .landing-maturity-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .landing-maturity-list .landing-maturity {
-      margin-bottom: 0;
-    }
-
-    .maturity-dot {
-      width: 8px;
-      height: 8px;
-      margin-right: 7px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      background: var(--red);
-    }
-
-    .maturity-dot.is-production { background: #3b8c5a; }
-    .maturity-dot.is-exploratory { background: #d18a00; }
-
-    .landing-report-link {
-      margin: 16px 0 0;
-      padding: 17px 20px;
-      border-left: 4px solid var(--red);
-      color: var(--ink);
-      background: var(--card);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-conclusion {
-      margin-top: 54px;
-      padding-bottom: 10px;
-    }
-
-    .landing-conclusion-header {
-      max-width: 1080px;
-      margin-bottom: 24px;
-    }
-
-    .landing-conclusion-layout {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .landing-recommendation {
-      min-height: 220px;
-      padding: 22px;
-      border: 1px solid var(--line);
+      padding: 18px;
+      border: 1px solid #b9b0a4;
       border-radius: var(--radius);
-      color: var(--ink);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.38);
     }
 
-    .landing-recommendation .eyebrow { color: var(--red-dark); }
-    .landing-recommendation h3 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; }
-    .landing-recommendation p { color: var(--muted); }
-
-    .landing-decision-list {
-      margin: 0;
-      display: contents;
-    }
-
-    .landing-decision-list div {
-      min-height: 220px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-
-    .landing-decision-list dt {
-      margin-bottom: 7px;
-      color: var(--ink);
+    .model-group h3 {
+      margin: 0 0 4px;
       font-size: 15px;
-      font-weight: 850;
     }
 
-    .landing-decision-list dd {
-      margin: 0;
+    .model-group > p {
+      min-height: 42px;
+      margin: 0 0 14px;
       color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .landing-conclusion-outcome {
-      margin: 16px 0 0;
-      padding: 18px 20px;
-      border-left: 4px solid var(--red);
-      color: var(--ink);
-      background: var(--card);
-      font-size: 16px;
-      line-height: 1.55;
+      font-size: 14px;
+      line-height: 1.4;
     }
 
     .model-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(var(--model-columns, 1), minmax(0, 1fr));
+      gap: 10px;
     }
 
     .model-card {
       position: relative;
-      min-height: 280px;
-      padding: 24px;
+      min-height: 240px;
+      padding: 18px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -642,23 +511,11 @@
       box-shadow: inset 0 0 0 1px var(--red), var(--shadow);
     }
 
-    .model-number {
-      display: grid;
-      place-items: center;
-      width: 48px;
-      height: 48px;
-      margin-bottom: 12px;
-      border-radius: 50%;
-      color: #fff;
-      background: var(--red);
-      font-weight: 850;
-    }
-
     .model-visual {
       display: grid;
-      width: 92px;
-      height: 82px;
-      margin: 0 0 16px;
+      width: 72px;
+      height: 66px;
+      margin: 0 0 14px;
       place-items: center;
       color: var(--ink);
     }
@@ -673,7 +530,7 @@
       display: block;
       max-width: 220px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: 25px;
+      font-size: 22px;
       font-weight: 600;
       letter-spacing: -0.02em;
       line-height: 1.06;
@@ -686,6 +543,78 @@
       color: var(--muted);
       font-size: 15px;
     }
+
+    .swiss-context {
+      padding: clamp(30px, 5vw, 58px);
+      border-radius: 28px;
+      color: #fff;
+      background: #171717;
+    }
+
+    .swiss-context-header { margin-bottom: 20px; }
+
+    .swiss-reference-list {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.26);
+      border-radius: 18px;
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.26);
+      list-style: none;
+    }
+
+    .swiss-reference-list li {
+      min-width: 0;
+      padding: 22px;
+      background: #171717;
+    }
+
+    .reference-identity {
+      display: grid;
+      gap: 15px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .reference-logo-bay {
+      width: 100%;
+      height: 66px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .reference-logo {
+      display: block;
+      width: 100%;
+      height: 36px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .reference-identity strong,
+    .reference-role,
+    .reference-status { display: block; }
+
+    .reference-identity strong { font-size: 18px; line-height: 1.18; }
+
+    .reference-role { margin-top: 7px; color: var(--red); font-size: 12px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .reference-status { margin-top: 4px; color: #fff; font-size: 14px; font-weight: 800; }
+
+    .swiss-reference-list p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.94);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .swiss-reference-list p + p { margin-top: 10px; }
 
     .workspace {
       min-height: 100vh;
@@ -1822,12 +1751,16 @@
     }
 
     @media (max-width: 1100px) {
-      .hero-architecture-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .hero-flow-item:nth-child(2)::after { display: none; }
-      .landing-report-grid,
-      .landing-landscape-grid,
-      .landing-conclusion-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .landing-orientation,
+      .landing-explainer,
+      .bank-decisions { grid-template-columns: 1fr; }
+      .claim-map { max-width: 760px; }
+      .representation-rail-header { grid-template-columns: 1fr; }
+      .deposit-types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .deposit-type:nth-child(2) { border-right: 0; }
+      .deposit-type:nth-child(3) { padding-left: 0; padding-top: 28px; border-top: 1px solid #d0cbc3; }
+      .deposit-type:nth-child(4) { padding-right: 0; padding-top: 28px; border-top: 1px solid #d0cbc3; }
+      .swiss-reference-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .model-card { min-height: 240px; }
       .context-actions { grid-column: 1 / -1; justify-content: flex-end; }
       .failure-bar { padding-left: 0; }
@@ -1835,7 +1768,8 @@
     }
 
     @media (max-width: 900px) {
-      .landing-lens-panel { grid-template-columns: 1fr; }
+      .model-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .model-group:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
       .scenario-heading.has-failure { grid-template-columns: 1fr; }
       .stage-layout { grid-template-columns: 1fr; }
       .inspector { min-height: 250px; }
@@ -1855,20 +1789,27 @@
         align-content: start;
       }
 
-      .landing-header { min-height: auto; padding: 34px 0 44px; }
-      .landing-lens-panel { padding: 24px; }
-      .hero-architecture-heading { display: block; }
-      .hero-architecture-heading span { display: block; margin-top: 5px; }
-      .hero-architecture-flow { grid-template-columns: 1fr; gap: 12px; }
-      .hero-flow-item::after { display: none !important; }
-      .landing-report-grid,
-      .landing-landscape-grid,
-      .landing-conclusion-layout { grid-template-columns: 1fr; }
-      .landing-report,
-      .landing-conclusion { padding-block: 38px; }
+      .landing-header { min-height: 0; padding: 32px 24px; border-radius: 20px; }
+      .landing-actions { display: grid; }
+      .landing-actions .button { width: 100%; }
+      .landing-orientation { gap: 26px; }
+      .claim-map { min-height: 0; padding: 20px; }
+      .claim-map svg { height: 150px; }
+      .representation-rail { padding: 28px 22px; border-radius: 20px; }
+      .deposit-types { grid-template-columns: 1fr; }
+      .deposit-type:nth-child(n) { min-height: 0; padding: 20px 0; border-right: 0; border-top: 1px solid #d0cbc3; }
+      .deposit-type:first-child { border-top: 0; }
+      .deposit-type b { margin-bottom: 13px; }
+      .landing-explainer { gap: 30px; padding: 30px 0; }
+      .bank-decisions { gap: 28px; padding: 28px 22px; border-radius: 20px; }
+      .bank-decisions::before { left: 22px; }
+      .decision-list { grid-template-columns: 1fr; }
+      .swiss-context { padding: 28px 22px; border-radius: 20px; }
+      .model-groups { grid-template-columns: 1fr; }
+      .model-group:nth-child(2) { grid-column: auto; grid-row: auto; }
       .model-grid { grid-template-columns: 1fr; }
-      .model-card { min-height: 210px; }
-      .model-number { margin-bottom: 24px; }
+      .model-card { min-height: 196px; }
+      .swiss-reference-list { grid-template-columns: 1fr; }
 
       .context-bar,
       .failure-bar,
@@ -2248,179 +2189,143 @@
   <main>
     <section class="landing" id="landing" aria-labelledby="landing-title">
       <header class="landing-header">
-        <div class="landing-hero-copy">
-          <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
-          <h1 id="landing-title" tabindex="-1">Tokenized deposits: how architecture changes a payment.</h1>
-          <p class="landing-definition">A tokenized deposit is a claim on a commercial bank represented or operated through token or distributed-ledger technology.</p>
-          <p class="landing-intro">Tokenization can coordinate bank money with conditions, assets, currencies and institutions. Its value must be demonstrated against core-banking automation, account APIs, SIC Instant Payments and ordinary escrow.</p>
+        <p class="landing-hero-kicker">Tokenized deposits for Swiss banking</p>
+        <h1 id="landing-title" tabindex="-1">Trace a tokenized deposit through payment and settlement.</h1>
+        <p class="landing-intro">A tokenized deposit is still a CHF claim on its issuing bank. Tokenization changes the representation and transfer workflow. It does not answer the hard questions about authority, finality, recovery, and reconciliation.</p>
+        <div class="landing-actions">
+          <button class="button button-primary" id="open-featured-flow" type="button">Open mirrored conditional payment</button>
+          <a class="button" href="#landing-models">Choose a model and scenario</a>
         </div>
-
-        <section class="hero-architecture" aria-labelledby="hero-architecture-title">
-          <header class="hero-architecture-heading">
-            <h2 id="hero-architecture-title">Four alternative structures</h2>
-            <span>Compared across the same payment scenarios—not a maturity sequence</span>
-          </header>
-          <div class="hero-architecture-flow">
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="receipt-text" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>01</span><strong>Payment instruction</strong><small>Bank executes a request</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="database" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>02</span><strong>Mirrored deposit</strong><small>CBS + token mirror</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="network" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>03</span><strong>Native on-chain</strong><small>DLT is authoritative</small></div>
-            </article>
-            <article class="hero-flow-item">
-              <span class="hero-flow-icon" data-hero-icon="coins" aria-hidden="true"></span>
-              <div class="hero-flow-copy"><span>04</span><strong>Non-bank stablecoin</strong><small>Separate issuer claim</small></div>
-            </article>
-          </div>
-        </section>
-
-        <aside class="landing-lens-panel" aria-labelledby="landing-lens-title">
-          <div class="landing-lens-heading">
-            <p>How to read the explorer</p>
-            <h2 id="landing-lens-title">Four questions follow every payment.</h2>
-          </div>
-          <ol class="landing-lenses" aria-label="Questions examined by the demonstration">
-            <li><span>01</span><div><strong>Claim</strong>Who owes the value to the holder?</div></li>
-            <li><span>02</span><div><strong>Authority</strong>Which record defines ownership?</div></li>
-            <li><span>03</span><div><strong>Settlement</strong>Which asset completes the payment?</div></li>
-            <li><span>04</span><div><strong>Control</strong>Who can issue, transfer, pause and recover?</div></li>
-          </ol>
-        </aside>
+        <p class="run-metadata">Mirrored deposit · Conditional payment · 7 steps · Normal and failure runs</p>
       </header>
 
-      <section class="landing-report" aria-labelledby="landing-context-title">
-        <header class="landing-report-header">
-          <p class="eyebrow">Before the explorer</p>
-          <h2 id="landing-context-title">Understand the money before choosing the technology.</h2>
-          <p>A tokenized deposit remains a commercial-bank liability. Tokenization may change its representation and workflow, while the product must still define the debtor, authoritative record, settlement arrangement and legal effect.</p>
-        </header>
-
-        <div class="landing-report-grid">
-          <article>
-            <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="coins" aria-hidden="true"></span>
-            <h3>It remains bank money</h3>
-            <p>The issuing bank owes the value to the holder. The token does not create a second asset or turn the deposit into central-bank money.</p>
-            <span class="landing-card-key">Define the debtor and holder</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="badge-check" aria-hidden="true"></span>
-            <h3>The record model matters</h3>
-            <p>The CBS, DLT and general ledger may record related facts. The design must state which record prevails and how disagreements are repaired.</p>
-            <span class="landing-card-key">Name the authoritative record</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="lock-keyhole" aria-hidden="true"></span>
-            <h3>Tokenization adds coordination</h3>
-            <p>Shared state can support conditional release, synchronized asset or FX exchange and workflows involving several institutions.</p>
-            <span class="landing-card-key">Prove value beyond ordinary payments</span>
-          </article>
-          <article>
-            <span class="landing-card-icon" data-guide-icon="git-compare-arrows" data-guide-badge="network" aria-hidden="true"></span>
-            <h3>Architectures change the risk</h3>
-            <p>An instruction, CBS mirror, authoritative on-chain deposit and separate stablecoin place authority, recovery and issuer risk differently.</p>
-            <span class="landing-card-key">Compare the same flow across models</span>
-          </article>
+      <section class="landing-orientation" aria-labelledby="landing-orientation-title">
+        <div>
+          <p class="section-kicker">01 / What changes</p>
+          <h2 id="landing-orientation-title">The deposit stays a bank liability. Its operating record changes.</h2>
+          <p>A token can be an instruction, a representation of a deposit, or the authoritative holder record. The simulator separates those designs so a wallet, token, ledger, and customer claim do not become the same thing by accident.</p>
         </div>
+        <figure class="claim-map">
+          <svg viewBox="0 0 640 200" role="img" aria-labelledby="claim-map-title claim-map-description">
+            <title id="claim-map-title">The five questions behind a tokenized deposit</title>
+            <desc id="claim-map-description">A line links the bank claim, token representation, record authority, settlement, and controls. Authority and settlement are marked in red because the bank must make those choices explicitly.</desc>
+            <path d="M42 78H598" fill="none" stroke="#858585" stroke-width="2" />
+            <path d="M42 78H292" fill="none" stroke="#ffffff" stroke-width="2" />
+            <path d="M292 78H460" fill="none" stroke="#E60000" stroke-width="3" />
+            <g fill="#171717" stroke="#ffffff" stroke-width="2">
+              <circle cx="42" cy="78" r="15" /><circle cx="166" cy="78" r="15" /><circle cx="292" cy="78" r="15" /><circle cx="460" cy="78" r="15" /><circle cx="598" cy="78" r="15" />
+            </g>
+            <g fill="#E60000" stroke="#E60000" stroke-width="2"><circle cx="292" cy="78" r="15" /><circle cx="460" cy="78" r="15" /></g>
+            <g fill="#fff" font-size="12" font-weight="800" text-anchor="middle"><text x="42" y="82">01</text><text x="166" y="82">02</text><text x="292" y="82">03</text><text x="460" y="82">04</text><text x="598" y="82">05</text></g>
+            <g fill="#fff" font-size="14" font-weight="800"><text x="21" y="126">Claim</text><text x="133" y="126">Representation</text><text x="258" y="126">Authority</text><text x="426" y="126">Settlement</text><text x="574" y="126">Control</text></g>
+            <g fill="#c6c6c6" font-size="12"><text x="21" y="148">Who owes?</text><text x="133" y="148">What moves?</text><text x="258" y="148">Which record?</text><text x="426" y="148">What is final?</text><text x="574" y="148">Who repairs?</text></g>
+          </svg>
+          <figcaption>Tokenization earns its name at the representation layer. A bank still has to define its debtor, authority model, settlement anchor, and repair controls.</figcaption>
+        </figure>
+      </section>
 
-        <section class="landing-landscape" aria-labelledby="landing-landscape-title">
-          <header class="landing-landscape-header">
-            <p class="eyebrow">Swiss landscape</p>
-            <h3 id="landing-landscape-title">Related initiatives test different parts of the system.</h3>
-            <p>Maturity labels show what each initiative has demonstrated or put into operation. They distinguish production infrastructure, pilots, proofs of concept and sandboxes; none is approval for a bank-specific tokenized deposit.</p>
-          </header>
-
-          <div class="landing-landscape-grid">
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="arrow-right-left" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>Production</span>
-              </div>
-              <h4>SIC and Instant Payments</h4>
-              <p>CHF interbank settlement in SNB money and the domestic benchmark for fast, continuously available account payments.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="receipt-text" data-guide-badge="workflow" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Concept · PoC · pilot</span>
-              </div>
-              <h4>SBA and bank initiatives</h4>
-              <p>The SBA PoC used on-chain instructions with off-chain account movements. Bank pilots examine treasury and programmable-payment uses.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="network" data-guide-badge="landmark" aria-hidden="true"></span>
-                <div class="landing-maturity-list" aria-label="Maturity by initiative">
-                  <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Helvetia · Pilot</span>
-                  <span class="landing-maturity"><span class="maturity-dot is-production" aria-hidden="true"></span>BX · Production scope</span>
-                  <span class="landing-maturity"><span class="maturity-dot" aria-hidden="true"></span>Agorá · Controlled test</span>
-                </div>
-              </div>
-              <h4>Helvetia, BX and Agorá</h4>
-              <p>These initiatives examine tokenized central-bank settlement, DLT securities infrastructure and cross-border workflows at different stages of deployment.</p>
-            </article>
-            <article class="landing-landscape-card">
-              <div class="landing-card-top">
-                <span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="wallet-cards" aria-hidden="true"></span>
-                <span class="landing-maturity"><span class="maturity-dot is-exploratory" aria-hidden="true"></span>Sandbox</span>
-              </div>
-              <h4>CHF stablecoin work</h4>
-              <p>An adjacent private-money model with a separate issuer and reserve arrangement rather than a deposit claim on the customer’s bank.</p>
-            </article>
+      <section class="representation-rail" aria-labelledby="representation-rail-title">
+        <header class="representation-rail-header">
+          <div>
+            <p class="section-kicker">02 / Four representations</p>
+            <h2 id="representation-rail-title">The token can mean four different things.</h2>
           </div>
-        </section>
-
-        <p class="landing-report-link"><strong>Next:</strong> choose one architecture and one scenario. The explorer will show how the claim, authority, settlement and controls change at every step.</p>
-      </section>
-
-      <section class="landing-choice-section" aria-labelledby="landing-model-title">
-        <header class="landing-choice-heading">
-          <p class="eyebrow">Step 1 of 2</p>
-          <h2 id="landing-model-title">Choose the money architecture</h2>
-          <p>The architecture determines the holder’s claim, the authoritative record and the role of the bank or issuer throughout the selected flow.</p>
+          <p>These models keep the payment objective constant and change the claim, the authoritative record, and the settlement design. The simulator uses the same four definitions below.</p>
         </header>
-        <div class="model-grid" id="model-grid" aria-label="Money architectures"></div>
+        <ol class="deposit-types">
+          <li class="deposit-type"><b>BASELINE</b><strong>Payment instruction</strong><span>The token carries an instruction. CBS remains authoritative for the customer balance and bank liability.</span></li>
+          <li class="deposit-type"><b>TOKENIZED DEPOSIT</b><strong>Mirrored deposit</strong><span>A DLT token represents the bank deposit. CBS and GL remain the liability control records.</span></li>
+          <li class="deposit-type"><b>TOKENIZED DEPOSIT</b><strong>Ledger-native deposit</strong><span>The DLT holder record runs the balance. The bank still controls issuance, recovery, and the issuer perimeter.</span></li>
+          <li class="deposit-type"><b>COMPARATOR</b><strong>Non-bank stablecoin</strong><span>The holder faces a separate issuer, reserve, and redemption arrangement. It is not a bank deposit.</span></li>
+        </ol>
       </section>
 
-      <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title" hidden>
+      <section class="landing-explainer" aria-labelledby="bank-case-title">
+        <div>
+          <p class="section-kicker">03 / Why consider it</p>
+          <h2 id="bank-case-title">Use a token only when the workflow changes.</h2>
+          <p>Switzerland already has SIC and Instant Payments for domestic account payments. A bank should add a token only when shared state, conditional release, or coordinated cash-and-asset settlement removes a measured hand-off, risk, or reconciliation cost.</p>
+        </div>
+        <ol class="workflow-sequence">
+          <li><b>01</b><div><strong>Shared workflow state</strong><span>Participants see one controlled status instead of inferring it from messages and local records.</span></div></li>
+          <li><b>02</b><div><strong>Conditional cash</strong><span>Value remains locked until accepted evidence, an expiry, or a defined repair path releases it.</span></div></li>
+          <li><b>03</b><div><strong>Coordinated settlement</strong><span>Cash and another obligation can complete under one agreed workflow, with the settlement anchor stated explicitly.</span></div></li>
+          <li><b>04</b><div><strong>Keep the existing rail when it is enough</strong><span>The token is not the benefit. The workflow is.</span></div></li>
+        </ol>
+      </section>
+
+      <section class="bank-decisions" aria-labelledby="bank-decisions-title">
+        <div>
+          <p class="section-kicker">04 / What the bank must decide</p>
+          <h2 id="bank-decisions-title">The design starts with the claim.</h2>
+          <p>These are product and operating choices. A shared ledger cannot decide them after the fact.</p>
+        </div>
+        <ol class="decision-list">
+          <li><b>01</b><strong>Who is the debtor?</strong><span>Name the bank or separate issuer that owes the holder.</span></li>
+          <li><b>02</b><strong>Which record decides a dispute?</strong><span>State whether CBS, DLT, or another controlled record is authoritative.</span></li>
+          <li><b>03</b><strong>What creates finality?</strong><span>Separate workflow completion, ledger posting, accounting recognition, and legal effect.</span></li>
+          <li><b>04</b><strong>How do institutions settle?</strong><span>Identify the institutional cash leg and the point at which it discharges.</span></li>
+          <li><b>05</b><strong>How does the bank recover?</strong><span>Define issuance, controls, reconciliation, pause, repair, and customer communication.</span></li>
+          <li><b>06</b><strong>Which model fits the use case?</strong><span>The simulator holds the payment flow constant and changes these answers.</span></li>
+        </ol>
+      </section>
+
+      <section class="swiss-context" id="swiss-context" aria-labelledby="swiss-context-title">
+        <header class="swiss-context-header">
+          <p class="section-kicker">05 / Swiss reference map</p>
+          <h2 id="swiss-context-title">Each project answers a different question.</h2>
+          <p>Use these as scoped reference points. They do not approve or prescribe a bank-specific tokenized deposit.</p>
+        </header>
+        <ul class="swiss-reference-list">
+          <li>
+            <div class="reference-identity">
+              <div class="reference-logo-bay"><img class="reference-logo" alt="" data-logo-source="SIX" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MS44NSIgaGVpZ2h0PSIyOS43OTIiIHZpZXdCb3g9IjAgMCA4MS44NSAyOS43OTIiPgo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPi5zaXh7ZmlsbDojREUzOTE5O308L3N0eWxlPgo8cGF0aCBjbGFzcz0ic2l4IiBkPSJNMjAuODE2IDYuNzk4YzEuNjY0LTEuOTgyIDQuMTU4LTMuMjQgNi45NS0zLjI0aDYuMjIzdjQuNTM2aC02LjIyNWMtMS4zOTUgMC0yLjY0My42My0zLjQ3NSAxLjYybC0xMS4xNDYgMTMuMjhjLTEuNjY0IDEuOTgtNC4xNTggMy4yNC02Ljk0OCAzLjI0SC0uMDI3di00LjUzNmg2LjIyM2MxLjM5NCAwIDIuNjQtLjYzIDMuNDc0LTEuNjJsMTEuMTQ2LTEzLjI4ek0zOC41MjMgMy41NTdoNC43NjJ2MjIuNjc3aC00Ljc2MnpNNjAuOTk1IDYuNzk4bDMuODM1IDQuNTcgMy44MzYtNC41N2MxLjY2NC0xLjk4MiA0LjE2LTMuMjQgNi45NS0zLjI0aDYuMjIydjQuNTM2aC02LjIyM2MtMS4zOTYgMC0yLjY0Mi42My0zLjQ3NCAxLjYybC00LjM1IDUuMTgyIDQuMzUgNS4xODJjLjgzMy45OSAyLjA4IDEuNjIgMy40NzUgMS42Mmg2LjIyM3Y0LjUzNmgtNi4yMjNjLTIuNzkgMC01LjI4NS0xLjI2LTYuOTUtMy4yNGwtMy44MzUtNC41Ny0zLjgzNSA0LjU3Yy0xLjY2NCAxLjk4LTQuMTYgMy4yNC02Ljk0OCAzLjI0aC02LjIyNXYtNC41MzZoNi4yMjVjMS4zOTQgMCAyLjY0LS42MyAzLjQ3Mi0xLjYybDQuMzUtNS4xODItNC4zNS01LjE4M2MtLjgzMy0uOTktMi4wOC0xLjYyLTMuNDczLTEuNjJoLTYuMjI1VjMuNTU4aDYuMjI1YzIuNzkgMCA1LjI4NCAxLjI2IDYuOTQ4IDMuMjQiLz48L3N2Zz4K"></div>
+              <div><strong>SIC and Instant Payments</strong><span class="reference-role">Domestic payment rail</span><span class="reference-status">Production</span></div>
+            </div>
+            <p>SIC is Switzerland's domestic CHF payment infrastructure. Eligible participants settle interbank obligations in sight deposits at the SNB. SIC Instant Payments adds 24/7 account-to-account payments.</p>
+            <p>Neither system creates or runs a customer tokenized deposit. They remain the settlement baseline for a bank that keeps the CBS and GL authoritative.</p>
+          </li>
+          <li>
+            <div class="reference-identity">
+              <div class="reference-logo-bay"><img class="reference-logo" alt="" data-logo-source="BIS" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAiIGhlaWdodD0iNDQiIHZpZXdCb3g9IjAgMCA5MCA0NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzIwMDA2MTIwXzE1MTI3KSI+CjxwYXRoIGQ9Ik0xOC45MDA5IDM0LjE2MzJDMTguNzY5IDM0LjE2MzIgMTguNjM3NSAzNC4xNjE2IDE4LjUwNjEgMzQuMTU5OFYyOS44NTgzTDEwLjg0NzkgMjIuMjQxM0gwLjAxMTcyNjZDMC4wMDQ3Njg4NCAyMi4xMDM4IDAgMjEuOTY1OCAwIDIxLjgyNzJDMCAyMS42ODg4IDAuMDA0NzY4ODQgMjEuNTUxMiAwLjAxMTcyNjYgMjEuNDEzN0gxMC44NDc5TDE4LjUwNjEgMTMuODM3N1Y5LjQ5Mzk4QzE4LjYzNzUgOS40OTIxOCAxOC43NjkgOS40OTA2OSAxOC45MDA5IDkuNDkwNjlDMTkuMDQ1OCA5LjQ5MDY5IDE5LjE5MDEgOS40OTIxIDE5LjMzNDEgOS40OTQyMVYxMy44Mzc3TDI2Ljk5MjQgMjEuNDEzN0gzNy43OTA0QzM3Ljc5NzMgMjEuNTUxMSAzNy44MDIxIDIxLjY4ODggMzcuODAyMSAyMS44MjcyQzM3LjgwMjEgMjEuOTY1OCAzNy43OTczIDIyLjEwMzggMzcuNzkwNCAyMi4yNDEzSDI2Ljk5MjRMMTkuMzM0MSAyOS44NTgzVjM0LjE1OTVDMTkuMTkgMzQuMTYxNyAxOS4wNDU4IDM0LjE2MzEgMTguOTAwOSAzNC4xNjMxVjM0LjE2MzJaIiBmaWxsPSIjRDJENEQzIi8+CjxwYXRoIGQ9Ik0yNi45OTI1IDIxLjQxMzNMMTkuMzM0MyAxMy44Mzc0VjkuNDkwODRDMjkuMzUyMSA5LjYxNTA3IDM3LjQ2NTkgMTQuODcyMyAzNy43OTcgMjEuNDEzM0gyNi45OTI1Wk0xOS4zMzQzIDM0LjE2MzJWMjkuODU3OEwyNi45OTI1IDIyLjI0MDlIMzcuNzk3QzM3LjQ2NTkgMjguNzgxOSAyOS4zNTIxIDM0LjAzOTIgMTkuMzM0MyAzNC4xNjMyWk0xMC44NDc5IDIxLjQxMzNIMC4wMDE5NTMxMkMwLjMzMzE5MiAxNC44NzI0IDguNDg4MjEgOS42MTUwNyAxOC41MDYxIDkuNDkwODRWMTMuODM3NEwxMC44NDc5IDIxLjQxMzNaTTAuMDAxOTUzMTIgMjIuMjQwOUgxMC44NDc5TDE4LjUwNjEgMjkuODU3OFYzNC4xNjMyQzguNDg4MjEgMzQuMDM5MiAwLjMzMzE5MiAyOC43ODIgMC4wMDE5NTMxMiAyMi4yNDA5WiIgZmlsbD0iI0FBMzIyRiIvPgo8cGF0aCBkPSJNNTEuNjE5MSAzNC4xOEM1NC40MjA2IDM0LjE4IDU5LjAzMyAzMy41NjUxIDU5LjAzMyAyNy4yNDQ0QzU5LjAzMyAyMy44NjIxIDU3LjQ5NTUgMjEuNzQzOCA1My45NzY1IDIxLjMzMzhWMjEuMTYyOUM1Ny4xNTQgMjAuNDQ1NSA1OC4yMTMgMTguMzk1NSA1OC4yMTMgMTUuMzIwNkM1OC4yMTMgMTQuODQyMiA1OC4wNzY0IDEzLjM3MzEgNTcuMjIyMiAxMi4wNDA3QzU2LjI5OTcgMTAuNjc0MSA1NS4xMzgxIDkuNTEyNDUgNTEuNzIxNSA5LjUxMjQ1SDQzLjY5MjZWMzQuMThINTEuNjE5MVYzNC4xOFpNNDYuODM1OSAyMi42MzIxSDUwLjE4NDFDNTMuMzk1NyAyMi42MzIxIDU1LjgyMTQgMjMuMzE1NCA1NS44MjE0IDI3LjI0NDRDNTUuODIxNCAyOS4wNTUyIDU0LjYyNTcgMzEuNDQ2OCA1MS4yNzc0IDMxLjQ0NjhINDYuODM1OVYyMi42MzIxWk00Ni44MzU5IDEyLjI0NTdINTEuMjc3NEM1My45MDgxIDEyLjI0NTcgNTUuMDY5OCAxMy45MTk4IDU1LjA2OTggMTUuOTY5OEM1NS4wNjk4IDE4LjM2MTQgNTMuODc0IDE5Ljg2NDcgNTEuNDE0MSAxOS44OTg4SDQ2LjgzNTlWMTIuMjQ1N1pNNjguODQ1IDkuNTEyNTNINjUuNzAxOFYzNC4xOEg2OC44NDVWOS41MTI1M1pNNzUuMTM4IDI2LjgzNDRDNzUuMDY5NyAyOS4xOTE5IDc1LjA2OTcgMzQuNzYwOSA4Mi4zNDY5IDM0LjY5MjVDODYuNDEyNiAzNC42OTI1IDkwIDMzLjAxODQgOTAgMjcuODI1MkM5MCAyMC4wMDEyIDc4LjkzMDMgMjAuNzg3IDc4LjkzMDMgMTUuMzU0OEM3OC45MzAzIDEyLjY4OTggODAuODQzNiAxMS43MzMyIDgyLjcyMjcgMTEuNzMzMkM4NS42OTUxIDExLjczMzIgODYuNTQ5MyAxMy41MDk4IDg2LjUxNTEgMTYuMjA4OUg4OS43OTVDOTAgMTEuMTg2NiA4Ny40NzE3IDkgODIuOTYxOSA5Qzc4LjgyNzggOSA3NS43MTg4IDExLjMyMzIgNzUuNzE4OCAxNS42OTY1Qzc1LjcxODggMjMuMTEwNCA4Ni43ODg0IDIyLjQ5NTQgODYuNzg4NCAyNy45NjE4Qzg2Ljc4ODQgMzAuOTAwMSA4NC44NzUyIDMxLjk1OTIgODIuMzgxMSAzMS45NTkyQzgwLjM2NTQgMzEuOTU5MiA3OC4yNDcxIDMwLjkwMDEgNzguMjQ3MSAyNy41NTE5VjI2LjgzNDRINzUuMTM4WiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8yMDAwNjEyMF8xNTEyNyI+CjxyZWN0IHdpZHRoPSI5MCIgaGVpZ2h0PSIyNS42OTMxIiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCA5KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo="></div>
+              <div><strong>Project Agorá</strong><span class="reference-role">Cross-border wholesale test</span><span class="reference-status">Controlled real-value test</span></div>
+            </div>
+            <p>Agorá tests cross-border wholesale payments with a unifying ledger for platform-authoritative tokenized commercial-bank deposits and jurisdictional ledgers for tokenized central-bank reserves. Participant middleware keeps confirmation of payee, route choice, pricing, and compliance checks private.</p>
+            <p>Shared contracts coordinate validation, locks, delegated authority, and settlement. Its platform-as-record model differs from a CBS-authoritative mirrored deposit. Controlled real-value testing does not establish production resilience, a final rulebook, or a Swiss bank product approval.</p>
+          </li>
+          <li>
+            <div class="reference-identity">
+              <div class="reference-logo-bay"><img class="reference-logo" alt="" data-logo-source="SNB" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTciIGhlaWdodD0iNzYiIGZpbGw9Im5vbmUiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaW5ZTWluIG1lZXQiIHZpZXdCb3g9IjAgMCAxOTcgNzYiPjxnIGZpbGw9IiMwNzM4NzEiPjxwYXRoIGQ9Ik0xLjM2OCA3LjkwOHYuMzA4YzAgMS40OC45NDkgMS45NTIgMS44MzYgMS45NTIgMS4xMTQgMCAxLjk2LS40NzMgMS45Ni0xLjc2NyAwLTIuNDI0LTQuOTMxLTIuMTU3LTQuOTMxLTUuNDQzQy4yNTMgMS4wMjcgMS42MzYgMCAzLjQ3MyAwYzIgMCAzLjEzNS45NjUgMy4wMzIgMy4yMDRINS4wNGMuMDItMS4xOTEtLjM3MS0xLjk3Mi0xLjY5Mi0xLjk3Mi0uODQ2IDAtMS42OTEuNDMyLTEuNjkxIDEuNjAzIDAgMi40MDMgNC45MyAyLjA1NCA0LjkzIDUuNTI1IDAgMi4zLTEuNTg4IDMuMDQtMy40MDQgMy4wNC0zLjIxOC4wMi0zLjIxOC0yLjQ0NC0zLjE5OC0zLjQ5MnptMTEuNDA5LTQuNjYzYy4wMi0uNjE2LS4wNDEtMS4yMzItLjMxLTEuNTgxLS4yNjgtLjM1LS45NDktLjQ3My0xLjIzNy0uNDczLTEuMTU2IDAtMS42MS42OTktMS42NS44NDMtLjA0Mi4xMjMtLjMxLjM5LS4zMSAyLjI4VjcuMjNjMCAyLjY3Ljg4NyAzIDEuOTYgMyAuNDMzIDAgMS43MTItLjE0NSAxLjczMy0yLjI4aDEuNDQ0Yy4wNjIgMy40NS0yLjM5MyAzLjQ1LTMuMDk1IDMuNDUtMS4zODItLjAyLTMuNDg3LS4xMDMtMy40ODctNC4zNTV2LTMuMDhDNy44MjUuODgyIDkuMTg3IDAgMTEuMzU0IDBzMy4wMTIgMS4xMyAyLjg2NyAzLjI0NXptMi45MDkgNy45MDlWLjIyNWgxLjQwM1Y0Ljk1aDMuODU4Vi4yMjZoMS40MDN2MTAuOTI3aC0xLjQwM3YtNC45OUgxNy4wOXY0Ljk5ek0yMi45NDkuMjI2aDEuNDg1bDIuMDYzIDkuNDdoLjAybDIuMjA5LTkuNDdoMS44MTVsMS45OCA5LjQ3aC4wMjFsMi4yMjktOS40N2gxLjQ2NWwtMi45MSAxMC45MjdoLTEuNjkxTDI5LjU3IDEuNjg1aC0uMDJsLTIuMjI4IDkuNDlIMjUuNjF6bTEzLjg0NCAxMC45MjhWLjIyNWg1LjY1M3YxLjIxMmgtNC4yNVY0Ljk1aDMuOTZ2MS4yMTJoLTMuOTZ2My43OGg0LjM1M3YxLjIxMXptOC4zNzYgMGgtMS40MDNWLjIyNWgxLjQwM3ptNy43MTYtOS41MzEtNS40NDcgOC4zMTloNS41N3YxLjIxMWgtNi44N3YtMS41OGw1LjMyNC04LjExNHYtLjAyaC01LjEzOFYuMjI2aDYuNTYxem0uOTI5IDkuNTMxVi4yMjVoNS42NTN2MS4yMTJoLTQuMjVWNC45NWgzLjk2djEuMjEyaC0zLjk2djMuNzhoNC4zNTN2MS4yMTF6bTguMTctNS4wMTJ2NS4wMzJINjAuNThWLjIyNmgzLjc3NWMxLjk0IDAgMi42NDEgMS4zNTYgMi42NDEgMi43MzIgMCAxLjI5NC0uNzIyIDIuMjYtMi4wMDEgMi41MDZ2LjAyYzEuMjU4LjIwNiAxLjcxMi42MTcgMS43OTUgMi44MTQuMDIuNDczLjE2NSAyLjE3OC4zNzEgMi44NTVoLTEuNDY1Yy0uMzkyLS43Ni0uMzA5LTIuMTc3LS40MzMtMy42MzUtLjEwMy0xLjMzNS0xLjE5Ni0xLjM5Ny0xLjY1LTEuMzk3em0wLTEuMjEyaDIuMTA0YzEuMDExIDAgMS40ODYtLjg2MyAxLjQ4Ni0xLjgyOCAwLS43OC0uMzkyLTEuNjY0LTEuNDY1LTEuNjY0aC0yLjEwNVY0Ljkzem03Ljg2MSA2LjIyNGgtMS40MDNWLjIyNWgxLjQwM3ptMi45MDktMy4yNDZ2LjMwOGMwIDEuNDguOTQ5IDEuOTUyIDEuODM2IDEuOTUyIDEuMTE0IDAgMS45Ni0uNDczIDEuOTYtMS43NjcgMC0yLjQyNC00LjkzMS0yLjE1Ny00LjkzMS01LjQ0M0M3MS42MzkgMS4wMjcgNzMuMDIyIDAgNzQuODU4IDBjMi4wMDEgMCAzLjEzNi45NjUgMy4wMzMgMy4yMDRoLTEuNDY1Yy4wMi0xLjE5MS0uMzcxLTEuOTcyLTEuNjkyLTEuOTcyLS44MjUgMC0xLjY5Mi40MzItMS42OTIgMS42MDMgMCAyLjQwMyA0LjkzMSAyLjA1NCA0LjkzMSA1LjUyNSAwIDIuMy0xLjU4OCAzLjA0LTMuNDA0IDMuMDQtMy4yMzkuMDQxLTMuMjM5LTIuNDQ0LTMuMTk4LTMuNDkyem0xMS40MDktNC42NjNjLjAyLS42MTYtLjAyLTEuMjMyLS4zMS0xLjU4MS0uMjg4LS4zNS0uOTQ5LS40NzMtMS4yMzctLjQ3My0xLjE1NiAwLTEuNjEuNjk5LTEuNjUxLjg0My0uMDQxLjEyMy0uMzEuMzktLjMxIDIuMjhWNy4yM2MwIDIuNjcuODg4IDMgMS45NiAzIC40MzQgMCAxLjcxMy0uMTQ1IDEuNzM0LTIuMjhoMS40NDRjLjA2MiAzLjQ1LTIuMzk0IDMuNDUtMy4wOTUgMy40NS0xLjM2MiAwLTMuNDY2LS4wODItMy40NjYtNC4zMzRWMy45ODVDNzkuMjMyLjg4MyA4MC41OTQuMDIgODIuNzM5LjAyczMuMDEzIDEuMTMgMi44NjggMy4yNDVoLTEuNDQ0em0yLjkwOSA3LjkwOVYuMjI1aDEuNDAzVjQuOTVoMy44MzhWLjIyNmgxLjQwMnYxMC45MjdoLTEuNDAzdi00Ljk5aC0zLjg1OHY0Ljk5em04LjM5OCAwVi4yMjVoNS42NTJ2MS4yMTJoLTQuMjVWNC45NWgzLjk2MXYxLjIxMmgtMy45NnYzLjc4aDQuMzUydjEuMjExek0xMTIuNDI4LjIyNnYxMC45MjhoLTEuOTE4bC00LjMzMy05LjQ5aC0uMDIxdjkuNDloLTEuMjM4Vi4yMjVoMS45ODFsNC4yNzEgOS4zNDZoLjA0MVYuMjI2em00LjIwOSAwaDEuNzc1bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43NjMtMi41ODloLTQuMjUxbC0uODI1IDIuNjFoLTEuNDIzem0uODY3IDEuMjk0aC0uMDQxbC0xLjcxMyA1LjgzNGgzLjUwOHpNMTI3LjY5Ni4yMjZ2MS4yMTJoLTIuODg4djkuNzE2aC0xLjQwM1YxLjQzOGgtMi44ODlWLjIyNnptMi4yMDggMTAuOTI4aC0xLjQwM1YuMjI1aDEuNDAzem0xLjc5NC0zLjk4NVYzLjU3NGMwLTIuMTc3IDEuMTM1LTMuNTc0IDMuNDQ2LTMuNTc0czMuNDQ1IDEuMzk3IDMuNDQ1IDMuNTc0VjcuMTdjMCAzLjAyLTEuMTM0IDQuMjMxLTMuNDQ1IDQuMjMxcy0zLjQ0Ni0xLjIxMi0zLjQ0Ni00LjIzMW01LjQ4OS4wNjFWMy41MzNjMC0yLjI4LTEuNTg5LTIuMzYyLTIuMDIyLTIuMzYyLS40MzQgMC0yLjAyMi4wODItMi4wMjIgMi4zNjJWNy4yM2MwIDIuMzgzLjcwMSAzIDIuMDIyIDNzMi4wMjItLjYxNyAyLjAyMi0zTTE0Ny44MzIuMjI2djEwLjkyOGgtMS45MThsLTQuMzMzLTkuNDloLS4wMjF2OS40OWgtMS4yMzdWLjIyNWgxLjk4bDQuMjcxIDkuMzQ2aC4wNDFWLjIyNnptNC4yMDkgMGgxLjc3NWwzLjU5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MWgtNC4yNWwtLjgyNiAyLjYxaC0xLjQyM3ptLjg0NiAxLjI5NGgtLjAybC0xLjcxMyA1LjgzNGgzLjUwOHptNS4xNzkgOS42MzRWLjIyNWgxLjQwM3Y5LjcxNmg0LjAyM3YxLjIxMXptNi4wNjYgMFYuMjI1aDMuNTljMS41MjYgMCAyLjA0Mi41MTMgMi40NTUgMS4xMS4yNjguNDMuNDMzLjk0NC40NTQgMS40NTggMCAxLjM1NS0uNDc1IDIuMjgtMS44NzggMi41ODh2LjA4MmMxLjU2OC4xODUgMi4yNDkgMS4xMyAyLjI0OSAyLjYwOCAwIDIuNzk0LTIuMDYzIDMuMDgyLTMuMzAxIDMuMDgyem0xLjQwMy02LjMyN2gyLjA0MmMxLjA5NC0uMDIgMS42My0uNjc4IDEuNjMtMS43NDYgMC0uOTA0LS41MTYtMS42NDMtMS42OTItMS42NDNoLTEuOTh6bTAgNS4xMTVoMS45OGMxLjQ4NiAwIDIuMDIyLTEuMDY4IDIuMDIyLTEuODcgMC0xLjc0Ni0xLjA3My0yLjA1NC0yLjUxNy0yLjA1NGgtMS40ODV6bTkuNDI4LTkuNzE2aDEuNzc1bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MWgtNC4yNWwtLjgyNSAyLjYxaC0xLjQwM3ptLjg0NiAxLjI5NGgtLjA0MWwtMS43MTIgNS44MzRoMy41MDd6TTE4OC41OC4yMjZ2MTAuOTI4aC0xLjkxOGwtNC4zMzMtOS40OWgtLjAyMXY5LjQ5aC0xLjIzOFYuMjI1aDEuOTgxbDQuMjcxIDkuMzY2aC4wMlYuMjI2em0xLjczMyAxMC45MjhWLjIyNWgxLjQwM3Y0LjgwNmguMDQxbDMuODM4LTQuODA2aDEuNTg5bC0zLjk4MiA0LjkzIDQuMjA5IDUuOTk4aC0xLjc5NWwtMy44MzgtNS43MWgtLjA0MXY1Ljcxek0uNDQgMjcuMjE2VjE2LjI2OGgzLjU2OWMxLjUyNiAwIDIuMDQyLjUxNCAyLjQ1NSAxLjExLjI2OC40My40MzMuOTQ0LjQzMyAxLjQ1OCAwIDEuMzU1LS40NzUgMi4yNi0xLjg3OCAyLjU4OHYuMDgyYzEuNTY4LjE4NSAyLjI1IDEuMTMgMi4yNSAyLjYzIDAgMi43OTMtMi4wNjQgMy4wOC0zLjMwMiAzLjA4em0xLjQwMi02LjMyNmgyLjA0M2MxLjA5My0uMDIgMS42My0uNjc4IDEuNjMtMS43NDYgMC0uOTA0LS41MTYtMS42NDMtMS42OTItMS42NDNoLTEuOTh6bTAgNS4xMTRoMS45OGMxLjQ4NiAwIDIuMDIzLTEuMDY4IDIuMDIzLTEuODY5IDAtMS43NDYtMS4wNzMtMi4wNTQtMi41MTctMi4wNTRIMS44NDJ6bTkuNDI4LTkuNzM2aDEuNzc1bDMuNTcgMTAuOTI4aC0xLjU2OGwtLjc4NC0yLjYwOWgtNC4yNWwtLjgyNiAyLjYwOUg3Ljc4NHptLjg0NyAxLjI5NGgtLjA0MWwtMS43MTMgNS44MzRoMy41MDh6bTEyLjc1LTEuMjk0djEwLjkyOGgtMS45MTlsLTQuMzMyLTkuNDloLS4wNDF2OS40OWgtMS4yMzhWMTYuMjY4aDEuOThsNC4yNzEgOS4zNjdoLjA0MXYtOS4zNjd6bTEuNjEgMy4zNDhjMC0yLjE3NyAxLjExNC0zLjU3NCAzLjQ0NS0zLjU3NCAyLjMzMiAwIDMuNDQ2IDEuMzk3IDMuNDQ2IDMuNTc0djMuNTk1YzAgLjc4LS4zMyAyLjczMi0uOTUgMi45OTlsLjAyMS4wNGMuMzEtLjEwMi42NC0uMTg0Ljk1LS4yNDZoMS4wOTN2MS4yMTJoLTQuNTZjLTEuNDg1IDAtMy40NjYtLjA4Mi0zLjQ2Ni00LjAwNXYtMy41OTV6bTUuNDY3IDMuNjU2di0zLjY5N2MwLTIuMjgtMS41ODktMi4zNjItMi4wMjItMi4zNjJzLTIuMDIyLjA4Mi0yLjAyMiAyLjM2MnYzLjY5N2MwIDEuODA4LjM5MiAyLjgxNSAyLjA0MyAyLjgxNSAxLjY1IDAgMi4wMDEtLjk4NiAyLjAwMS0yLjgxNW0zLjA5NS03LjAwNGgxLjQwM3Y3LjAwNWMwIDIuNDAzLjcyMiAyLjk5OCAyLjA2MyAyLjk5OCAxLjM0IDAgMi4wNDItLjYxNiAyLjA0Mi0yLjk5OHYtNi45ODRoMS40MDN2Ni45MjJjMCAzLjAyLTEuMTM0IDQuMjMxLTMuNDQ1IDQuMjMxcy0zLjQ0Ni0xLjIxMi0zLjQ0Ni00LjIzMXptOC41NDEgMTAuOTQ4VjE2LjI2OGg1LjY1M3YxLjIxMmgtNC4yNXYzLjUxMmgzLjk2MnYxLjIxMmgtMy45NjJ2My43OGg0LjM1NHYxLjIxMkg0My41OHptMTYuOTYtMTAuOTQ4djEwLjkyOGgtMS45MmwtNC4zMzItOS40OWgtLjAydjkuNDloLTEuMjM5VjE2LjI2OGgxLjk4MWw0LjI3MSA5LjM2N2guMDJ2LTkuMzY3em00LjIzIDBoMS43NzNsMy41NyAxMC45MjhoLTEuNTY4bC0uNzg0LTIuNjA5aC00LjI1bC0uODI2IDIuNjA5aC0xLjQyM3ptLjg0NSAxLjI5NGgtLjAybC0xLjcxMyA1LjgzNGgzLjUwN3ptMTAuMTkyLTEuMjk0djEuMjEyaC0yLjg4OHY5LjcxNmgtMS40MDNWMTcuNDhoLTIuODg5di0xLjIxMnptMi4yMDggMTAuOTQ4aC0xLjQwM1YxNi4yNjhoMS40MDN6bTEuNzk1LTQuMDA2di0zLjU5NGMwLTIuMTc3IDEuMTM0LTMuNTc0IDMuNDQ1LTMuNTc0czMuNDQ2IDEuMzk3IDMuNDQ2IDMuNTc0djMuNTk1YzAgMy4wMi0xLjEzNSA0LjIzMS0zLjQ0NiA0LjIzMXMtMy40NDUtMS4xOTEtMy40NDUtNC4yMzFtNS40ODguMDYydi0zLjY5N2MwLTIuMjgtMS41ODktMi4zNjItMi4wMjItMi4zNjJzLTIuMDIyLjA4Mi0yLjAyMiAyLjM2MnYzLjY5N2MwIDIuNDA0LjcwMSAzIDIuMDIyIDNzMi4wMjItLjU5NiAyLjAyMi0zbTEwLjY0Ni03LjAwNXYxMC45MjhoLTEuOTJsLTQuMzMyLTkuNDloLS4wMnY5LjQ5aC0xLjIzOFYxNi4yNjhoMS45OGw0LjI3MSA5LjM2N2guMDJ2LTkuMzY3em00LjIwOSAwaDEuNzc0bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MDloLTQuMjVsLS44MjUgMi42MDloLTEuNDI0em0uODY2IDEuMjk0aC0uMDIxbC0xLjcxMiA1LjgzNGgzLjUwN3ptNS4xNTggOS42NTRWMTYuMjY4aDEuNDAzdjkuNzE2aDQuMDIzdjEuMjEyaC01LjQyNnptNS45NDIgMFYxNi4yNjhoNS42NTN2MS4yMTJoLTQuMjV2My41MTJoMy45NjF2MS4yMTJoLTMuOTYxdjMuNzhoNC4zNTN2MS4yMTJoLTUuNzU2em0xMC40NC0zLjI2NnYuMzI5YzAgMS40NzkuOTQ5IDEuOTUxIDEuODM2IDEuOTUxIDEuMTE0IDAgMS45Ni0uNDcyIDEuOTYtMS43NjYgMC0yLjQyNC00LjkzMS0yLjE1Ny00LjkzMS01LjQ0MyAwLTEuOTMxIDEuMzgyLTIuOTU4IDMuMjE4LTIuOTU4IDIuMDAyIDAgMy4xMzYuOTY1IDMuMDU0IDMuMjA0aC0xLjQ0NGMuMDItMS4xOTEtLjM3Mi0xLjk5Mi0xLjY5Mi0xLjk5Mi0uODQ2IDAtMS42OTIuNDMtMS42OTIgMS42MDIgMCAyLjQwMyA0LjkzMSAyLjA1NCA0LjkzMSA1LjUyNSAwIDIuMy0xLjU4OSAzLjA0LTMuNDA0IDMuMDQtMy4yMzkuMDItMy4yMzktMi40NDQtMy4yMTktMy40NzF6bTYuNTE5LTcuNjgyaDEuNDAzdjcuMDA1YzAgMi40MDMuNzIyIDIuOTk4IDIuMDYzIDIuOTk4czIuMDY0LS42MTYgMi4wNjQtMi45OTh2LTYuOTg0aDEuNDAzdjYuOTIyYzAgMy4wMi0xLjEzNSA0LjIzMS0zLjQ0NiA0LjIzMXMtMy40NDUtMS4xOTEtMy40NDUtNC4yMzF6bTEwLjEzIDEwLjk0OGgtMS40MDJWMTYuMjY4aDEuNDAyem0yLjkwOS0zLjI2NnYuMzI5YzAgMS40NzkuOTUgMS45NTEgMS44MzcgMS45NTEgMS4xMTQgMCAxLjk2LS40NzIgMS45Ni0xLjc2NiAwLTIuNDI0LTQuOTMxLTIuMTU3LTQuOTMxLTUuNDQzIDAtMS45MzEgMS4zODItMi45NTggMy4yMTgtMi45NTggMi4wMDIgMCAzLjEzNi45NjUgMy4wMzMgMy4yMDRoLTEuNDY1Yy4wMjEtMS4xOTEtLjM1LTEuOTkyLTEuNjkyLTEuOTkyLS44MjUgMC0xLjY5MS40My0xLjY5MSAxLjYwMiAwIDIuNDAzIDQuOTMxIDIuMDU0IDQuOTMxIDUuNTI1IDAgMi4zLTEuNTg5IDMuMDQtMy40MDUgMy4wNC0zLjIzOS4wMi0zLjIzOS0yLjQ0NC0zLjE5OC0zLjQ3MXptNy42NTUgMHYuMzI5YzAgMS40NzkuOTQ5IDEuOTUxIDEuODM2IDEuOTUxIDEuMTE0IDAgMS45Ni0uNDcyIDEuOTYtMS43NjYgMC0yLjQyNC00LjkzMS0yLjE1Ny00LjkzMS01LjQ0MyAwLTEuOTMxIDEuMzgzLTIuOTU4IDMuMjE5LTIuOTU4IDIuMDAxIDAgMy4xMzYuOTY1IDMuMDMzIDMuMjA0aC0xLjQ2NWMuMDItMS4xOTEtLjM3Mi0xLjk5Mi0xLjY5Mi0xLjk5Mi0uODI1IDAtMS42OTIuNDMtMS42OTIgMS42MDIgMCAyLjQwMyA0LjkzMSAyLjA1NCA0LjkzMSA1LjUyNSAwIDIuMy0xLjU4OCAzLjA0LTMuNDA0IDMuMDQtMy4yMzkuMDItMy4yMzktMi40NDQtMy4yMTktMy40NzF6bTYuNTYxIDMuMjY2VjE2LjI2OGg1LjY1M3YxLjIxMmgtNC4yNXYzLjUxMmgzLjk2MXYxLjIxMmgtMy45NjF2My43OGg0LjM1M3YxLjIxMmgtNS43NTZ6TS40NCA0My4yNThWMzIuMzMxaDMuNTY5YzEuNTI2IDAgMi4wNDIuNTEzIDIuNDU1IDEuMTMuMjY4LjQzLjQzMy45NDQuNDMzIDEuNDU4IDAgMS4zNTYtLjQ3NSAyLjI4LTEuODc4IDIuNTg4di4wODJjMS41NjguMTg1IDIuMjUgMS4xMSAyLjI1IDIuNjMgMCAyLjc5My0yLjA2NCAzLjA4LTMuMzAyIDMuMDh6bTEuNDAyLTYuMzI2aDIuMDQzYzEuMDkzLS4wMiAxLjYzLS42NzggMS42My0xLjc0NiAwLS45MDQtLjUxNi0xLjY0My0xLjY5Mi0xLjY0M2gtMS45OHptMCA1LjExNWgxLjk4YzEuNDg2IDAgMi4wMjMtMS4wNjkgMi4wMjMtMS44NyAwLTEuNzQ2LTEuMDczLTIuMDMzLTIuNTE3LTIuMDMzSDEuODQyek0uNDQgNTkuMzJWNDguMzkxaDMuNTY5YzEuNTI2IDAgMi4wNDIuNTE0IDIuNDU1IDEuMTMuMjY4LjQzMS40MzMuOTQ1LjQzMyAxLjQ1OCAwIDEuMzU2LS40NzUgMi4yOC0xLjg3OCAyLjU4OHYuMDgyYzEuNTY4LjE4NSAyLjI1IDEuMTEgMi4yNSAyLjYzIDAgMi43OTMtMi4wNjQgMy4wOC0zLjMwMiAzLjA4em0xLjQwMi02LjMyN2gyLjA0M2MxLjA5My0uMDIgMS42My0uNjc4IDEuNjMtMS43NDYgMC0uOTA0LS41MTYtMS42NDMtMS42OTItMS42NDNoLTEuOTh6bTAgNS4xMTVoMS45OGMxLjQ4NiAwIDIuMDIzLTEuMDY5IDIuMDIzLTEuODcgMC0xLjc0NS0xLjA3My0yLjAzMy0yLjUxNy0yLjAzM0gxLjg0MnpNMTEuMjcgMzIuMzNoMS43NzVsMy41NyAxMC45MjhoLTEuNTY4bC0uNzg0LTIuNjA4aC00LjI1bC0uODI2IDIuNjA4SDcuNzg0em0uODQ3IDEuMjk1aC0uMDQxbC0xLjcxMyA1LjgxM2gzLjUwOHptLS44NDcgMTQuNzY3aDEuNzc1bDMuNTcgMTAuOTI3aC0xLjU2OGwtLjc4NC0yLjYwOGgtNC4yNWwtLjgyNiAyLjYwOEg3Ljc4NHptLjg0NyAxLjI5NGgtLjA0MWwtMS43MTMgNS44MTNoMy41MDh6bTEyLjc1LTE3LjM1NnYxMC45MjhoLTEuOTE5bC00LjMzMi05LjQ5aC0uMDQxdjkuNDdoLTEuMjM4VjMyLjMxaDEuOThsNC4yNzEgOS4zNjdoLjA0MVYzMi4zMWgxLjIzOHptMCAxNi4wNjJ2MTAuOTI3aC0xLjkxOWwtNC4zMzItOS40OWgtLjA0MXY5LjQ3aC0xLjIzOFY0OC4zNzFoMS45OGw0LjI3MSA5LjM2N2guMDQxVjQ4LjM3aDEuMjM4em02LjU4Mi0xMy4wNDJjLjAyLS42MTYtLjAyLTEuMjMyLS4zMS0xLjU4MS0uMjg4LS4zNS0uOTQ5LS40NzMtMS4yMzgtLjQ3My0xLjE1NSAwLTEuNjA5LjY5OS0xLjY1Ljg0Mi0uMDQxLjEyNC0uMzMuMzktLjMzIDIuMjh2Mi45MTdjMCAyLjY5MS44ODcgMyAxLjk2IDMgLjQzMyAwIDEuNzEyLS4xNDUgMS43MzMtMi4yOGgxLjQ0NGMuMDYyIDMuNDUtMi4zOTMgMy40NS0zLjA5NSAzLjQ1LTEuMzYxIDAtMy40NjYtLjA4Mi0zLjQ2Ni00LjMzNFYzNi4wOWMwLTMuMDgxIDEuMzYyLTMuOTY1IDMuNTI4LTMuOTY1czMuMDEzIDEuMTEgMi44NjggMy4yNDZ6bTAgMTYuMDYyYy4wMi0uNjE3LS4wMi0xLjIzMy0uMzEtMS41ODItLjI4OC0uMzUtLjk0OS0uNDczLTEuMjM4LS40NzMtMS4xNTUgMC0xLjYwOS42OTktMS42NS44NDMtLjA0MS4xMjMtLjMzLjM5LS4zMyAyLjI4djIuOTE2YzAgMi42OTEuODg3IDMgMS45NiAzIC40MzMgMCAxLjcxMi0uMTQ1IDEuNzMzLTIuMjhoMS40NDRjLjA2MiAzLjQ1LTIuMzkzIDMuNDUtMy4wOTUgMy40NS0xLjM2MSAwLTMuNDY2LS4wODItMy40NjYtNC4zMzR2LTMuMDgxYzAtMy4wODEgMS4zNjItMy45NjQgMy41MjgtMy45NjRzMy4wMTMgMS4xMDkgMi44NjggMy4yNDV6TTM2LjczIDMyLjMzaDEuNzc1bDMuNTcgMTAuOTI4aC0xLjU2OWwtLjc4NC0yLjYwOGgtNC4yNWwtLjgyNSAyLjYwOGgtMS40MjR6bS44NDYgMS4yOTVoLS4wMmwtMS43MTMgNS44MTNoMy41MDh6bS0uODQ2IDE0Ljc2N2gxLjc3NWwzLjU3IDEwLjkyN2gtMS41NjlsLS43ODQtMi42MDhoLTQuMjVsLS44MjUgMi42MDhoLTEuNDI0em0uODQ2IDEuMjk0aC0uMDJsLTEuNzEzIDUuODEzaDMuNTA4em0xNS4zMy0xNy4zNTZ2MTAuOTI4aC0xLjkxOWwtNC4zMzMtOS40OWgtLjAydjkuNDdoLTEuMjM4VjMyLjMxaDEuOThsNC4yNzEgOS4zNjdoLjAyVjMyLjMxaDEuMjM5em00LjIyOSAwaDEuNzc1bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MDhoLTQuMjVsLS44MjYgMi42MDhoLTEuNDIzem0uODQ2IDEuMjk1aC0uMDJsLTEuNzEzIDUuODEzaDMuNTA4eiIvPjxwYXRoIGQ9Im02OC45OTkgMzMuNzI4LTUuNDQ3IDguMzE5aDUuNTd2MS4yMTFoLTYuODd2LTEuNTgxbDUuMzIzLTguMTE0di0uMDJoLTUuMTM3VjMyLjMzaDYuNTZ6bTIuNTE3IDkuNTNoLTEuNDAzVjMyLjMzMWgxLjQwM3ptMS43OTQtNC4wMDV2LTMuNTk1YzAtMi4xNzcgMS4xMzUtMy41NzQgMy40NDYtMy41NzRzMy40NDYgMS4zOTcgMy40NDYgMy41NzR2My41OTVjMCAzLjAyLTEuMTM1IDQuMjMxLTMuNDQ2IDQuMjMxcy0zLjQ0NS0xLjE5MS0zLjQ0NS00LjIzMW01LjQ2OC4wNjJ2LTMuNjk4YzAtMi4yOC0xLjU4OS0yLjM2Mi0yLjAyMi0yLjM2MnMtMi4wMjIuMDgyLTIuMDIyIDIuMzYydjMuNjk4YzAgMi4zODIuNzAyIDIuOTk5IDIuMDIyIDIuOTk5czIuMDIyLS41OTYgMi4wMjItM20xMC42NjYtNi45ODR2MTAuOTI4aC0xLjkybC00LjMzMi05LjQ5aC0uMDJ2OS40N2gtMS4yMzhWMzIuMzFoMS45OGw0LjI3MSA5LjM2N2guMDJWMzIuMzFoMS4yMzl6bTQuMjA5IDBoMS43NzRsMy41NyAxMC45MjhoLTEuNTY5bC0uNzg0LTIuNjA4aC00LjIzbC0uODI1IDIuNjA4aC0xLjQyM3ptLjg0NSAxLjI5NWgtLjAybC0xLjczMyA1LjgxM2gzLjUwN3ptNS4xNTkgOS42MzNWMzIuMzMxaDEuNDAydjkuNzE1aDQuMDI0djEuMjEyem01Ljk0MSAwVjMyLjMzMWg1LjY1M3YxLjIxMmgtNC4yNXYzLjUxMmgzLjk2MnYxLjIxMmgtMy45NjJ2My43OGg0LjM1NHYxLjIxMXptMTAuNDYxLTMuMjQ1di4zMjljMCAxLjQ3OS45NDkgMS45NTEgMS44MzYgMS45NTEgMS4xMTQgMCAxLjk2LS40NzIgMS45Ni0xLjc2NyAwLTIuNDIzLTQuOTMxLTIuMTU2LTQuOTMxLTUuNDQzIDAtMS45MyAxLjM4Mi0yLjk1OCAzLjIxOC0yLjk1OCAyLjAwMiAwIDMuMTM2Ljk2NiAzLjAzMyAzLjIwNWgtMS40NjVjLjAyMS0xLjE5Mi0uMzcxLTEuOTcyLTEuNjkxLTEuOTcyLS44MjYgMC0xLjY5Mi40MzEtMS42OTIgMS42MDIgMCAyLjQwMyA0LjkzMSAyLjA1NCA0LjkzMSA1LjUyNSAwIDIuMzAxLTEuNTg5IDMuMDQtMy40MDQgMy4wNC0zLjI0LjAyMS0zLjI0LTIuNDQ0LTMuMTk4LTMuNDkyem0xMC4zNzcgMy4yNDVoLTEuNjcxbC0zLjE3Ny0xMC45MjdoMS41MjdsMi41MTcgOS42MTNoLjAybDIuNTc5LTkuNjEzaDEuNDI0em01LjQyNyAwaC0xLjQwM1YzMi4zMzFoMS40MDN6bTcuNjk1LTkuNTMtNS40NDcgOC4zMTloNS41NzF2MS4yMTFoLTYuODd2LTEuNTgxbDUuMzIzLTguMTE0di0uMDJoLTUuMTM4VjMyLjMzaDYuNTYxeiIvPjxwYXRoIGQ9Im0xNDYuMzY4IDMzLjcyOC01LjQ0NyA4LjMxOWg1LjU3djEuMjExaC02Ljg3di0xLjU4MWw1LjMyMy04LjExNHYtLjAyaC01LjEzN1YzMi4zM2g2LjU2MXptLjkyOCA5LjUzVjMyLjMzMWg1LjY1M3YxLjIxMmgtNC4yNzF2My41MTJoMy45NjJ2MS4yMTJoLTMuOTYydjMuNzhoNC4zNTR2MS4yMTF6bTguMTUtNS4wMzJ2NS4wMzJoLTEuNDAzVjMyLjMzMWgzLjc3NWMxLjk0IDAgMi42NDEgMS4zNTUgMi42NDEgMi43MzIgMCAxLjI5NC0uNzIyIDIuMjgtMi4wMDEgMi41MDZ2LjA0YzEuMjU4LjIwNiAxLjcxMi42MTcgMS43OTUgMi44MTUuMDIxLjQ3Mi4xNjUgMi4xNzcuMzcxIDIuODU1aC0xLjQ2NWMtLjM5Mi0uNzYtLjMwOS0yLjE3Ny0uNDMzLTMuNjM2LS4xMDMtMS4zMzUtMS4xOTctMS4zOTctMS42NS0xLjM5N3ptMC0xLjIxMmgyLjEwNGMxLjAxMSAwIDEuNDg2LS44NjMgMS40ODYtMS44MjggMC0uNzgtLjM5Mi0xLjY2NC0xLjQ4Ni0xLjY2NGgtMi4xMDR6bTguNzY4LTQuNjg0aDEuNzc1bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MDhoLTQuMjNsLS44MjUgMi42MDhoLTEuNDAzem0uODQ2IDEuMjk1aC0uMDIxbC0xLjczMyA1LjgxM2gzLjUwOHpNNTIuOTI3IDQ4LjM3M3YxMC45MjhoLTEuOTJsLTQuMzMyLTkuNDdoLS4wNDF2OS40N2gtMS4yMzhWNDguMzczaDEuOThsNC4yNzEgOS4zNjdoLjAydi05LjM2N3ptNC4yMDggMGgxLjc3NWwzLjU3IDEwLjkyOGgtMS41N2wtLjc4NC0yLjYxaC00LjI1bC0uODI1IDIuNjFoLTEuNDAzem0uODQ2IDEuMjk0aC0uMDJsLTEuNzEzIDUuODM0aDMuNTA4eiIvPjxwYXRoIGQ9Im02OS4wMiA0OS43Ny01LjQ0NyA4LjMxOWg1LjU3VjU5LjNoLTYuODd2LTEuNTgybDUuMzIzLTguMTE0di0uMDJoLTUuMTM4di0xLjIxMmg2LjU2MXptMi40OTYgOS41NTFoLTEuNDAzVjQ4LjM5NGgxLjQwM3ptMS43OTQtMTAuOTQ4aDEuNDA0djcuMDA0YzAgMi4zODMuNzIyIDMgMi4wNjMgMyAxLjM0IDAgMi4wNjMtLjYxNyAyLjA2My0zdi03LjAwNGgxLjQwM3Y2Ljk0M2MwIDMuMDItMS4xMzUgNC4yMzEtMy40NDYgNC4yMzFzLTMuNDQ1LTEuMTkxLTMuNDQ1LTQuMjMxem0xNi4xMzUgMHYxMC45MjhoLTEuOTJsLTQuMzMyLTkuNDdoLS4wMnY5LjQ3aC0xLjIzOFY0OC4zNzNoMS45OGw0LjI3MSA5LjM2N2guMDJ2LTkuMzY3em00LjIwOSAwaDEuNzc0bDMuNTcgMTAuOTI4aC0xLjU2OWwtLjc4NC0yLjYxaC00LjI1bC0uODI1IDIuNjFoLTEuNDAzem0uODY2IDEuMjk0aC0uMDJsLTEuNzEzIDUuODM0aDMuNTA3em01LjEzOCA5LjY1NFY0OC4zOTRoMS40MDJ2OS43MTVoNC4wMjR2MS4yMTJ6Ii8+PHBhdGggZD0iTTEwOC4wOTYgNDguMzczaDEuNzc0bDMuNTcgMTAuOTI4aC0xLjU2OGwtLjc4NC0yLjYxaC00LjI1MWwtLjgyNSAyLjYxaC0xLjQwM3ptLjg0NiAxLjI5NGgtLjA0MWwtMS43MTMgNS44MzRoMy41MDh6bTguODA5IDYuMzg4di4zMDhjMCAxLjQ4Ljk1IDEuOTUyIDEuODM3IDEuOTUyIDEuMTE0IDAgMS45Ni0uNDczIDEuOTYtMS43NjcgMC0yLjQyNC00LjkzMS0yLjE1Ny00LjkzMS01LjQ0MyAwLTEuOTMgMS4zODItMi45NTggMy4yMTgtMi45NTggMi4wMDIgMCAzLjEzNi45NjUgMy4wNTQgMy4yMDRoLTEuNDY1Yy4wMjEtMS4xOTEtLjM3MS0xLjk3MS0xLjY5Mi0xLjk3MS0uODQ2IDAtMS42OTIuNDMtMS42OTIgMS42MDIgMCAyLjQwMyA0LjkzMSAyLjA1NCA0LjkzMSA1LjUyNSAwIDIuMy0xLjU4OCAzLjA0LTMuNDA0IDMuMDQtMy4yMzkuMDItMy4yMzktMi40NDQtMy4yMTgtMy40OTJ6bTEwLjM3OCAzLjI2NmgtMS42NzFsLTMuMTc3LTEwLjkyN2gxLjUyN2wyLjQ5NiA5LjYxM2guMDQxbDIuNTc5LTkuNjEzaDEuNDI0em01LjQyNiAwaC0xLjQwM1Y0OC4zOTRoMS40MDN6bTcuNzE3LTkuNTUxLTUuNDQ3IDguMzE5aDUuNTcxVjU5LjNoLTYuODcxdi0xLjU4Mmw1LjMyMy04LjExNHYtLjAyaC01LjEzN3YtMS4yMTJoNi41NjF6bTIuMjkgNC41MTl2NS4wMzJoLTEuNDAzVjQ4LjM5NGgzLjc5NmMxLjk0IDAgMi42NDEgMS4zNTUgMi42NDEgMi43MzEgMCAxLjI5NC0uNzIyIDIuMjgtMi4wMDEgMi41MDZ2LjAyYzEuMjU4LjIwNiAxLjcxMi42MTcgMS43OTUgMi44MTUuMDIuNDcyLjE2NSAyLjE3Ny4zNzEgMi44NTVoLTEuNDY1Yy0uMzkyLS43Ni0uMzA5LTIuMTc3LS40MzMtMy42MzYtLjEwMy0xLjMzNS0xLjE5Ny0xLjM5Ni0xLjY1MS0xLjM5NnptMC0xLjIxMmgyLjEwNGMxLjAxMSAwIDEuNDg2LS44NjMgMS40ODYtMS44MjggMC0uNzgtLjM5Mi0xLjY2NC0xLjQ4Ni0xLjY2NGgtMi4xMDR6bTguNzQ4LTQuNzA0aDEuNzc0bDMuNTY5IDEwLjkyOGgtMS41NjhsLS43ODQtMi42MWgtNC4yNWwtLjgyNSAyLjYxaC0xLjQwM3ptLjg2NiAxLjI5NGgtLjA0MWwtMS43MTMgNS44MzRoMy41MDh6TTEuMzY4IDcyLjA5N3YuMzA4YzAgMS40OC45NDkgMS45NTIgMS44MzYgMS45NTIgMS4xMTQgMCAxLjk2LS40NzMgMS45Ni0xLjc2NyAwLTIuNDI0LTQuOTMxLTIuMTM2LTQuOTMxLTUuNDIyIDAtMS45MzEgMS4zODItMi45NzkgMy4yMTktMi45NzkgMiAwIDMuMTM2Ljk2NiAzLjAzMiAzLjE4NEg1LjAyYy4wMi0xLjE5MS0uMzcyLTEuOTcyLTEuNjkyLTEuOTcyLS44NDYgMC0xLjY5Mi40MzEtMS42OTIgMS42MDIgMCAyLjQwMyA0LjkzIDIuMDU0IDQuOTMgNS41MjYgMCAyLjMtMS41ODggMy4wNC0zLjQwMyAzLjA0LTMuMTk4LjA0LTMuMTk4LTIuNDI0LTMuMTc4LTMuNDcyem01LjQ0Ni03LjY2MUg4LjNsMi4wNjMgOS40NjloLjA0MWwyLjIwOC05LjQ3aDEuODE2bDIgOS40N2guMDQybDIuMjI4LTkuNDdoMS40NjVsLTIuOTA5IDEwLjkyOGgtMS43MTJsLTIuMDg0LTkuNDloLS4wNjJsLTIuMjA4IDkuNDlIOS40NzZ6bTE1LjQzMyAxMC45MjdoLTEuNDAzVjY0LjQzNmgxLjQwM3ptMi45MDktMy4yNjZ2LjMwOGMwIDEuNDguOTUgMS45NTIgMS44MzYgMS45NTIgMS4xMTQgMCAxLjk2LS40NzMgMS45Ni0xLjc2NyAwLTIuNDI0LTQuOTMtMi4xNTctNC45My01LjQ0MyAwLTEuOTMgMS4zODItMi45NzggMy4yMTgtMi45NzggMi4wMDEgMCAzLjEzNi45NjUgMy4wNTMgMy4xODNIMjguODNjLjAyLTEuMTktLjM3Mi0xLjk3Mi0xLjY5Mi0xLjk3Mi0uODQ2IDAtMS42OTIuNDMyLTEuNjkyIDEuNjAzIDAgMi40MDMgNC45MzEgMi4wNTQgNC45MzEgNS41MjUgMCAyLjMtMS41ODkgMy4wNC0zLjQwNCAzLjA0LTMuMjQuMDItMy4yNC0yLjQ0NC0zLjIxOS0zLjQ5MmgxLjQwM3ptNy42NTQgMHYuMzA4YzAgMS40OC45NSAxLjk1MiAxLjgzNyAxLjk1MiAxLjExNCAwIDEuOTYtLjQ3MyAxLjk2LTEuNzY3IDAtMi40MjQtNC45MzEtMi4xNTctNC45MzEtNS40NDMgMC0xLjkzIDEuMzgyLTIuOTc4IDMuMjE4LTIuOTc4IDIuMDAyIDAgMy4xMzYuOTY1IDMuMDMzIDMuMTgzaC0xLjQ2NWMuMDItMS4xOS0uMzcxLTEuOTcyLTEuNjkyLTEuOTcyLS44NDUgMC0xLjY5MS40MzItMS42OTEgMS42MDMgMCAyLjQwMyA0LjkzIDIuMDU0IDQuOTMgNS41MjUgMCAyLjMtMS41ODggMy4wNC0zLjQwNCAzLjA0LTMuMjM5LjAyLTMuMjM5LTIuNDQ0LTMuMjE4LTMuNDkyaDEuNDIzem0xNi43NTMtNy42NjF2MTAuOTI3aC0xLjkxOGwtNC4zMzMtOS40NjloLS4wMnY5LjQ3aC0xLjI2VjY0LjQzNWgxLjk4Mmw0LjI3IDkuMzY2aC4wMnYtOS4zNjZ6bTQuMjA5IDBoMS43NzVsMy41NjkgMTAuOTI3aC0xLjU2OGwtLjc4NC0yLjYwOGgtNC4yNWwtLjgyNiAyLjYwOGgtMS40MjN6bS44NDYgMS4yNzNoLS4wMmwtMS43MTMgNS44MzRoMy41MDh6bTEwLjE5Mi0xLjI3M3YxLjIxMmgtMi44ODh2OS43MTVoLTEuNDAzdi05LjcxNUg1Ny42M3YtMS4yMTJ6bTIuMjA4IDEwLjkyN2gtMS40MDNWNjQuNDM2aDEuNDAzem0xLjc5NS00LjAwNXYtMy41NzRjMC0yLjE3OCAxLjEzNS0zLjU3NCAzLjQ0NS0zLjU3NCAyLjMxMSAwIDMuNDQ2IDEuMzk3IDMuNDQ2IDMuNTc0djMuNTk0YzAgMy4wNC0xLjEzNSA0LjIzMi0zLjQ0NSA0LjIzMi0yLjMxMSAwLTMuNDQ2LTEuMjEyLTMuNDQ2LTQuMjUybTUuNDg4LjA2MXYtMy42OTdjMC0yLjI4LTEuNTg5LTIuMzYyLTIuMDIyLTIuMzYycy0yLjAyMi4wODItMi4wMjIgMi4zNjJ2My42OTdjMCAyLjM4My43MDIgMyAyLjAyMiAzczIuMDIyLS41OTYgMi4wMjItM20xMC42NDYtNi45ODN2MTAuOTI3aC0xLjkxOWwtNC4zMzMtOS40NjloLS4wMnY5LjQ3aC0xLjIzOFY2NC40MzVoMS45OGw0LjI3MSA5LjM2NmguMDIxdi05LjM2NnptNC4yMyAwaDEuNzc0bDMuNTcgMTAuOTI3aC0xLjU2OWwtLjc4NC0yLjYwOGgtNC4yNWwtLjgyNSAyLjYwOGgtMS40MjR6bS44NDUgMS4yNzNoLS4wMmwtMS43MTMgNS44MzRoMy41MDh6bTUuMTU4IDkuNjU0VjY0LjQzNmgxLjQwM3Y5LjcxNWg0LjAyM3YxLjIxMnptOC42NDUgMFY2NC40MzZoMy41NjljMS41MjcgMCAyLjA0My41MTMgMi40NTUgMS4xMy4yNjkuNDMuNDM0Ljk0NC40MzQgMS40NTggMCAxLjM1NS0uNDc1IDIuMjYtMS44NzggMi41ODh2LjA4MmMxLjU2OC4xODUgMi4yNDkgMS4xMyAyLjI0OSAyLjYzIDAgMi43OTMtMi4wNjMgMy4wOC0zLjMwMSAzLjA4em0xLjQwMy02LjMyNmgyLjA0MmMxLjA5NC0uMDIgMS42My0uNjc4IDEuNjMtMS43NDYgMC0uOTA0LS41MTUtMS42NDMtMS42OTEtMS42NDNoLTEuOTgxem0wIDUuMTE0aDEuOTgxYzEuNDg1IDAgMi4wMjEtMS4wNjggMi4wMjEtMS44NjkgMC0xLjc0Ni0xLjA3Mi0yLjA1NC0yLjUxNy0yLjA1NGgtMS40ODV6bTkuNDI5LTkuNzE1aDEuNzc0TDEyMCA3NS4zNjNoLTEuNTY4bC0uNzg0LTIuNjA4aC00LjI1bC0uODI1IDIuNjA4aC0xLjQyNHptLjg0NiAxLjI3M2gtLjAyMWwtMS43MTIgNS44MzRoMy41MDd6bTEyLjc3MS0xLjI3M3YxMC45MjdoLTEuOTE5bC00LjMzMy05LjQ2OWgtLjA0MXY5LjQ3aC0xLjIzOFY2NC40MzVoMS45ODFsNC4yNyA5LjM2NmguMDQydi05LjM2NnptMS43MzMgMTAuOTI3VjY0LjQzNmgxLjQwM3Y0Ljc4NmguMDQxbDMuODM3LTQuODA3aDEuNTg5bC0zLjk4MiA0LjkzIDQuMjA5IDUuOTk4aC0xLjc5NWwtMy44MzctNS42OWgtLjA0MnY1Ljcxem02Mi41MzQuNjM3aC0zLjg3OHYtMy42NzdoLTMuNjkzdi0zLjg2MWgzLjY5M3YtMy42NzdoMy44Nzh2My42NzdoMy42OTR2My44NjFoLTMuNjk0em0tMy4yOC0uNjE2aDIuNjQxdi0zLjY3N2gzLjY5M3YtMi42M2gtMy42OTN2LTMuNjc2aC0yLjY0MXYzLjY3N2gtMy42OTN2Mi42MjloMy42OTN6Ii8+PC9nPjwvc3ZnPg=="></div>
+              <div><strong>Project Helvetia</strong><span class="reference-role">Wholesale settlement pilot</span><span class="reference-status">Pilot in production infrastructure</span></div>
+            </div>
+            <p>Helvetia tests tokenized-asset settlement in central-bank money through two paths. One uses wholesale CBDC on SIX Digital Asset Platform. The other synchronizes a DLT transaction with an RTGS payment in SIC.</p>
+            <p>It examines the wholesale settlement leg between eligible institutions. It does not issue a retail CBDC, define the customer's deposit claim, or commit the SNB to permanent wholesale CBDC.</p>
+          </li>
+          <li>
+            <div class="reference-identity">
+              <div class="reference-logo-bay"><img class="reference-logo" alt="" data-logo-source="BX Digital" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iRWJlbmVfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxNzQzLjUgMTE5OS44Ij4KICA8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjkuOC4yLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogMi4xLjEgQnVpbGQgMykgIC0tPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuc3QwIHsKICAgICAgICBmaWxsOiAjYjIxYzIyOwogICAgICB9CgogICAgICAuc3QxIHsKICAgICAgICBmaWxsOiAjN2Q3ZjgwOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8Zz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik02MzguNSw4MTIuOWMtMTQuNC04LjEtMjkuOS03LjktMzIuOS03LjloLS43Yy01LjksMC0xMy41LTUuMS0xMy41LTExLS40LTUuNSw3LjYtMTEsMTMuMi0xMWgxLjFjMi42LDAsMTYuMy0uNywyOC41LTcuNywxNS41LTguMSwyMi42LTIyLDIyLjYtNDEuNnMtOC4xLTM0LjctMjUuMS00My41Yy0xMy4zLTYuMy0yNy02LjItMjcuNC02LjJoLTkyLjF2OTloNTBjNS45LDAsMTAuNyw1LjEsMTAuNywxMXMtNC44LDExLTEwLjcsMTFoLTUwdjExNGg5MS43YzEuNSwwLDE3LjctLjUsMzMuNi03LjUsMTguOS04LjUsMjguMS0yMi41LDI4LjEtNDMuNnMtOS4yLTQ0LjctMjctNTVaIi8+CiAgICA8cGF0aCBjbGFzcz0ic3QwIiBkPSJNOTAyLjksMGwtNDM3LjgsNTA4LjhjLTE1LjIsMTcuNi0zNi43LDI2LjktNTguMywyNi45cy0zNS42LTYtNTAuMS0xOC41Yy0zMi4yLTI3LjctMzUuOC03Ni42LTguMS0xMDguN0w3MDAsMEgwdjUzOC42bDE2OC4yLTE5Ny40YzI3LjgtMzIuMSw3Ni40LTM1LjYsMTA4LjUtNy44LDMyLjEsMjcuOCwzNS40LDc2LjMsNy42LDEwOC40TDAsNzcyLjl2MjE1LjFoOTg0VjBoLTgxLjFaTTY3NCw5MDguNmMtNyw5LjYtMTYuMywxNy4xLTI4LjEsMjIuMy0xOS4yLDguNS0zOC44LDkuMS00Mi4yLDkuMWgtMTAyLjhjLTUuNiwwLTExLTUuMy0xMS0xMS4ydi0yNTUuOWMwLTUuOSw1LjQtMTAuOSwxMS0xMC45aDEwMy4xYy43LDAsMTguNS41LDM1LjksOC42LDExLjEsNS4yLDIwLDEyLjcsMjYuMywyMS42LDcuOCwxMS4xLDExLjUsMjUuNSwxMS41LDQxLjQsMCwzMi45LTE2LjYsNTAuMy0zMS4xLDU5LjIuNy40LDEuNS43LDIuNiwxLjEsMTcsMTAsMzcuMywzMS4xLDM3LjMsNzMuNnMtNC4xLDMwLTEyLjYsNDEuMVpNNzIzLjUsOTM5LjVjLTIuMiwwLTQuNC0uNy02LjYtMS44LTQuNC0zLjctNS41LTEwLjMtMS44LTE1LjFsOTAuNC0xMjEuNC05MC40LTEyMS40Yy0zLjctNC44LTIuNi0xMS44LDEuOC0xNS4xLDQuOC0zLjMsMTEuNC0yLjYsMTQuOCwyLjJsOTUuMiwxMjhjMyw0LjEsMyw4LjksMCwxMi45bC05NS4yLDEyNy4zYy0xLjgsMy01LjIsNC40LTguMSw0LjRaTTkyMC45LDkzNy43Yy0xLjgsMS4xLTQuMSwxLjgtNi4zLDEuOC0zLjMsMC02LjYtMS41LTguNS00LjRsLTc3LjgtMTAzLjNjLTMuNy00LjQtMi42LTExLjQsMi4yLTE0LjgsNC44LTMuMywxMS4xLTIuNiwxNC44LDIuMmw3Ny44LDEwMy4zYzMuMyw0LjQsMi4yLDExLjQtMi4yLDE1LjFaTTkyMy4xLDY3OS44bC03Ny44LDEwMy4zYy0yLjIsMi45LTUuMiw0LjQtOC41LDQuNHMtNC40LS43LTYuMy0xLjhjLTQuOC0zLjctNS45LTExLjEtMi4yLTE1LjFsNzcuOC0xMDMuN2MzLjctNC44LDEwLTUuNSwxNC44LTIuMiw0LjQsMy4zLDUuNSwxMC43LDIuMiwxNS4xWiIvPgogIDwvZz4KICA8Zz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMTkyLjMsODQzLjdjMCwxNC40LTIuMywyNy41LTYuOCwzOS4zcy0xMSwyMS45LTE5LjMsMzAuM2MtOC4zLDguNC0xOC4zLDE0LjktMzAsMTkuNS0xMS43LDQuNi0yNC42LDYuOS0zOC43LDYuOWgtNzEuN3YtMTkyLjFoNzEuN2MxNC4xLDAsMjcsMi4zLDM4LjcsNi45LDExLjcsNC42LDIxLjYsMTEuMSwzMCwxOS42czE0LjcsMTguNiwxOS4zLDMwLjQsNi44LDI0LjksNi44LDM5LjNaTTExNjUuNyw4NDMuN2MwLTExLjgtMS42LTIyLjMtNC44LTMxLjYtMy4yLTkuMy03LjgtMTcuMi0xMy43LTIzLjYtNS45LTYuNC0xMy0xMS4zLTIxLjQtMTQuNy04LjQtMy40LTE3LjgtNS4xLTI4LjEtNS4xaC00NS43djE1MGg0NS43YzEwLjQsMCwxOS43LTEuNywyOC4xLTUuMSw4LjQtMy40LDE1LjUtOC4zLDIxLjQtMTQuNyw1LjktNi40LDEwLjUtMTQuMiwxMy43LTIzLjUsMy4yLTkuMyw0LjgtMTkuOCw0LjgtMzEuNloiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMjUxLjcsNzYxLjNjMCwyLjMtLjUsNC41LTEuNCw2LjUtLjksMi0yLjIsMy44LTMuOCw1LjQtMS42LDEuNi0zLjQsMi44LTUuNSwzLjctMi4xLjktNC4zLDEuMy02LjYsMS4zcy00LjUtLjQtNi41LTEuM2MtMi0uOS0zLjgtMi4xLTUuMy0zLjctMS41LTEuNi0yLjctMy40LTMuNi01LjQtLjktMi0xLjMtNC4yLTEuMy02LjVzLjQtNC41LDEuMy02LjZjLjktMi4xLDIuMS0zLjksMy42LTUuNSwxLjUtMS42LDMuMy0yLjgsNS4zLTMuNywyLS45LDQuMi0xLjMsNi41LTEuM3M0LjUuNCw2LjYsMS4zYzIuMS45LDMuOSwyLjEsNS41LDMuNywxLjYsMS42LDIuOCwzLjQsMy44LDUuNS45LDIuMSwxLjQsNC4zLDEuNCw2LjZaTTEyNDYuNiw4MDMuOXYxMzUuOGgtMjMuOXYtMTM1LjhoMjMuOVoiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNDAwLjMsODA5LjN2OC44YzAsMi45LTEuOSw0LjgtNS42LDUuNmwtMTUuNCwyYzMsNS45LDQuNiwxMi40LDQuNiwxOS42cy0xLjMsMTIuNi0zLjgsMThjLTIuNSw1LjQtNi4xLDEwLTEwLjUsMTMuOS00LjUsMy44LTkuOCw2LjgtMTYuMSw4LjgtNi4zLDIuMS0xMywzLjEtMjAuNCwzLjFzLTEyLjMtLjgtMTgtMi4zYy0yLjksMS44LTUsMy43LTYuNiw1LjctMS41LDItMi4zLDQtMi4zLDYuMSwwLDMuMiwxLjMsNS43LDQsNy4zLDIuNiwxLjcsNi4xLDIuOCwxMC40LDMuNiw0LjMuNyw5LjIsMS4yLDE0LjcsMS4zLDUuNS4yLDExLjEuNSwxNi45LjksNS44LjQsMTEuNCwxLjEsMTYuOSwyLjEsNS41LDEsMTAuNCwyLjYsMTQuNyw0LjgsNC4zLDIuMiw3LjgsNS4zLDEwLjQsOS4yLDIuNiwzLjksNCw5LDQsMTUuM3MtMS41LDExLjQtNC40LDE2LjljLTIuOSw1LjQtNy4xLDEwLjMtMTIuNSwxNC41LTUuNSw0LjItMTIuMSw3LjYtMjAsMTAuMi03LjksMi41LTE2LjgsMy44LTI2LjcsMy44cy0xOC42LTEtMjYtMi45Yy03LjQtMi0xMy42LTQuNi0xOC41LTcuOS00LjktMy4zLTguNi03LjEtMTEuMS0xMS41LTIuNS00LjMtMy43LTguOS0zLjctMTMuNiwwLTYuNywyLjEtMTIuNCw2LjMtMTcsNC4yLTQuNiwxMC04LjQsMTcuMy0xMS4xLTQtMS44LTcuMi00LjItOS42LTcuMi0yLjQtMy0zLjYtNy0zLjYtMTIuMXMuNC00LDEuMS02LjFjLjctMi4xLDEuOC00LjIsMy4zLTYuMywxLjUtMi4xLDMuMy00LjEsNS40LTYsMi4xLTEuOSw0LjYtMy41LDcuNS01LTYuNy0zLjgtMTEuOS04LjctMTUuNy0xNC45LTMuOC02LjItNS42LTEzLjQtNS42LTIxLjZzMS4zLTEyLjYsMy44LTE4YzIuNS01LjQsNi4xLTEwLDEwLjctMTMuOCw0LjYtMy44LDEwLTYuNywxNi4zLTguOCw2LjMtMi4xLDEzLjItMy4xLDIwLjctMy4xczExLjQuNiwxNi41LDEuOWM1LjEsMS4zLDkuNywzLjIsMTMuOSw1LjdoMzYuOVpNMTM3Ni4xLDk0Ny4xYzAtMy4zLS45LTYtMi44LTgtMS45LTIuMS00LjQtMy43LTcuNi00LjgtMy4yLTEuMi02LjktMi0xMS4xLTIuNS00LjItLjUtOC42LS45LTEzLjMtMS4xLTQuNy0uMy05LjQtLjUtMTQuMy0uOC00LjgtLjMtOS41LS43LTEzLjktMS4zLTUsMi4zLTkuMSw1LjItMTIuMyw4LjgtMy4yLDMuNS00LjgsNy43LTQuOCwxMi40cy44LDUuOSwyLjMsOC41YzEuNiwyLjYsNCw0LjksNy4yLDYuOCwzLjIsMS45LDcuMywzLjQsMTIuMSw0LjYsNC45LDEuMSwxMC42LDEuNywxNy4yLDEuN3MxMi4yLS42LDE3LjMtMS43YzUuMS0xLjIsOS40LTIuOCwxMi45LTUsMy41LTIuMSw2LjItNC43LDguMS03LjYsMS45LTIuOSwyLjgtNi4yLDIuOC05LjhaTTEzMzMuMSw4NzMuNGM0LjgsMCw5LjEtLjcsMTIuNy0yLDMuNy0xLjMsNi43LTMuMiw5LjItNS42LDIuNS0yLjQsNC40LTUuMyw1LjYtOC42LDEuMi0zLjQsMS45LTcsMS45LTExLjEsMC04LjMtMi41LTE0LjktNy42LTE5LjgtNS00LjktMTIuNC03LjQtMjEuOS03LjRzLTE3LDIuNS0yMiw3LjRjLTUsNC45LTcuNiwxMS41LTcuNiwxOS44cy42LDcuNywxLjksMTEuMWMxLjMsMy40LDMuMiw2LjIsNS43LDguNiwyLjUsMi40LDUuNiw0LjMsOS4yLDUuNiwzLjcsMS4zLDcuOSwyLDEyLjcsMloiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNDU1LjQsNzYxLjNjMCwyLjMtLjUsNC41LTEuNCw2LjUtLjksMi0yLjIsMy44LTMuOCw1LjQtMS42LDEuNi0zLjQsMi44LTUuNSwzLjctMi4xLjktNC4zLDEuMy02LjYsMS4zcy00LjUtLjQtNi41LTEuM2MtMi0uOS0zLjgtMi4xLTUuMy0zLjctMS41LTEuNi0yLjctMy40LTMuNi01LjQtLjktMi0xLjMtNC4yLTEuMy02LjVzLjQtNC41LDEuMy02LjZjLjktMi4xLDIuMS0zLjksMy42LTUuNSwxLjUtMS42LDMuMy0yLjgsNS4zLTMuNywyLS45LDQuMi0xLjMsNi41LTEuM3M0LjUuNCw2LjYsMS4zYzIuMS45LDMuOSwyLjEsNS41LDMuNywxLjYsMS42LDIuOCwzLjQsMy44LDUuNS45LDIuMSwxLjQsNC4zLDEuNCw2LjZaTTE0NTAuMyw4MDMuOXYxMzUuOGgtMjMuOXYtMTM1LjhoMjMuOVoiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNTMxLjIsOTQxLjhjLTEwLjcsMC0xOS0zLTI0LjctOS01LjgtNi04LjYtMTQuNi04LjYtMjUuOXYtODMuMWgtMTYuNGMtMS40LDAtMi42LS40LTMuNi0xLjMtMS0uOC0xLjUtMi4yLTEuNS00di05LjVsMjIuMi0yLjgsNS41LTQyYy4zLTEuMy45LTIuNCwxLjgtMy4zLjktLjgsMi4yLTEuMywzLjctMS4zaDEyLjF2NDYuOGgzOS4zdjE3LjNoLTM5LjN2ODEuNWMwLDUuNywxLjQsMTAsNC4yLDEyLjcsMi44LDIuOCw2LjMsNC4yLDEwLjcsNC4yczQuNy0uMyw2LjUtMWMxLjgtLjcsMy40LTEuNCw0LjgtMi4yLDEuMy0uOCwyLjUtMS41LDMuNC0yLjIuOS0uNywxLjgtMSwyLjUtMSwxLjIsMCwyLjQuOCwzLjQsMi4zbDcsMTEuNGMtNC4xLDMuOC05LjEsNi45LTE0LjksOS01LjgsMi4yLTExLjgsMy4zLTE4LDMuM1oiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNTgyLjEsODIzLjFjNy41LTcuMiwxNS42LTEyLjYsMjQuMy0xNi4yLDguNy0zLjYsMTguMy01LjQsMjguOC01LjRzMTQuMywxLjMsMjAuMiwzLjhjNS45LDIuNSwxMC45LDYsMTQuOSwxMC41LDQsNC41LDcuMSw5LjksOS4xLDE2LjIsMi4xLDYuMywzLjEsMTMuMywzLjEsMjAuOXY4Ni45aC0xMC42Yy0yLjMsMC00LjEtLjQtNS40LTEuMS0xLjMtLjgtMi4yLTIuMy0yLjktNC41bC0yLjctMTIuOWMtMy42LDMuMy03LjEsNi4yLTEwLjUsOC44LTMuNCwyLjUtNyw0LjctMTAuNyw2LjQtMy44LDEuNy03LjgsMy4xLTEyLDQtNC4yLjktOSwxLjQtMTQuMSwxLjRzLTEwLjItLjctMTQuOS0yLjJjLTQuNi0xLjUtOC43LTMuNy0xMi4xLTYuNi0zLjQtMi45LTYuMi02LjctOC4yLTExLjItMi00LjUtMy05LjktMy0xNnMxLjUtMTAuNSw0LjQtMTUuNWMyLjktNSw3LjctOS40LDE0LjMtMTMuMiw2LjYtMy44LDE1LjItNywyNS45LTkuNCwxMC42LTIuNSwyMy43LTMuOSwzOS4xLTQuMnYtMTAuNmMwLTEwLjUtMi4zLTE4LjUtNi44LTIzLjktNC42LTUuNC0xMS4yLTguMS0yMC04LjFzLTEwLjguNy0xNC44LDIuMmMtNCwxLjUtNy40LDMuMS0xMC4zLDUtMi45LDEuOC01LjQsMy41LTcuNSw1LTIuMSwxLjUtNC4yLDIuMi02LjIsMi4ycy0zLS40LTQuMi0xLjNjLTEuMi0uOC0yLjEtMS45LTIuOS0zLjFsLTQuMy03LjZaTTE2NTkuMiw4NzguNmMtMTEsLjQtMjAuNCwxLjItMjguMSwyLjYtNy43LDEuNC0xNCwzLjItMTguOSw1LjQtNC45LDIuMi04LjQsNC45LTEwLjYsNy45LTIuMiwzLTMuMyw2LjQtMy4zLDEwLjJzLjYsNi43LDEuNyw5LjJjMS4yLDIuNiwyLjcsNC43LDQuOCw2LjQsMiwxLjcsNC40LDIuOSw3LjEsMy42LDIuNy44LDUuNywxLjEsOC44LDEuMXM4LS40LDExLjUtMS4zYzMuNS0uOCw2LjgtMi4xLDkuOS0zLjcsMy4xLTEuNiw2LTMuNSw4LjgtNS44LDIuOC0yLjIsNS42LTQuOCw4LjItNy42di0yOC4xWiIvPgogICAgPHBhdGggY2xhc3M9InN0MCIgZD0iTTE3NDMuNSw3NDIuM3YxOTcuNGgtMjMuOXYtMTk3LjRoMjMuOVoiLz4KICA8L2c+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTA0OS42LDEwOTAuM2MzLjItMy43LDYuNy02LjYsMTAuNy04LjgsNC0yLjIsOC42LTMuMywxMy44LTMuM3M4LjQuOCwxMS45LDIuNWMzLjUsMS43LDYuNSw0LjEsOSw3LjMsMi41LDMuMiw0LjQsNy4xLDUuNywxMS42LDEuMyw0LjYsMiw5LjcsMiwxNS40cy0uNywxMS42LTIuMiwxNi42Yy0xLjUsNS0zLjYsOS4zLTYuNCwxMi44LTIuOCwzLjUtNi4yLDYuMy0xMC4yLDguMnMtOC41LDIuOS0xMy41LDIuOS05LjEtLjktMTIuNS0yLjhjLTMuNC0xLjktNi40LTQuNS04LjktNy45bC0uNyw2LjhjLS40LDEuOS0xLjUsMi44LTMuNCwyLjhoLTguNXYtMTA5LjRoMTMuM3Y0NVpNMTA0OS42LDExMzYuNWMyLjQsMy4zLDUuMSw1LjYsOCw2LjksMi45LDEuMyw2LjEsMiw5LjUsMiw3LjEsMCwxMi41LTIuNSwxNi4zLTcuNSwzLjgtNSw1LjYtMTIuNSw1LjYtMjIuNHMtMS43LTE2LTUtMjAuM2MtMy4zLTQuMy04LjEtNi41LTE0LjMtNi41cy04LjEsMS0xMS4zLDNjLTMuMiwyLTYuMiw0LjgtOC45LDguNHYzNi40WiIvPgogICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTExODIuNiwxMDc5LjRsLTQyLDk3LjVjLS40LDEtMSwxLjgtMS43LDIuNHMtMS43LjktMy4xLjloLTkuOGwxMy43LTI5LjktMzEuMS03MC45aDExLjRjMS4xLDAsMiwuMywyLjcuOS43LjYsMS4xLDEuMiwxLjQsMS45bDIwLjEsNDcuNGMuOCwyLjEsMS41LDQuMywyLDYuNS43LTIuMywxLjQtNC41LDIuMi02LjZsMTkuNS00Ny4zYy4zLS44LjgtMS40LDEuNS0yLC43LS41LDEuNS0uOCwyLjQtLjhoMTAuNVoiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMjcyLjUsMTA5MS44Yy0uNiwxLjEtMS41LDEuNi0yLjgsMS42cy0xLjYtLjMtMi41LS44Yy0uOS0uNS0yLjEtMS4yLTMuNS0xLjhzLTMtMS4zLTQuOS0xLjljLTEuOS0uNi00LjEtLjktNi43LS45cy00LjIuMy02LC45Yy0xLjguNi0zLjMsMS40LTQuNiwyLjMtMS4zLDEtMi4yLDIuMS0yLjksMy41cy0xLDIuNy0xLDQuMy42LDMuNSwxLjcsNC44YzEuMSwxLjMsMi42LDIuNCw0LjQsMy4zLDEuOC45LDMuOSwxLjgsNi4yLDIuNSwyLjMuNyw0LjcsMS41LDcuMiwyLjNzNC44LDEuNyw3LjIsMi43YzIuMywxLDQuNCwyLjIsNi4yLDMuNywxLjgsMS41LDMuMywzLjMsNC40LDUuNSwxLjEsMi4yLDEuNyw0LjcsMS43LDcuOHMtLjYsNi43LTEuOSw5LjZjLTEuMiwyLjktMy4xLDUuNS01LjUsNy43LTIuNCwyLjItNS40LDMuOS04LjksNS4xLTMuNSwxLjItNy42LDEuOS0xMi4yLDEuOXMtMTAtLjktMTQuMy0yLjZjLTQuMy0xLjctNy45LTMuOS0xMC44LTYuNmwzLjEtNS4xYy40LS42LjktMS4xLDEuNC0xLjUuNS0uMywxLjItLjUsMi4xLS41czEuOC4zLDIuOCwxYzEsLjcsMi4yLDEuNSwzLjYsMi4zLDEuNC44LDMuMSwxLjYsNS4yLDIuMywyLC43LDQuNiwxLDcuNiwxczQuOC0uMyw2LjgtMSwzLjUtMS42LDQuOC0yLjdjMS4zLTEuMSwyLjItMi41LDIuOS0zLjkuNi0xLjUuOS0zLjEuOS00LjhzLS42LTMuOC0xLjctNS4yLTIuNi0yLjUtNC40LTMuNWMtMS44LTEtMy45LTEuOC02LjMtMi41LTIuNC0uNy00LjgtMS41LTcuMi0yLjMtMi41LS44LTQuOS0xLjctNy4yLTIuNy0yLjQtMS00LjQtMi4zLTYuMy0zLjgtMS44LTEuNS0zLjMtMy40LTQuNC01LjdzLTEuNy01LTEuNy04LjIuNi01LjYsMS44LTguM2MxLjItMi42LDIuOS01LDUuMi03czUuMS0zLjYsOC40LTQuOGMzLjMtMS4yLDcuMS0xLjgsMTEuNC0xLjhzOS40LjgsMTMuMywyLjNjMy45LDEuNiw3LjMsMy43LDEwLjIsNi40bC0zLDQuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xMzU0LjEsMTE0NC4xYy0xLjYsMi0zLjYsMy43LTUuOSw1LjItMi4zLDEuNS00LjcsMi43LTcuMywzLjYtMi42LjktNS4zLDEuNi04LjEsMi4xLTIuOC41LTUuNS43LTguMi43LTUuMiwwLTEwLS45LTE0LjQtMi42LTQuNC0xLjgtOC4yLTQuMy0xMS40LTcuNy0zLjItMy40LTUuNy03LjYtNy41LTEyLjYtMS44LTUtMi43LTEwLjctMi43LTE3LjJzLjgtMTAuMiwyLjQtMTQuN2MxLjYtNC42LDMuOS04LjUsNi45LTExLjlzNi43LTYsMTEuMS03LjljNC40LTEuOSw5LjMtMi45LDE0LjctMi45czguNy44LDEyLjUsMi4zYzMuOCwxLjUsNy4yLDMuNywxMCw2LjUsMi44LDIuOCw1LDYuNCw2LjYsMTAuNiwxLjYsNC4yLDIuNCw5LDIuNCwxNC4zcy0uMiwzLjUtLjcsNC4yYy0uNC43LTEuMywxLTIuNSwxaC01MC4zYy4xLDQuOC44LDguOSwyLDEyLjQsMS4yLDMuNSwyLjgsNi41LDQuOSw4LjgsMi4xLDIuNCw0LjYsNC4xLDcuNCw1LjMsMi45LDEuMiw2LjEsMS43LDkuNywxLjdzNi4yLS40LDguNi0xLjJjMi40LS44LDQuNS0xLjYsNi4yLTIuNSwxLjctLjksMy4yLTEuNyw0LjMtMi41LDEuMi0uOCwyLjItMS4yLDMtMS4yczEuOS40LDIuNSwxLjNsMy43LDQuOFpNMTM0My40LDExMDguOGMwLTMuMS0uNC01LjktMS4zLTguNC0uOS0yLjYtMi4xLTQuOC0zLjgtNi42LTEuNy0xLjktMy43LTMuMy02LjEtNC4zLTIuNC0xLTUuMS0xLjUtOC4xLTEuNS02LjMsMC0xMS40LDEuOC0xNSw1LjUtMy43LDMuNy02LDguOC02LjksMTUuM2g0MS4yWiIvPgogICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTEzOTQsMTE1NS45Yy01LjksMC0xMC41LTEuNy0xMy43LTUtMy4yLTMuMy00LjgtOC4xLTQuOC0xNC4zdi00Ni4xaC05LjFjLS44LDAtMS41LS4yLTItLjctLjUtLjUtLjgtMS4yLS44LTIuMnYtNS4zbDEyLjMtMS42LDMtMjMuM2MuMS0uNy41LTEuMywxLTEuOC41LS41LDEuMi0uNywyLS43aDYuN3YyNS45aDIxLjh2OS42aC0yMS44djQ1LjJjMCwzLjIuOCw1LjUsMi4zLDcuMSwxLjUsMS41LDMuNSwyLjMsNS45LDIuM3MyLjYtLjIsMy42LS42YzEtLjQsMS45LS44LDIuNi0xLjIuNy0uNCwxLjQtLjksMS45LTEuMi41LS40LDEtLjYsMS40LS42LjcsMCwxLjMuNCwxLjksMS4zbDMuOSw2LjNjLTIuMywyLjEtNSwzLjgtOC4yLDUtMy4yLDEuMi02LjUsMS44LTEwLDEuOFoiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNDg2LjEsMTA3OS40djc1LjNoLTcuOWMtMS45LDAtMy4xLS45LTMuNi0yLjdsLTEtOC4xYy0zLjMsMy42LTYuOSw2LjUtMTEsOC43LTQuMSwyLjItOC43LDMuMy0xNCwzLjNzLTcuNy0uNy0xMC45LTJjLTMuMS0xLjQtNS44LTMuMy03LjktNS44LTIuMS0yLjUtMy43LTUuNS00LjgtOS0xLjEtMy41LTEuNi03LjQtMS42LTExLjd2LTQ4aDEzLjJ2NDhjMCw1LjcsMS4zLDEwLjEsMy45LDEzLjIsMi42LDMuMSw2LjYsNC43LDExLjksNC43czcuNi0uOSwxMS0yLjhjMy40LTEuOSw2LjUtNC40LDkuNC03Ljd2LTU1LjRoMTMuMloiLz4KICAgIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNTE5LjYsMTA5NC41YzIuNC01LjIsNS4zLTkuMiw4LjgtMTIuMSwzLjUtMi45LDcuNy00LjMsMTIuNy00LjNzMy4xLjIsNC42LjVjMS41LjMsMi44LjksMy45LDEuNmwtMSw5LjljLS4zLDEuMi0xLDEuOS0yLjIsMS45cy0xLjctLjEtMy0uNGMtMS4zLS4zLTIuOC0uNC00LjUtLjRzLTQuNS4zLTYuNCwxYy0xLjkuNy0zLjUsMS43LTUsMy4xLTEuNSwxLjQtMi44LDMtMy45LDUuMS0xLjIsMi0yLjIsNC4zLTMuMiw2Ljl2NDcuNmgtMTMuM3YtNzUuM2g3LjZjMS40LDAsMi40LjMsMywuOC41LjUuOSwxLjUsMS4xLDIuOGwuOSwxMS40WiIvPgogICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTE1NzcuOSwxMDU1LjhjMCwxLjMtLjMsMi41LS44LDMuNi0uNSwxLjEtMS4yLDIuMS0yLjEsM3MtMS45LDEuNS0zLDJjLTEuMi41LTIuNC43LTMuNy43cy0yLjUtLjItMy42LS43Yy0xLjEtLjUtMi4xLTEuMi0yLjktMi0uOC0uOS0xLjUtMS45LTItMy0uNS0xLjEtLjctMi4zLS43LTMuNnMuMi0yLjUuNy0zLjdjLjUtMS4yLDEuMi0yLjIsMi0zLC44LS45LDEuOC0xLjUsMi45LTIsMS4xLS41LDIuMy0uNywzLjYtLjdzMi41LjIsMy43LjdjMS4yLjUsMi4yLDEuMiwzLDIsLjkuOSwxLjYsMS45LDIuMSwzcy44LDIuNC44LDMuN1pNMTU3NS4xLDEwNzkuNHY3NS4zaC0xMy4ydi03NS4zaDEzLjJaIi8+CiAgICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTYyOC41LDEwNzguMmM1LjUsMCwxMC41LjksMTQuOSwyLjgsNC40LDEuOCw4LjIsNC40LDExLjMsNy44LDMuMSwzLjQsNS41LDcuNCw3LjIsMTIuMiwxLjcsNC44LDIuNSwxMC4xLDIuNSwxNnMtLjgsMTEuMy0yLjUsMTZjLTEuNyw0LjgtNCw4LjgtNy4yLDEyLjItMy4xLDMuNC02LjksNi0xMS4zLDcuOC00LjQsMS44LTkuNCwyLjctMTQuOSwyLjdzLTEwLjUtLjktMTUtMi43Yy00LjQtMS44LTguMi00LjQtMTEuMy03LjgtMy4xLTMuNC01LjUtNy40LTcuMi0xMi4yLTEuNy00LjgtMi41LTEwLjEtMi41LTE2cy44LTExLjIsMi41LTE2YzEuNy00LjgsNC04LjksNy4yLTEyLjIsMy4xLTMuNCw2LjktNiwxMS4zLTcuOCw0LjQtMS44LDkuNC0yLjgsMTUtMi44Wk0xNjI4LjUsMTE0NS40YzcuNCwwLDEzLTIuNSwxNi42LTcuNSwzLjctNSw1LjUtMTEuOSw1LjUtMjAuOHMtMS44LTE2LTUuNS0yMWMtMy43LTUtOS4yLTcuNS0xNi42LTcuNXMtNywuNi05LjgsMS45Yy0yLjgsMS4zLTUuMSwzLjEtNyw1LjYtMS45LDIuNC0zLjIsNS40LTQuMiw5LS45LDMuNS0xLjQsNy41LTEuNCwxMiwwLDguOSwxLjgsMTUuOSw1LjUsMjAuOCwzLjcsNSw5LjMsNy41LDE2LjgsNy41WiIvPgogICAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTE2OTMuNiwxMDkwLjNjMS42LTEuOCwzLjQtMy41LDUuMi01LDEuOC0xLjUsMy44LTIuOCw1LjgtMy44LDIuMS0xLjEsNC4yLTEuOSw2LjUtMi41LDIuMy0uNiw0LjgtLjksNy41LS45LDQuMSwwLDcuNy43LDEwLjksMiwzLjEsMS40LDUuOCwzLjMsNy45LDUuOCwyLjEsMi41LDMuNyw1LjUsNC44LDksMS4xLDMuNSwxLjYsNy40LDEuNiwxMS43djQ3LjloLTEzLjN2LTQ3LjljMC01LjctMS4zLTEwLjEtMy45LTEzLjMtMi42LTMuMS02LjYtNC43LTExLjktNC43cy03LjYuOS0xMSwyLjhjLTMuNCwxLjktNi41LDQuNC05LjQsNy43djU1LjRoLTEzLjN2LTc1LjNoOGMxLjksMCwzLC45LDMuNSwyLjdsMSw4LjJaIi8+CiAgPC9nPgo8L3N2Zz4="></div>
+              <div><strong>BX Digital</strong><span class="reference-role">DLT securities settlement</span><span class="reference-status">Production for approved DLT-securities scope</span></div>
+            </div>
+            <p>BX Digital is a DLT trading and settlement infrastructure for its approved securities scope. It links securities transfers on its DLT infrastructure with RTGS settlement in central-bank money through SIC.</p>
+            <p>The cash movement remains between eligible institutions' SNB accounts. This is a production example of DLT securities settlement connected to SIC, not a tokenized-deposit scheme or approval for one.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="landing-choice-section" id="landing-models" aria-labelledby="landing-model-title">
         <header class="landing-choice-heading">
-          <p class="eyebrow">Step 2 of 2</p>
-          <h2 id="landing-scenario-title">Choose the scenario to examine</h2>
-          <p id="landing-scenario-help">Recommended scenarios are marked, while the complete library remains available.</p>
+          <p class="section-kicker">06 / Now use the simulator</p>
+          <h2 id="landing-model-title">Choose a money model</h2>
+          <p>Choose the liability and authority model. Then run the same payment situations and failure modes against it.</p>
+        </header>
+        <div class="model-groups" id="model-grid" aria-label="Money models"></div>
+      </section>
+
+      <section class="landing-scenario-section" id="landing-scenarios" aria-labelledby="landing-scenario-title">
+        <header class="landing-choice-heading">
+          <h2 id="landing-scenario-title">Choose a scenario</h2>
         </header>
         <div class="landing-scenario-groups" id="landing-scenario-groups"></div>
-      </section>
-
-      <section class="landing-conclusion" aria-labelledby="landing-conclusion-title">
-          <header class="landing-conclusion-header">
-            <p class="eyebrow">Decision perspective</p>
-            <h2 id="landing-conclusion-title">Use the explorer to narrow a bank proposition—not to select a ledger.</h2>
-            <p>A technical flow demonstrates a mechanism. Adoption also requires product, legal, financial, risk and operating evidence.</p>
-          </header>
-
-          <div class="landing-conclusion-layout">
-            <article class="landing-recommendation">
-              <span class="landing-card-icon" data-guide-icon="database" data-guide-badge="refresh-cw" aria-hidden="true"></span>
-              <p class="eyebrow">Starting hypothesis</p>
-              <h3>A narrow CBS-authoritative pilot</h3>
-              <p>Bank-issued CHF mirror, identified customers, recoverable wallets, low limits, one conditional flow and continuous CBS, GL and token reconciliation.</p>
-            </article>
-
-            <dl class="landing-decision-list">
-              <div><span class="landing-card-icon" data-guide-icon="scale" data-guide-badge="badge-check" aria-hidden="true"></span><dt>Business fit</dt><dd>Beat APIs, SIC or escrow on measured value.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="landmark" data-guide-badge="database" aria-hidden="true"></span><dt>Claim and authority</dt><dd>Approve the debtor, transfer effect and prevailing record.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="coins" data-guide-badge="arrow-right-left" aria-hidden="true"></span><dt>Settlement and liquidity</dt><dd>Define finality, anchor asset and funding obligations.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="shield-alert" data-guide-badge="lock-keyhole" aria-hidden="true"></span><dt>Controls and privacy</dt><dd>Test AML, secrecy, reconciliation and recovery.</dd></div>
-              <div><span class="landing-card-icon" data-guide-icon="workflow" data-guide-badge="key-round" aria-hidden="true"></span><dt>Governance and evidence</dt><dd>Name owners, pause rights, exit paths and gates.</dd></div>
-            </dl>
-          </div>
-
-          <p class="landing-conclusion-outcome"><strong>Valid outcomes: proceed, narrow, postpone or use ordinary payments.</strong> Stop while creditor, liability, finality or customer-value recovery remains unresolved.</p>
       </section>
     </section>
 
@@ -2428,7 +2333,7 @@
       <div class="context-shell">
         <nav class="context-bar" aria-label="Current flow and controls">
           <div class="context-current">
-            <button class="overview-button" id="back-to-overview" type="button" aria-label="Back to research overview">Overview</button>
+            <button class="overview-button" id="back-to-overview" type="button" aria-label="Back to overview">Overview</button>
             <div class="swiss-mark" aria-hidden="true">+</div>
             <div class="context-copy">
               <span class="context-label">Current flow</span>
@@ -2541,7 +2446,7 @@
         instruction: {
           number: "01",
           name: "Payment instruction",
-          summary: "Bank executes a request",
+          summary: "An on-chain request. The CBS account remains the deposit and authoritative record.",
           defaultScenario: "interbank",
           recommended: ["interbank", "same", "conditional", "correspondent"],
           claim: "Claim remains on the bank",
@@ -2552,7 +2457,7 @@
         mirrored: {
           number: "02",
           name: "Mirrored deposit",
-          summary: "CBS + token mirror",
+          summary: "A bank deposit represented on DLT. CBS and GL control the liability and reconcile to token state.",
           defaultScenario: "conditional",
           recommended: ["conditional", "mint", "interbank", "mismatch"],
           claim: "Deposit plus synchronized token record",
@@ -2562,8 +2467,8 @@
         },
         native: {
           number: "03",
-          name: "Native on-chain",
-          summary: "DLT is authoritative",
+          name: "Ledger-native deposit",
+          summary: "A bank deposit whose holder record lives on the authority DLT, with issuer controls and recovery rules.",
           defaultScenario: "same",
           recommended: ["same", "pvp", "bridge", "mismatch"],
           claim: "On-chain bank deposit claim",
@@ -2574,7 +2479,7 @@
         stablecoin: {
           number: "04",
           name: "Non-bank stablecoin",
-          summary: "Separate issuer",
+          summary: "A comparator with a separate issuer, reserve arrangement, redemption process, and issuer risk.",
           defaultScenario: "mint",
           recommended: ["mint", "redeem", "bridge", "pvp"],
           claim: "Claim on a separate issuer",
@@ -2583,6 +2488,12 @@
           context: "The token gives its holder a claim on a separate issuer. Reserve, redemption, and issuer-governance arrangements determine how the value is issued, transferred, and converted."
         }
       };
+
+      const modelGroups = [
+        { id: "baseline", label: "Baseline", description: "Payment instruction without a tokenized deposit.", modelIds: ["instruction"] },
+        { id: "tokenized", label: "Tokenized deposit", description: "Mirrored and ledger-native structures for a bank deposit claim.", modelIds: ["mirrored", "native"] },
+        { id: "comparator", label: "Comparator", description: "A separate non-bank issuer claim.", modelIds: ["stablecoin"] }
+      ];
 
       const visualSvg = (content, viewBox = "0 0 150 150") => `<svg viewBox="${viewBox}" aria-hidden="true">${content}</svg>`;
 
@@ -2606,14 +2517,6 @@
         native: iconVisual("network", "badge-check"),
         stablecoin: iconVisual("coins", "wallet-cards")
       };
-
-      document.querySelectorAll?.("[data-hero-icon]").forEach((visual) => {
-        visual.innerHTML = lucideSvg(visual.dataset.heroIcon);
-      });
-
-      document.querySelectorAll?.("[data-guide-icon]").forEach((visual) => {
-        visual.innerHTML = iconVisual(visual.dataset.guideIcon, visual.dataset.guideBadge || "");
-      });
 
       const scenarioVisuals = {
         mint: iconVisual("banknote-arrow-up", "badge-check"),
@@ -3038,7 +2941,8 @@
       const state = {
         model: null,
         scenario: null,
-        pendingModel: null,
+        landing: { model: "mirrored" },
+        dialogModel: null,
         failure: null,
         step: 0,
         timer: null,
@@ -3090,7 +2994,7 @@
       const elements = {
         landing: $("#landing"), workspace: $("#workspace"), modelGrid: $("#model-grid"),
         landingScenarios: $("#landing-scenarios"), landingScenarioGroups: $("#landing-scenario-groups"),
-        landingScenarioHelp: $("#landing-scenario-help"),
+        openFeaturedFlow: $("#open-featured-flow"),
         contextModel: $("#context-model"), contextScenario: $("#context-scenario"),
         runModeSelect: $("#run-mode-select"), changeFlow: $("#change-flow"), backToOverview: $("#back-to-overview"),
         scenarioHeading: $(".scenario-heading"), scenarioCategory: $("#scenario-category"), scenarioTitle: $("#scenario-title"),
@@ -3140,9 +3044,12 @@
       function validateDemoData() {
         let explanationCount = 0;
         let failureCombinationCount = 0;
+        const groupedModelIds = modelGroups.flatMap((group) => group.modelIds);
+        if (groupedModelIds.length !== modelIds.length || new Set(groupedModelIds).size !== modelIds.length || groupedModelIds.some((id) => !models[id])) throw new Error("Model taxonomy must include each model once");
         Object.entries(models).forEach(([id, model]) => {
           if (!scenarios[model.defaultScenario]) throw new Error("Unknown default scenario for " + id);
           if (model.recommended.some((scenarioId) => !scenarios[scenarioId])) throw new Error("Unknown recommendation for " + id);
+          if (model.recommended.length !== 4 || new Set(model.recommended).size !== 4) throw new Error("Expected four unique suggestions for " + id);
           if (!modelVisuals[id]) throw new Error("Missing model visual for " + id);
         });
         Object.entries(scenarios).forEach(([scenarioId, scenarioData]) => {
@@ -3183,28 +3090,45 @@
 
       const validationStats = validateDemoData();
 
+      function scenarioGroupsFor(ids) {
+        const selectedIds = new Set(ids);
+        return Object.entries(categories).map(([id, label]) => ({
+          id,
+          label,
+          scenarioIds: Object.keys(scenarios).filter((scenarioId) => selectedIds.has(scenarioId) && scenarios[scenarioId].category === id)
+        })).filter((group) => group.scenarioIds.length);
+      }
+
       function renderModelCards() {
-        elements.modelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
-          const button = makeButton("model-card", "", {
-            "data-model": id,
-            "aria-label": model.name + ": " + model.summary,
-            "aria-pressed": String(state.pendingModel === id)
-          });
-          const number = document.createElement("span"); number.className = "model-number"; number.textContent = model.number;
-          const visual = document.createElement("span"); visual.className = "model-visual"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
-          const name = document.createElement("strong"); name.textContent = model.name;
-          const summary = document.createElement("span"); summary.textContent = model.summary;
-          button.append(number, visual, name, summary);
-          return button;
+        elements.modelGrid.replaceChildren(...modelGroups.map((group) => {
+          const section = document.createElement("section"); section.className = "model-group"; section.dataset.modelGroup = group.id;
+          const heading = document.createElement("h3"); heading.textContent = group.label;
+          const description = document.createElement("p"); description.textContent = group.description;
+          const grid = document.createElement("div"); grid.className = "model-grid"; grid.style.setProperty("--model-columns", String(group.modelIds.length));
+          grid.append(...group.modelIds.map((id) => {
+            const model = models[id];
+            const button = makeButton("model-card", "", {
+              "data-model": id,
+              "aria-label": model.name + ": " + model.summary,
+              "aria-pressed": String(state.landing.model === id)
+            });
+            const visual = document.createElement("span"); visual.className = "model-visual"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
+            const name = document.createElement("strong"); name.textContent = model.name;
+            const summary = document.createElement("span"); summary.textContent = model.summary;
+            button.append(visual, name, summary);
+            return button;
+          }));
+          section.append(heading, description, grid);
+          return section;
         }));
       }
 
-      function scenarioButton(id) {
+      function scenarioButton(id, { modelId, markRecommended }) {
         const scenarioData = scenarios[id];
-        const recommended = models[state.pendingModel].recommended.includes(id);
+        const recommended = markRecommended && models[modelId].recommended.includes(id);
         const button = makeButton("scenario-option" + (recommended ? " is-recommended" : ""), "", {
           "data-scenario": id,
-          "aria-pressed": String(state.scenario === id && state.pendingModel === state.model)
+          "aria-pressed": String(state.scenario === id && modelId === state.model)
         });
         const visual = document.createElement("span"); visual.className = "scenario-thumbnail"; visual.setAttribute("aria-hidden", "true"); visual.innerHTML = scenarioVisuals[id];
         const title = document.createElement("strong"); title.textContent = scenarioData.name;
@@ -3213,31 +3137,38 @@
         return button;
       }
 
-      function buildScenarioGroups() {
-        return Object.entries(categories).map(([categoryId, categoryName]) => {
-          const section = document.createElement("section"); section.className = "scenario-group";
-          const heading = document.createElement("h4"); heading.textContent = categoryName;
+      function renderScenarioGroups(target, { modelId, scenarioIds, markRecommended }) {
+        target.replaceChildren(...scenarioGroupsFor(scenarioIds).map((group) => {
+          const section = document.createElement("section"); section.className = "scenario-group"; section.dataset.scenarioGroup = group.id;
+          const heading = document.createElement("h4"); heading.textContent = group.label;
           const grid = document.createElement("div"); grid.className = "scenario-grid";
-          Object.entries(scenarios).filter(([, scenarioData]) => scenarioData.category === categoryId).forEach(([id]) => grid.append(scenarioButton(id)));
+          grid.append(...group.scenarioIds.map((id) => scenarioButton(id, { modelId, markRecommended })));
           section.append(heading, grid);
           return section;
-        });
+        }));
       }
 
       function renderLandingScenarios() {
-        elements.landingScenarioHelp.textContent = "Recommended for " + models[state.pendingModel].name + " are marked. Every scenario remains available for comparison.";
-        elements.landingScenarioGroups.replaceChildren(...buildScenarioGroups());
+        const { model } = state.landing;
+        renderScenarioGroups(elements.landingScenarioGroups, { modelId: model, scenarioIds: Object.keys(scenarios), markRecommended: false });
       }
 
       function renderFlowDialog() {
         elements.dialogModelGrid.replaceChildren(...Object.entries(models).map(([id, model]) => {
-          const button = makeButton("dialog-model-option", "", { "data-dialog-model": id, "aria-pressed": String(state.pendingModel === id) });
+          const button = makeButton("dialog-model-option", "", {
+            "data-dialog-model": id,
+            "aria-pressed": String(state.dialogModel === id)
+          });
           const visual = document.createElement("span"); visual.setAttribute("aria-hidden", "true"); visual.innerHTML = modelVisuals[id];
           const label = document.createElement("strong"); label.textContent = model.name;
           button.append(visual, label);
           return button;
         }));
-        elements.scenarioGroups.replaceChildren(...buildScenarioGroups());
+        renderScenarioGroups(elements.scenarioGroups, {
+          modelId: state.dialogModel,
+          scenarioIds: Object.keys(scenarios),
+          markRecommended: true
+        });
       }
 
       function renderRunMode() {
@@ -3465,7 +3396,7 @@
       }
 
       function chooseLandingModel(modelId) {
-        state.pendingModel = modelId;
+        state.landing.model = modelId;
         elements.modelGrid.querySelectorAll("[data-model]").forEach((card) => card.setAttribute("aria-pressed", String(card.dataset.model === modelId)));
         renderLandingScenarios();
         elements.landingScenarios.hidden = false;
@@ -3479,7 +3410,7 @@
         stopPlayback();
         state.model = modelId;
         state.scenario = scenarioId;
-        state.pendingModel = modelId;
+        state.landing.model = modelId;
         state.failure = null;
         state.step = 0;
         elements.landing.hidden = true;
@@ -3494,7 +3425,7 @@
         elements.workspace.hidden = true;
         elements.landing.hidden = false;
         renderModelCards();
-        if (state.pendingModel) {
+        if (state.landing.model) {
           renderLandingScenarios();
           elements.landingScenarios.hidden = false;
         }
@@ -3504,18 +3435,21 @@
 
       function openFlowDialog() {
         stopPlayback();
-        state.pendingModel = state.model;
+        state.dialogModel = state.model;
         state.dialogReturnFocus = document.activeElement;
         renderFlowDialog();
         elements.dialog.showModal();
       }
 
       function commitFlow(scenarioId) {
-        startScenario(state.pendingModel, scenarioId);
+        const modelId = state.dialogModel;
+        state.dialogReturnFocus = null;
         elements.dialog.close();
+        startScenario(modelId, scenarioId);
       }
 
       renderModelCards();
+      renderLandingScenarios();
 
       elements.modelGrid.addEventListener("click", (event) => {
         const card = event.target.closest("[data-model]");
@@ -3523,15 +3457,16 @@
       });
       elements.landingScenarioGroups.addEventListener("click", (event) => {
         const scenarioCard = event.target.closest("[data-scenario]");
-        if (scenarioCard) startScenario(state.pendingModel, scenarioCard.dataset.scenario);
+        if (scenarioCard) startScenario(state.landing.model, scenarioCard.dataset.scenario);
       });
+      elements.openFeaturedFlow.addEventListener("click", () => startScenario("mirrored", "conditional"));
 
       elements.changeFlow.addEventListener("click", openFlowDialog);
       elements.backToOverview.addEventListener("click", showOverview);
       elements.closeDialog.addEventListener("click", () => elements.dialog.close());
       elements.dialog.addEventListener("click", (event) => {
         const modelButton = event.target.closest("[data-dialog-model]");
-        if (modelButton) { state.pendingModel = modelButton.dataset.dialogModel; renderFlowDialog(); return; }
+        if (modelButton) { state.dialogModel = modelButton.dataset.dialogModel; renderFlowDialog(); return; }
         const scenarioButton = event.target.closest("[data-scenario]");
         if (scenarioButton) commitFlow(scenarioButton.dataset.scenario);
       });
@@ -3578,8 +3513,8 @@
       });
 
       window.TokenizedDepositDemo = Object.freeze({
-        models, scenarios, failures, validationStats,
-        getState: () => ({ ...state, timer: Boolean(state.timer) }),
+        models, modelGroups, scenarios, failures, validationStats,
+        getState: () => ({ ...state, landing: { ...state.landing }, timer: Boolean(state.timer) }),
         getCurrentStep: () => ({ ...currentStep(), model: state.model, scenario: state.scenario, blocked: isBlocked() })
       });
     })();

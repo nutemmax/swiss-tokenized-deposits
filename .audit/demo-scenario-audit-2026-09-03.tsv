@@ -1,0 +1,3 @@
+ts	phase	decision	why	evidence	result
+2026-09-03T11:38:54Z	frame	audit all 44 model and scenario pairings, 300 normal step explanations, and 169 applicable failure combinations	the simulator exposes all of these states and a partial sample could miss model-specific errors	demo/index.html; tests/interactive-demo.test.js	baseline scope confirmed
+2026-09-03T11:38:54Z	frame	use a high-rigor review with source, code, test, and rendered-product checks	the demo explains regulated money flows and visual polish can make an inaccurate claim look authoritative	docs/10-tokenized-deposit-sources-and-regulatory-watch.md; demo/index.html	in progress
