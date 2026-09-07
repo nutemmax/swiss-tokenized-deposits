@@ -73,8 +73,11 @@ assert.match(html, /Mirrored deposit · Conditional payment · 7 steps · Normal
 assert.match(html, /id="open-featured-flow"[\s\S]*?Open mirrored conditional payment/, 'hero must expose the featured walkthrough action');
 assert.match(html, /openFeaturedFlow\.addEventListener\("click", \(\) => startScenario\("mirrored", "conditional"\)\)/, 'featured action must open the mirrored conditional flow directly');
 assert.match(html, /href="#landing-models"/, 'hero must link to model and scenario selection');
-assert.match(html, /<section class="landing-orientation"[\s\S]*?Compare four money models/, 'the landing page must orient readers before the simulator');
-assert.match(html, /A payment instruction is the baseline[\s\S]*?Mirrored and ledger-native designs are bank-issued tokenized deposits[\s\S]*?stablecoin is a comparator/, 'the orientation must distinguish the four comparison models');
+assert.match(html, /--red: #E60000;/, 'the landing page must use the requested red accent');
+assert.match(html, /<section class="landing-orientation"[\s\S]*?The deposit stays a bank liability. Its operating record changes./, 'the landing page must explain tokenized deposits before the simulator');
+assert.match(html, /class="claim-map"[\s\S]*?Claim[\s\S]*?Representation[\s\S]*?Authority[\s\S]*?Settlement[\s\S]*?Control/, 'the claim map must separate the core bank design questions');
+assert.match(html, /<section class="landing-explainer"[\s\S]*?Use a token only when the workflow changes.[\s\S]*?Shared workflow state[\s\S]*?Conditional cash[\s\S]*?Coordinated settlement/, 'the landing page must explain when a tokenized workflow earns its place');
+assert.match(html, /<section class="bank-decisions"[\s\S]*?Who is the debtor\?[\s\S]*?Which record decides a dispute\?[\s\S]*?What creates finality\?[\s\S]*?How does the bank recover\?/, 'the landing page must introduce bank design choices before model selection');
 assert.match(html, /id="landing-scenarios" aria-labelledby="landing-scenario-title">/, 'the scenario library must be visible without a prior model selection');
 assert.doesNotMatch(html, /scenario-library-toggle|scenarioScope|scenarioIdsFor/, 'the landing page must not hide scenarios behind a suggested-library mode');
 assert.match(html, /landing: \{ model: "mirrored" \}/, 'mirrored deposit must be the default landing model');
@@ -95,9 +98,12 @@ assert.match(html, /h1\[tabindex="-1"\]:focus \{ outline: none; \}/, 'programmat
 for (const control of ['button', 'select', 'a']) assert.match(html, new RegExp(`${control}:focus-visible`), `${control} must retain visible keyboard focus`);
 assert.match(html, /<section class="swiss-context" id="swiss-context" aria-labelledby="swiss-context-title">/, 'Swiss context must be visible before scenario selection');
 assert.ok(html.indexOf('id="swiss-context"') < html.indexOf('id="landing-models"'), 'Swiss context must appear before model choice');
+assert.ok(html.indexOf('class="bank-decisions"') < html.indexOf('id="swiss-context"'), 'bank design choices must lead into the Swiss reference map');
 for (const [name, status] of [['SIC and Instant Payments', 'Production'], ['Project Agorá', 'Controlled real-value test'], ['Project Helvetia', 'Pilot in production infrastructure'], ['BX Digital', 'Production for approved DLT-securities scope']]) {
-  assert.match(html, new RegExp(`<strong>${name}</strong><span>${status}</span>`), `${name} must retain its status`);
+  assert.match(html, new RegExp(`<strong>${name}</strong>[\\s\\S]*?<span>${status}</span>`), `${name} must retain its status`);
 }
+assert.match(html, /reference-sigil/, 'Swiss reference points must have visible in-page identifiers');
+assert.doesNotMatch(html, /landing-scenario-help|All 11 scenarios for/, 'the landing page must not repeat the scenario count after model selection');
 assert.match(html, /unifying ledger for platform-authoritative tokenized commercial-bank deposits[\s\S]*?jurisdictional ledgers for tokenized central-bank reserves/, 'Agorá must explain its wholesale tokenized-deposit architecture');
 assert.match(html, /platform-as-record model differs from a CBS-authoritative mirrored deposit/, 'Agorá must distinguish its authority model from a mirrored deposit');
 assert.match(html, /wholesale CBDC on SIX Digital Asset Platform[\s\S]*?synchronizes a DLT transaction with an RTGS payment in SIC/, 'Helvetia must explain its two settlement approaches');
