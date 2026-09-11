@@ -1,5 +1,7 @@
 # Simulator scenario, failure and visual audit
 
+> **Superseded for the refactored simulator:** use the [7 September 2026 content and visual audit](demo-scenario-content-and-visual-audit-2026-09-07.md). This report is retained as historical evidence; its six-failure, 169-combination counts and structural verification did not describe the later refactored implementation.
+
 **Reviewed:** 3 September 2026  
 **Artifact:** `demo/index.html`  
 **Scope:** 4 money models, 11 scenarios, 75 normal steps, 300 resolved step explanations and 169 applicable model/scenario/failure combinations

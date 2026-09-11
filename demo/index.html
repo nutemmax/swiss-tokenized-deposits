@@ -2010,6 +2010,7 @@
     .step-button[aria-current="step"]::before { color: #fff; border-color: var(--red); background: var(--red); }
     .step-button.is-blocked { color: var(--red-dark); border-color: var(--red-dark); background: var(--card); }
     .step-button.is-blocked::before { content: "!"; color: #fff; border-color: var(--red-dark); background: var(--red-dark); }
+    .step-button:disabled { color: #8a8681; cursor: not-allowed; opacity: .58; }
 
     .guided-layout .stage {
       min-width: 0;
@@ -2063,6 +2064,30 @@
       right: auto;
       left: -1px;
       transform: rotate(-135deg);
+    }
+
+    .guided-layout .journey[data-node-count="6"] .journey-node {
+      padding-inline: 2px;
+    }
+
+    .guided-layout .journey[data-node-count="6"] .node-glyph {
+      height: 126px;
+    }
+
+    .guided-layout .journey[data-node-count="6"] .journey-node > strong {
+      width: 100%;
+      min-width: 0;
+      padding-inline: 2px;
+      font-size: 12px;
+      overflow-wrap: normal;
+    }
+
+    .guided-layout .journey[data-node-count="6"] .journey-node > span:last-child {
+      width: 100%;
+      min-width: 0;
+      padding-inline: 2px;
+      font-size: 11px;
+      overflow-wrap: normal;
     }
 
     .guided-layout .inspector {
@@ -2171,6 +2196,9 @@
       .guided-layout .journey-arrow { width: 3px; height: 20px; margin: 0 0 0 37px; }
       .guided-layout .journey-arrow::after { top: auto; right: -3px; bottom: 0; transform: rotate(135deg); }
       .guided-layout .journey-arrow.is-reverse::after { top: 0; right: -3px; bottom: auto; left: auto; transform: rotate(-45deg); }
+      .guided-layout .journey[data-node-count="6"] .node-glyph { height: 88px; }
+      .guided-layout .journey[data-node-count="6"] .journey-node > strong { font-size: 15px; }
+      .guided-layout .journey[data-node-count="6"] .journey-node > span:last-child { font-size: 14px; }
       .dialog-model-grid { grid-template-columns: 1fr; }
     }
 
@@ -2451,8 +2479,13 @@
           recommended: ["interbank", "same", "conditional", "correspondent"],
           claim: "Claim remains on the bank",
           authority: "Core banking account",
+          debtor: "Bank A for Alice’s ordinary deposit",
+          holder: "Alice as the core-account creditor",
+          supportingRecords: "Instruction record, reservation, payment and audit evidence",
+          settlementMechanism: "Accepted bank posting and, when interbank, the applicable settlement rail",
           bankNote: "Account & controls",
-          context: "The digital object carries the payment request. The bank posts the resulting account movement to the core account record, which remains authoritative for the deposit."
+          context: "The digital object carries the payment request. The bank posts the resulting account movement to the core account record, which remains authoritative for the deposit.",
+          scenarioContext: "The digital object is a request, not the deposit claim; the core-account posting determines the monetary result."
         },
         mirrored: {
           number: "02",
@@ -2462,8 +2495,13 @@
           recommended: ["conditional", "mint", "interbank", "mismatch"],
           claim: "Deposit plus synchronized token record",
           authority: "Core banking, reconciled to DLT",
+          debtor: "The commercial bank",
+          holder: "The customer recorded in the authoritative core-banking liability record",
+          supportingRecords: "DLT token mirror, customer subledger, GL control and accepted event evidence",
+          settlementMechanism: "Synchronized CBS and DLT events plus the applicable institutional rail",
           bankNote: "Core banking system",
-          context: "The core banking record remains authoritative while the token mirrors the position. Each step requires controlled synchronization and reconciliation between the two records."
+          context: "The core banking record remains authoritative while the token mirrors the position. Each step requires controlled synchronization and reconciliation between the two records.",
+          scenarioContext: "The bank remains the debtor and its core-banking liability record controls; the DLT position must follow it deterministically."
         },
         native: {
           number: "03",
@@ -2473,8 +2511,13 @@
           recommended: ["same", "pvp", "bridge", "mismatch"],
           claim: "On-chain bank deposit claim",
           authority: "Authoritative DLT record",
+          debtor: "The commercial bank",
+          holder: "The customer recorded in the authoritative DLT holder record",
+          supportingRecords: "Bank accounting, reporting, control and recovery records",
+          settlementMechanism: "Authoritative platform events plus any separate institutional settlement leg",
           bankNote: "Issuer & controls",
-          context: "The DLT holder record is authoritative for the bank deposit claim. Contract controls, keys, finality rules, and bank accounting support that legal effect."
+          context: "The DLT holder record is authoritative for the bank deposit claim. Contract controls, keys, finality rules, and bank accounting support that legal effect.",
+          scenarioContext: "The bank remains the debtor, but the DLT holder record controls; bank copies support rather than replace that state."
         },
         stablecoin: {
           number: "04",
@@ -2484,8 +2527,13 @@
           recommended: ["mint", "redeem", "bridge", "pvp"],
           claim: "Claim on a separate issuer",
           authority: "Issuer ledger or token contract",
+          debtor: "The separate stablecoin issuer",
+          holder: "The customer recorded in the issuer ledger or token contract",
+          supportingRecords: "Reserve, guarantee, redemption, entitlement and accounting records",
+          settlementMechanism: "Issuer-ledger transfer or redemption, with any bank settlement leg kept separate",
           bankNote: "Reserve bank",
-          context: "The token gives its holder a claim on a separate issuer. Reserve, redemption, and issuer-governance arrangements determine how the value is issued, transferred, and converted."
+          context: "The token gives its holder a claim on a separate issuer. Reserve, redemption, and issuer-governance arrangements determine how the value is issued, transferred, and converted.",
+          scenarioContext: "The holder faces the separate issuer; reserve, guarantee and redemption records support but do not become the customer-facing claim."
         }
       };
 
@@ -2538,9 +2586,9 @@
         sic: lucideSvg("landmark"),
         receiver: lucideSvg("building-2"),
         reconciliation: lucideSvg("git-compare-arrows"),
-        key: lucideSvg("key-round")
+        key: lucideSvg("key-round"),
+        condition: lucideSvg("lock-keyhole")
       };
-      const failureTargets = { aml: 1, dlt: 2, sic: 2, receiver: 3, reconciliation: 2, key: 2 };
 
       const categories = {
         lifecycle: "Lifecycle",
@@ -2552,8 +2600,8 @@
       const modelIds = Object.keys(models);
       const copies = (text, overrides = {}) => Object.fromEntries(modelIds.map((id) => [id, overrides[id] || text]));
       const scene = (focus, stateLabel, moves = []) => ({ focus: Array.isArray(focus) ? focus : [focus], stateLabel, moves });
-      const step = (label, actor, action, object, result, sceneState, explanation, overrides = {}) => ({
-        label, actor, action, object, result, scene: sceneState, explanations: copies(explanation, overrides)
+      const step = (label, actor, action, object, result, sceneState, explanation, overrides = {}, scenes = {}) => ({
+        label, actor, action, object, result, scene: sceneState, scenes, explanations: copies(explanation, overrides)
       });
 
       const scenarios = {
@@ -2701,7 +2749,7 @@
           settlement: "Gross or deferred net settlement",
           steps: [
             step("Obligations received", "Bank A and Bank B", "Submit opposing payments", "CHF 100 and CHF 60 obligations", "Two obligations queued", scene(["bankA", "bankB"], "Obligations received"), "Bank A submits a CHF 100 obligation and Bank B submits a CHF 60 obligation."),
-            step("Payments matched", "Payment queue", "Matches the obligations", "Two payment instructions", "Payments eligible for comparison", scene("queue", "Payments matched", [{ from: "bankA", to: "queue", label: "100" }, { from: "bankB", to: "settlement", label: "60" }]), "The queue validates and matches the two obligations as separate payments before calculating any offset."),
+            step("Payments matched", "Payment queue", "Matches the obligations", "Two payment instructions", "Payments eligible for comparison", scene("queue", "Payments matched", [{ from: "bankA", to: "queue", label: "100" }, { from: "bankB", to: "queue", label: "60" }]), "The queue validates and matches the two obligations as separate payments before calculating any offset."),
             step("Gross result measured", "Settlement operator", "Measures gross activity", "CHF 160 total movement", "Gross requirement calculated", scene("netting", "Gross: CHF 160"), "Gross settlement would move CHF 100 and CHF 60 separately, producing CHF 160 of total settlement activity."),
             step("Net position calculated", "Netting cycle", "Offsets obligations", "CHF 40 net position", "Bank A owes Bank B CHF 40", scene("netting", "Net: CHF 40"), "The agreed netting convention offsets the two obligations and calculates a CHF 40 position from Bank A to Bank B."),
             step("Net amount settled", "SIC / scheme settlement", "Settles CHF 40", "Net institutional position", "CHF 40 settled", scene("settlement", "Net amount settled", [{ from: "netting", to: "settlement", label: "40" }]), "The settlement mechanism transfers the CHF 40 net amount at the agreed settlement point.",
@@ -2714,14 +2762,14 @@
           name: "Agorá five-stage payment",
           category: "crossborder",
           summary: "Coordinate payee confirmation, routing, validation, locking and settlement.",
-          description: "A cross-border payment is coordinated across the receiving institution, participating banks, FX liquidity and connected settlement arrangements. The five-stage path confirms Luca, discovers a viable CHF-to-EUR route, validates each participant privately, locks the required balances, delegates limited authority and settles the payment.",
+          description: "A cross-border payment is coordinated across the receiving institution, participating banks and connected settlement arrangements. The five-stage path confirms Luca, discovers a viable CHF-to-EUR route, validates each participant privately, locks the required balances, delegates limited authority and settles the payment.",
           settlement: "Coordinated commercial and central-bank legs",
           steps: [
-            step("Confirm payee", "Receiving institution", "Confirms the intended beneficiary", "Payee identity and account", "Payee confirmed", scene("payee", "Payee confirmed"), "The receiving institution confirms Luca and the intended receiving arrangement before route selection begins."),
-            step("Discover path", "Participating institutions", "Find a viable corridor", "Banks, FX liquidity and settlement rails", "Route selected", scene("route", "Route selected", [{ from: "payee", to: "route", label: "PATH" }]), "Participants identify a viable CHF-to-EUR route, including the banks, FX liquidity and settlement rails required for the payment."),
+            step("Confirm payee", "Receiving institution", "Confirms the intended beneficiary", "Payee identity and account", "Payee confirmed", scene(["payee", "confirmation"], "Payee confirmed", [{ from: "payee", to: "confirmation", label: "CHECK" }]), "The receiving institution confirms Luca and the intended receiving arrangement before route selection begins."),
+            step("Discover path", "Participating institutions", "Find a viable corridor", "Banks, currency amounts and settlement rails", "Route selected", scene("route", "Route selected", [{ from: "confirmation", to: "route", label: "PATH" }]), "Participants identify a viable CHF-to-EUR route and determine the currency amounts and settlement legs. The prototype did not integrate an FX execution service."),
             step("Validate", "Each participating institution", "Completes private checks", "Compliance, funding and readiness", "Validations endorsed", scene("validation", "Validations endorsed", [{ from: "route", to: "validation", label: "OK" }]), "Each institution privately validates compliance, amount, funding and operational readiness, then shares its endorsed outcome."),
             step("Lock and delegate", "Participating institutions", "Lock balances and delegate authority", "Required currency legs", "Both legs committed", scene("lock", "Balances locked", [{ from: "validation", to: "lock", label: "LOCK" }]), "The required balances are locked and narrowly scoped settlement authority is delegated after every validation succeeds."),
-            step("Settle", "Coordinated settlement workflow", "Executes both payment legs", "Commercial and central-bank money legs", "Usable receiving value recorded", scene("settlement", "Coordinated settlement complete", [{ from: "lock", to: "settlement", label: "FX" }]), "The coordinated payment legs execute and the receiving institution records usable value after the agreed settlement conditions are met.")
+            step("Settle", "Coordinated settlement workflow", "Executes both payment legs", "Commercial and central-bank money legs", "Usable receiving value recorded", scene("settlement", "Coordinated settlement complete", [{ from: "lock", to: "settlement", label: "SETTLE" }]), "The coordinated payment legs execute and the receiving institution records usable value after the agreed settlement conditions are met.")
           ]
         },
         pvp: {
@@ -2742,7 +2790,7 @@
         },
         cbdc: {
           name: "Wholesale CBDC",
-          category: "crossborder",
+          category: "infrastructure",
           summary: "Settle the bank-to-bank obligation in wholesale central-bank money.",
           description: "Bank A prepares a customer payment that will create a CHF 100 commercial-bank claim for Luca at Bank B. The banks settle their separate institutional obligation in wholesale central-bank money, then reconcile the wCBDC evidence with their customer, accounting and control records.",
           settlement: "Wholesale central-bank money",
@@ -2780,15 +2828,225 @@
           settlement: "Reconciliation and controlled recovery",
           steps: [
             step("Records captured", "Operations", "Collects comparable records", "CHF 100 position across systems", "Records ready for comparison", scene("operations", "Records captured"), "Operations captures the bank, ledger and control records that should describe the same CHF 100 position."),
-            step("Comparison run", "Reconciliation control", "Compares expected and observed states", "Bank and ledger records", "Records initially matched", scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "CBS" }, { from: "ledgerRecord", to: "reconcile", label: "DLT" }]), "The reconciliation control compares amounts, holders, event identifiers and posting references. The records initially agree."),
+            step("Comparison run", "Reconciliation control", "Compares the two model-specific records", "Authority and supporting evidence", "Records initially matched", scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "BANK" }, { from: "ledgerRecord", to: "reconcile", label: "LEDGER" }]), "The reconciliation control compares amounts, holders, event identifiers and posting references. The records initially agree.", {}, {
+              instruction: scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "CORE" }, { from: "ledgerRecord", to: "reconcile", label: "INSTR" }]),
+              mirrored: scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "CBS" }, { from: "ledgerRecord", to: "reconcile", label: "DLT" }]),
+              native: scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "COPY" }, { from: "ledgerRecord", to: "reconcile", label: "DLT" }]),
+              stablecoin: scene("reconcile", "Records compared", [{ from: "bankRecord", to: "reconcile", label: "BACKING" }, { from: "ledgerRecord", to: "reconcile", label: "ISSUER" }])
+            }),
             step("Mismatch detected", "Reconciliation control", "Finds a CHF 10 difference", "Expected and observed positions", "Records disagree", scene(["bankRecord", "ledgerRecord", "reconcile"], "CHF 10 mismatch detected"), "The control detects a CHF 10 difference, leaving the systems without one consistent view of the position."),
-            step("Movement paused", "Control framework", "Contains further movement", "Affected customer position", "Outbound activity blocked", scene("reconcile", "Movement paused"), "Minting and outbound movement stop while the customer position remains held under the last valid state."),
+            step("Movement paused", "Control framework", "Contains further movement", "Affected customer position", "Outbound activity blocked", scene("reconcile", "Movement paused"), "Creation and outbound movement stop while the customer position remains held under the last valid state."),
             step("Cause isolated", "Operations", "Traces the discrepancy", "Events, postings and replay evidence", "Source of break identified", scene(["operations", "reconcile"], "Cause isolated"), "Operations compares event identifiers, postings, contract events and replay evidence to locate the missing or duplicated record."),
-            step("Records repaired", "Authorized operations staff", "Repairs or replays the event", "Affected record set", "Records brought into agreement", scene(["bankRecord", "ledgerRecord"], "Records repaired", [{ from: "reconcile", to: "ledgerRecord", label: "FIX" }]), "Authorized staff repair or replay the required event under dual control and preserve the audit evidence."),
-            step("Resolved", "Reconciliation control", "Confirms restored agreement", "Bank, ledger and control records", "Normal movement restored", scene(["bankRecord", "reconcile", "ledgerRecord"], "Records matched"), "The records match again, the repair trail is retained and normal movement can resume.")
+            step("Records repaired", "Authorized operations staff", "Repairs the non-authoritative record or records an approved recovery event", "Affected record set", "Records brought into agreement", scene(["bankRecord", "ledgerRecord"], "Records repaired", [{ from: "reconcile", to: "ledgerRecord", label: "FIX" }]), "Authorized staff apply the model’s approved repair direction under dual control and preserve the audit evidence.", {
+              instruction: "Operations corrects the instruction status or its evidence while preserving the authoritative core-account position.",
+              mirrored: "Operations repairs the token mirror from the authoritative CBS state and accepted event evidence.",
+              native: "Operations preserves the authoritative DLT holder state and corrects supporting bank records, unless an approved recovery event must be recorded on-chain.",
+              stablecoin: "Operations preserves the issuer-ledger claim and corrects reserve, guarantee, entitlement or accounting records under the issuer’s approved process."
+            }, {
+              native: scene(["bankRecord", "reconcile", "ledgerRecord"], "Supporting records repaired", [{ from: "ledgerRecord", to: "reconcile", label: "AUTH" }, { from: "reconcile", to: "bankRecord", label: "FIX" }]),
+              stablecoin: scene(["bankRecord", "reconcile", "ledgerRecord"], "Backing records repaired", [{ from: "ledgerRecord", to: "reconcile", label: "AUTH" }, { from: "reconcile", to: "bankRecord", label: "FIX" }])
+            }),
+            step("Resolved", "Reconciliation control", "Confirms restored agreement", "Bank, ledger and control records", "Normal movement restored", scene(["bankRecord", "reconcile", "ledgerRecord"], "Records matched"), "The records match again, the repair trail is retained and normal movement can resume.", {
+              instruction: "The core account remains authoritative and the corrected instruction evidence now agrees with it.",
+              mirrored: "The authoritative CBS liability record and the repaired DLT mirror agree again.",
+              native: "The authoritative DLT holder record and the corrected bank support records agree again.",
+              stablecoin: "The authoritative issuer ledger and the corrected backing and entitlement records agree again."
+            })
           ]
         }
       };
+
+      const scenarioVariants = {
+        mint: {
+          instruction: {
+            name: "Create payment instruction",
+            treatment: "Boundary-safe baseline",
+            summary: "Record a request to move ordinary account money without minting a monetary claim.",
+            settlement: "Instruction creation against an authoritative core account",
+            description: "Alice asks Bank A to record a CHF 100 payment instruction against her ordinary deposit. The instruction is a request to move account money, not money itself; the core-account record remains authoritative and changes only when Bank A accepts and posts the payment.",
+            stepOverrides: {
+              0: { action: "Requests a payment instruction", object: "CHF 100 ordinary-deposit payment", result: "Instruction request received", explanation: "Alice asks Bank A to record a request to move CHF 100 from her ordinary account. No money is created at this step." },
+              1: { actor: "Bank A", object: "Alice, destination and core-account funds", explanation: "Bank A checks Alice, the destination, available account funds and payment controls before accepting the request." },
+              2: { actor: "Bank A", object: "CHF 100 core-account position", explanation: "Bank A reserves CHF 100 against competing use in the authoritative core account while the instruction is pending." },
+              3: { label: "Instruction recorded", actor: "Bank A instruction service", action: "Records the payment request", object: "Digital payment instruction", result: "Instruction recorded", explanation: "Bank A records a digital payment instruction for CHF 100. The record is a request, not a newly minted monetary claim.", scene: scene("ledger", "Instruction recorded", [{ from: "issuer", to: "ledger", label: "INSTR" }]) },
+              4: { actor: "Bank A", object: "Instruction, core account and audit reference", explanation: "Bank A links the instruction to the authoritative account position and a unique audit reference so duplicate use can be detected." },
+              5: { action: "Receives a usable request", object: "Digital payment instruction", result: "Instruction available to submit", explanation: "Alice can submit the instruction through Bank A’s accepted workflow. Her deposit changes only when Bank A accepts and posts the requested payment.", scene: scene("wallet", "Instruction available", [{ from: "ledger", to: "wallet", label: "INSTR" }]) },
+              6: { actor: "Bank A", action: "Confirms instruction setup", object: "Instruction and linked account evidence", result: "Instruction setup complete", explanation: "The instruction workflow is ready with one traceable request and an unchanged authoritative deposit claim except for any explicit account reservation." }
+            }
+          }
+        },
+        redeem: {
+          instruction: {
+            name: "Cancel or complete instruction",
+            treatment: "Boundary-safe baseline",
+            summary: "Resolve a payment request without describing cancellation as burning money.",
+            settlement: "Instruction cancellation or accepted core-account posting",
+            description: "Alice asks Bank A either to cancel an unused CHF 100 payment instruction or to complete the accepted payment it requests. Cancelling or consuming the instruction does not burn money; the authoritative core-account balance changes only through Bank A’s accepted posting.",
+            stepOverrides: {
+              0: { action: "Requests cancellation or completion", object: "CHF 100 payment instruction", result: "Instruction request received", explanation: "Alice asks Bank A to cancel an unused instruction or complete the payment it requests. She is not redeeming a separate monetary claim." },
+              1: { actor: "Bank A", action: "Checks instruction authority and status", object: "Instruction, account and destination", explanation: "Bank A verifies Alice’s authority, the instruction status, the account position and whether a payment has already been posted." },
+              2: { label: "Instruction held", actor: "Bank A", action: "Prevents competing execution", object: "CHF 100 payment instruction", result: "Instruction pending resolution", explanation: "Bank A prevents a duplicate submission while it resolves the instruction. The core-account record remains authoritative." },
+              3: { label: "Instruction resolved", actor: "Bank A instruction service", action: "Cancels or consumes the instruction", object: "Digital payment instruction", result: "Instruction disabled", explanation: "The service cancels an unused instruction or marks an accepted instruction consumed. This disables a request; it does not burn money.", scene: scene("ledger", "Instruction resolved", [{ from: "issuer", to: "ledger", label: "STATUS" }]) },
+              4: { label: "Evidence matched", actor: "Bank A", action: "Verifies cancellation or posting", object: "Instruction and core-account evidence", explanation: "Bank A matches the instruction status to accepted account-posting evidence before releasing any reservation." },
+              5: { label: "Account outcome posted", actor: "Bank A", action: "Preserves or posts the account outcome", object: "Authoritative core-account position", result: "Account outcome recorded", explanation: "A cancellation preserves the applicable account position; a completed payment changes it through Bank A’s accepted posting.", scene: scene("account", "Account outcome posted", [{ from: "ledger", to: "account", label: "EVID" }]) },
+              6: { actor: "Bank A", action: "Confirms instruction outcome", object: "Instruction and core-account records", result: "Instruction workflow complete", explanation: "The final instruction status and authoritative core-account record agree, with the accepted audit evidence retained." }
+            }
+          }
+        },
+        same: {
+          instruction: {
+            name: "Same-bank payment instruction",
+            treatment: "Boundary-safe baseline",
+            summary: "Use a payment request to coordinate an internal core-account debit and credit.",
+            description: "Alice asks Bank A to pay CHF 100 to Luca inside the same bank. The digital instruction coordinates the request but does not itself transfer the deposit claim; Bank A’s authoritative core-account debit and credit change the customer positions.",
+            settlement: "Internal core-account debit and credit",
+            stepOverrides: {
+              3: { label: "Posting authorized", actor: "Bank A", action: "Authorizes core-account posting", object: "Accepted payment instruction and reservation", result: "Debit and credit ready to post", explanation: "Bank A accepts the instruction and authorizes the linked core-account debit and credit. The instruction does not itself change the creditor.", scene: scene("ledger", "Posting authorized", [{ from: "bankA", to: "ledger", label: "INSTR" }]) },
+              4: { label: "Core accounts posted", actor: "Bank A core banking", action: "Posts Alice’s debit and Luca’s credit", object: "Authoritative customer account positions", result: "Luca’s account credited", explanation: "Core banking posts the authoritative debit to Alice and credit to Luca, with the instruction retained as evidence.", scene: scene(["bankA", "ledger"], "Core accounts posted") },
+              5: { action: "Uses the posted credit", object: "CHF 100 bank deposit", result: "CHF 100 available to Luca", explanation: "Luca can use the CHF 100 credited in his ordinary account. The accepted core-account posting, not movement of the instruction, changed the deposit holder.", scene: scene("luca", "Posted credit available") },
+              6: { actor: "Bank A", action: "Confirms instruction and account evidence", object: "Instruction, debit and credit records", result: "Same-bank payment complete", explanation: "The flow completes when the consumed instruction and the authoritative core-account debit and credit share one audit reference." }
+            }
+          },
+          mirrored: {
+            name: "Same-bank mirrored-token transfer",
+            treatment: "Synchronized tokenized-deposit flow",
+            stepOverrides: {
+              3: { actor: "DLT token mirror", action: "Records the token holder change", object: "CHF 100 mirrored deposit token", result: "DLT mirror shows Luca", explanation: "The DLT mirror records Luca as token holder, while the CBS liability record remains authoritative and awaits the matching internal reallocation." },
+              4: { actor: "Bank A core banking", action: "Posts the matching liability reallocation", object: "Alice and Luca mirror subaccounts", result: "CBS liability positions updated", explanation: "Bank A posts the authoritative liability reallocation in core banking and reconciles it deterministically to the DLT transfer." }
+            }
+          },
+          stablecoin: {
+            name: "Same-issuer stablecoin transfer",
+            treatment: "Verified same-issuer flow",
+            summary: "Move one issuer claim between Alice and Luca on the issuer ledger.",
+            description: "Alice sends CHF 100 of a stablecoin issuer claim to Luca inside the same issuer perimeter. The issuer ledger changes the recorded holder and supporting wallet and entitlement records align; no commercial-bank debtor change or interbank SIC settlement is implied.",
+            settlement: "Internal transfer of the same issuer claim",
+            stepOverrides: {
+              3: { actor: "Stablecoin issuer ledger", action: "Records the holder change", object: "CHF 100 issuer claim", result: "Issuer ledger shows Luca", explanation: "The authoritative issuer ledger transfers the CHF 100 issuer claim from Alice to Luca." },
+              4: { actor: "Stablecoin issuer", object: "Issuer-ledger, wallet and entitlement records", explanation: "The issuer aligns wallet and entitlement records to the authoritative holder change." }
+            }
+          }
+        },
+        interbank: {
+          instruction: {
+            stepOverrides: {
+              3: { scene: scene(["bankA", "settlement"], "Payment instruction prepared", [{ from: "bankA", to: "settlement", label: "PAY" }]), explanation: "Bank A prepares the payment message and linked core-account reservation needed for the SIC leg. The instruction is not the settlement asset." },
+              5: { scene: scene(["bankB", "luca"], "Core-account credit posted", [{ from: "bankB", to: "luca", label: "CREDIT" }]), explanation: "Bank B accepts the settled incoming payment and posts Luca’s authoritative core-account credit." }
+            }
+          },
+          stablecoin: {
+            name: "Same-issuer transfer comparison",
+            treatment: "Architectural comparison",
+            summary: "Transfer one issuer claim between holders without an intrinsic SIC leg.",
+            description: "Alice transfers CHF 100 of a stablecoin issuer claim to Luca through the same issuer ledger. The customer-facing claim stays with that issuer; this comparison has no Bank A-to-B liability change and no intrinsic SIC settlement leg.",
+            settlement: "Direct issuer-ledger holder transfer",
+            stepOverrides: {
+              0: { action: "Initiates same-issuer transfer", object: "CHF 100 issuer claim", explanation: "Alice asks the stablecoin issuer to transfer CHF 100 of its claim to Luca. No bank-to-bank payment is created." },
+              1: { label: "Issuer checks", actor: "Stablecoin issuer", action: "Checks holder and receiving wallet", object: "Issuer claim and transfer request", result: "Issuer checks passed", explanation: "The issuer checks Alice’s holder position, Luca’s receiving wallet and the transfer controls within its own scheme." },
+              2: { label: "Issuer claim reserved", actor: "Stablecoin issuer", action: "Reserves the sending position", object: "Alice’s CHF 100 issuer claim", explanation: "The issuer reserves Alice’s claim against competing use while Alice remains its recorded holder." },
+              3: { label: "Transfer prepared", actor: "Stablecoin issuer ledger", action: "Prepares the holder change", object: "CHF 100 issuer claim", explanation: "The issuer ledger prepares a direct change of holder from Alice to Luca without creating an interbank SIC obligation." },
+              4: { label: "Holder changed", actor: "Stablecoin issuer ledger", action: "Transfers the same issuer claim", object: "CHF 100 issuer claim", result: "Luca recorded as holder", explanation: "The authoritative issuer ledger records Luca as holder of the same issuer claim. Wholesale central-bank money is not the customer-facing asset." },
+              5: { label: "Receiving wallet accepts", actor: "Receiving service", action: "Makes the issuer claim usable", object: "Luca’s wallet position", result: "Issuer claim available to Luca", explanation: "The receiving service exposes Luca’s issuer-ledger position under the issuer’s wallet and redemption rules." },
+              6: { actor: "Issuer arrangement", action: "Confirms holder records", object: "Issuer-ledger and wallet records", result: "Same-issuer transfer complete", explanation: "The transfer is complete when the issuer ledger and wallet service agree that Luca holds the issuer claim." }
+            }
+          }
+        },
+        conditional: {
+          instruction: {
+            stepOverrides: {
+              2: { scene: scene(["bankA", "condition"], "Core-account funds reserved", [{ from: "bankA", to: "condition", label: "LOCK" }]), explanation: "Bank A reserves CHF 100 in Alice’s authoritative core account while the instruction waits for the condition." },
+              5: { actor: "Bank A", action: "Posts the authorized payment", object: "Alice’s debit and Luca’s credit", result: "Luca’s core account credited", scene: scene(["bankA", "luca"], "Core-account payment posted", [{ from: "bankA", to: "luca", label: "CREDIT" }]), explanation: "After accepted condition evidence, Bank A posts the authoritative debit and credit. The instruction and condition coordinate the posting but do not themselves transfer the deposit claim." }
+            }
+          }
+        },
+        netting: {
+          stablecoin: {
+            name: "Issuer-scheme netting comparison",
+            treatment: "Conceptual comparison",
+            summary: "Compare gross obligations and settle one net position under issuer-scheme rules.",
+            description: "Two obligations inside a stablecoin issuer or participant scheme are compared before a CHF 40 net position is settled under that scheme’s rules. SIC finality and commercial-bank debtor transformation are not part of this comparison.",
+            settlement: "Issuer-scheme settlement, not SIC",
+            stepOverrides: {
+              0: { actor: "Scheme participants", action: "Submit opposing issuer-scheme obligations", explanation: "Two scheme participants submit CHF 100 and CHF 60 obligations involving the same stablecoin issuer arrangement." },
+              1: { explanation: "The scheme queue records both gross obligations before it calculates an offset." },
+              2: { actor: "Scheme operator", object: "CHF 160 gross scheme activity", explanation: "Separate gross processing would record CHF 160 of total scheme activity." },
+              3: { actor: "Issuer-scheme netting cycle", explanation: "The scheme’s agreed rule calculates one CHF 40 net position from participant A to participant B." },
+              4: { label: "Scheme net settled", actor: "Issuer-scheme settlement", action: "Settles CHF 40 under scheme rules", object: "Net issuer-scheme position", result: "CHF 40 scheme position settled", explanation: "The issuer scheme settles the CHF 40 position under its own rules. This step is not SIC settlement." },
+              5: { actor: "Scheme participants", object: "Wallet, scheme and accounting records", explanation: "The participants align their wallet, scheme and accounting records to the settled issuer-scheme position." },
+              6: { actor: "Issuer-scheme arrangement", result: "Issuer-scheme netting complete", explanation: "The conceptual comparison ends when both gross obligations, the net result and participant records agree." }
+            }
+          }
+        },
+        correspondent: {
+          instruction: { name: "Agorá workflow comparison", treatment: "Workflow comparison", description: "This payment-instruction comparison applies Agorá’s five-stage workflow to an ordinary bank deposit that remains authoritative in core banking. It does not reproduce Agorá’s platform-authoritative tokenized-money architecture, and it does not imply integrated FX execution." },
+          mirrored: { name: "Agorá workflow adaptation", treatment: "Architectural adaptation", description: "This mirrored-deposit adaptation applies Agorá’s five-stage workflow while core banking remains authoritative and DLT mirrors the position. Agorá itself treated platform balances as authoritative, and its prototype did not integrate an FX execution service." },
+          native: { treatment: "Closest tested architecture", description: "This is the simulator’s closest representation of Agorá’s tested money architecture: platform-authoritative tokenized commercial-bank deposits coordinate with tokenized central-bank reserves. The five stages cover payee confirmation, path discovery, private participant validation, locking and delegated authority, and settlement; technical coordination does not by itself establish legal finality." },
+          stablecoin: { name: "Agorá workflow comparison", treatment: "Product boundary comparison", description: "This stablecoin comparison applies Agorá’s five-stage workflow to a separate issuer claim. Agorá tested tokenized commercial-bank deposits and central-bank reserves, not a customer-facing non-bank stablecoin, and its prototype did not integrate an FX execution service." }
+        },
+        cbdc: {
+          instruction: { treatment: "Settlement infrastructure comparison" },
+          mirrored: { treatment: "Settlement infrastructure comparison" },
+          native: { treatment: "Settlement infrastructure comparison" },
+          stablecoin: {
+            name: "Stablecoin with wCBDC funding",
+            treatment: "Conceptual infrastructure comparison",
+            summary: "Keep Luca’s issuer claim separate from an institutional wholesale-CBDC funding leg.",
+            description: "Luca’s customer-facing position remains a claim on the separate stablecoin issuer. A distinct settlement bank may use wholesale CBDC for an institutional funding leg, but Alice and Luca neither hold nor transfer wholesale central-bank money.",
+            settlement: "Separate institutional wCBDC leg supporting an issuer claim",
+            stepOverrides: {
+              0: { actor: "Stablecoin issuer and settlement bank", action: "Prepare claim transfer and funding leg", object: "Issuer claim and institutional obligation", explanation: "The issuer prepares Luca’s customer-facing issuer claim while an eligible settlement bank identifies a separate institutional funding obligation.", scene: scene(["alice", "bankA", "issuer"], "Payment prepared") },
+              1: { actor: "wCBDC settlement service", action: "Checks eligible settlement banks", object: "Institutions, instructions and liquidity access", explanation: "The service validates the settlement banks and their eligibility to use wholesale central-bank money. Alice and Luca are not wCBDC holders." },
+              2: { actor: "Settlement bank A", action: "Reserves institutional liquidity", explanation: "Settlement bank A reserves CHF 100 of its wholesale CBDC for the institutional leg; the asset is not Alice’s stablecoin." },
+              3: { actor: "wCBDC rail", result: "Settlement bank B receives wCBDC", explanation: "The wCBDC rail transfers central-bank money between eligible settlement banks only." },
+              4: { actor: "Issuer and settlement banks", object: "Issuer-claim, accounting and wCBDC records", explanation: "The issuer and settlement banks reconcile institutional wCBDC evidence with the distinct issuer-claim and accounting records.", scene: scene(["bankA", "wcbdc", "bankB", "issuer"], "Records reconciled") },
+              5: { actor: "Stablecoin issuer or receiving service", action: "Records Luca’s issuer claim", object: "Customer-facing CHF 100 stablecoin claim", result: "Luca holds the issuer claim", explanation: "The issuer ledger records Luca’s customer-facing claim on the stablecoin issuer. Bank B’s wCBDC position does not become Luca’s asset.", scene: scene(["issuer", "luca"], "Customer claim posted", [{ from: "issuer", to: "luca", label: "CLAIM" }]) },
+              6: { actor: "Issuer and eligible institutions", action: "Confirm customer and funding layers", object: "Issuer-ledger and institutional wCBDC records", explanation: "The flow completes only when the issuer claim and the separate institutional wCBDC funding records show their intended outcomes.", scene: scene(["wcbdc", "bankB", "issuer", "luca"], "Workflow complete") }
+            }
+          }
+        },
+        bridge: {
+          instruction: {
+            name: "Wrapped instruction boundary test",
+            treatment: "Boundary test",
+            summary: "Relay a wrapped instruction reference without transferring the underlying deposit claim.",
+            description: "Alice asks a bridge to carry a reference to a CHF 100 payment instruction onto another ledger. The wrapped reference is not the underlying deposit claim, and moving it cannot change the authoritative core-account balance until Bank A accepts and posts the payment.",
+            settlement: "Cross-ledger instruction evidence followed by bank acceptance",
+            stepOverrides: {
+              0: { action: "Requests instruction-reference relay", object: "CHF 100 payment instruction", explanation: "Alice asks the bridge to relay evidence of a payment instruction, not to move the underlying bank deposit claim." },
+              1: { object: "Instruction, destination and contract version", explanation: "The bridge checks the instruction reference, destination, wallet authority and supported contract version." },
+              2: { label: "Instruction held", actor: "Bank A instruction service", action: "Marks the instruction pending", object: "Payment instruction", result: "Instruction cannot be reused", explanation: "Bank A marks the instruction pending to prevent conflicting use. The authoritative core-account deposit position remains at Bank A.", scene: scene("sourceLedger", "Instruction held") },
+              3: { action: "Relays instruction evidence", object: "Signed instruction reference", explanation: "The bridge relays signed evidence of the instruction status across the trust boundary; it does not relay the deposit claim." },
+              4: { label: "Wrapped reference created", action: "Creates wrapped instruction reference", object: "Destination instruction reference", result: "Non-monetary reference recorded", explanation: "The destination ledger creates a wrapped reference to the instruction. That reference is not money and cannot itself debit Alice’s core account." },
+              5: { action: "Receives wrapped reference", object: "Destination instruction reference", result: "Reference available on destination", explanation: "The destination wallet receives the reference under the bridge rules, without becoming holder of Alice’s underlying deposit claim.", scene: scene("destWallet", "Wrapped reference received", [{ from: "destLedger", to: "destWallet", label: "REF" }]) },
+              6: { action: "Confirms evidence consistency", object: "Instruction status, proof and wrapped reference", result: "Boundary-test flow complete", explanation: "The boundary test ends when the instruction status, bridge proof and wrapped reference agree; a bank posting remains necessary to move account money." }
+            }
+          },
+          mirrored: { treatment: "Conceptual bridge comparison" },
+          native: { treatment: "Conceptual bridge comparison" },
+          stablecoin: { treatment: "Conceptual bridge comparison" }
+        }
+      };
+
+      function scenarioFor(modelId, scenarioId) {
+        const base = scenarios[scenarioId];
+        const variant = scenarioVariants[scenarioId]?.[modelId] || {};
+        return {
+          ...base,
+          ...variant,
+          treatment: variant.treatment || "Conceptual teaching flow",
+          description: variant.description || base.description + " " + models[modelId].scenarioContext,
+          settlement: variant.settlement || base.settlement,
+          steps: base.steps.map((stepData, index) => {
+            const { explanation, ...stepOverride } = variant.stepOverrides?.[index] || {};
+            return {
+              ...stepData,
+              ...stepOverride,
+              explanations: explanation ? { ...stepData.explanations, [modelId]: explanation } : stepData.explanations,
+              scene: stepOverride.scene || stepData.scenes[modelId] || stepData.scene
+            };
+          })
+        };
+      }
 
       const sceneLayouts = {
         mint: [
@@ -2824,38 +3082,39 @@
         ],
         netting: [
           { id: "bankA", role: "bank", title: "Bank A", note: "CHF 100 obligation" },
-          { id: "queue", role: "account", title: "Payment queue", note: "Matches obligations" },
+          { id: "queue", role: "queue", title: "Payment queue", note: "Matches obligations" },
           { id: "netting", role: "netting", title: "Netting cycle", note: "CHF 40 result" },
           { id: "settlement", role: "sic", title: "SIC / settlement", note: "Moves net position" },
           { id: "bankB", role: "bank", title: "Bank B", note: "CHF 60 obligation" }
         ],
         correspondent: [
-          { id: "payee", role: "luca", title: "Payee", note: "Confirmed first" },
-          { id: "route", role: "route", title: "Route", note: "Banks, FX and rails" },
+          { id: "payee", role: "luca", title: "Luca", note: "Intended beneficiary" },
+          { id: "confirmation", role: "validation", title: "Receiving institution", note: "Confirms payee" },
+          { id: "route", role: "route", title: "Route", note: "Banks, amounts and rails" },
           { id: "validation", role: "validation", title: "Validation", note: "Private endorsements" },
           { id: "lock", role: "condition", title: "Lock and delegate", note: "Balances committed" },
           { id: "settlement", role: "settlement", title: "Settlement", note: "Coordinated outcome" }
         ],
         pvp: [
-          { id: "chf", role: "wallet", title: "CHF party", note: "CHF leg" },
+          { id: "chf", role: "alice", title: "Alice", note: "Pays CHF, receives EUR" },
           { id: "bankA", role: "bank", title: "CHF institution", note: "Checks and locks" },
           { id: "pvp", role: "pvp", title: "PvP coordinator", note: "Atomic rule" },
           { id: "bankB", role: "bank", title: "EUR institution", note: "Checks and locks" },
-          { id: "eur", role: "wallet", title: "EUR party", note: "EUR leg" }
+          { id: "eur", role: "luca", title: "Luca", note: "Pays EUR, receives CHF" }
         ],
         cbdc: [
-          { id: "alice", role: "alice", title: "Alice’s claim", note: "Commercial-bank money" },
+          { id: "alice", role: "alice", title: "Alice", note: "Commercial-bank claim" },
           { id: "bankA", role: "bank", title: "Bank A", note: "Sending institution" },
           { id: "wcbdc", role: "sic", title: "Wholesale CBDC", note: "Central-bank money" },
           { id: "bankB", role: "bank", title: "Bank B", note: "Receiving institution" },
-          { id: "luca", role: "luca", title: "Luca’s claim", note: "Commercial-bank money" }
+          { id: "luca", role: "luca", title: "Luca", note: "Commercial-bank claim" }
         ],
         bridge: [
-          { id: "sourceWallet", role: "wallet", title: "Source wallet", note: "Starting position" },
-          { id: "sourceLedger", role: "ledger", title: "Source ledger", note: "Locks value" },
+          { id: "sourceWallet", role: "alice", title: "Alice", note: "Source-wallet holder" },
+          { id: "sourceLedger", role: "sourceLedger", title: "Source ledger", note: "Locks value" },
           { id: "bridge", role: "bridge", title: "Bridge", note: "Relays evidence" },
-          { id: "destLedger", role: "ledger", title: "Destination ledger", note: "Creates representation" },
-          { id: "destWallet", role: "wallet", title: "Destination wallet", note: "Receives value" }
+          { id: "destLedger", role: "destinationLedger", title: "Destination ledger", note: "Creates representation" },
+          { id: "destWallet", role: "destinationWallet", title: "Destination wallet", note: "Receives value" }
         ],
         mismatch: [
           { id: "operations", role: "operations", title: "Operations", note: "Investigates and repairs" },
@@ -2866,77 +3125,137 @@
       };
 
       const failures = {
-        aml: {
-          name: "AML / sanctions rejection", trigger: 1,
-          summary: "An identity, sanctions or transaction-control check does not permit the requested action to proceed.",
-          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "bridge"],
-          targets: ["issuer", "bankA", "validation", "bridge"],
-          effects: {
-            instruction: "Compliance rejects the payment instruction before further value movement. Alice’s core-account claim remains in its last valid state.",
-            mirrored: "Compliance stops the mirrored-token action before final movement. The core-banking claim remains held for controlled review.",
-            native: "Compliance stops the on-chain action before the next authoritative transfer. The last confirmed DLT holder remains recorded.",
-            stablecoin: "Compliance rejects the issuer-side action before the next transfer. The last accepted issuer claim remains recorded."
-          }
+        aml: { name: "AML / sanctions rejection", summary: "A required identity, sanctions or transaction-control decision rejects the action." },
+        dlt: { name: "DLT / platform unavailable", summary: "The ledger or platform required for the next event cannot accept or confirm it." },
+        sic: { name: "SIC unavailable", summary: "SIC cannot confirm the required central-bank-money movement." },
+        receiver: { name: "Receiving institution rejects", summary: "The receiving institution rejects the beneficiary or incoming position." },
+        reconciliation: { name: "Reconciliation mismatch", summary: "Records that should describe the same position do not agree." },
+        key: { name: "Key / contract pause", summary: "A required signing key or contract cannot authorize the next transition." },
+        condition: { name: "Condition expires or fails", summary: "The agreed condition expires or produces an accepted negative result." }
+      };
+
+      const failurePolicies = {
+        aml: { prohibitedRetry: "Do not bypass or overwrite the rejected control decision.", recoveryEvidence: "A resolved compliance decision and a newly authorized request.", recoveryOwner: "Compliance and the product owner", outcomes: "Reject the request, or start a new request after approved resolution." },
+        dlt: { prohibitedRetry: "Do not resubmit blindly while the prior ledger outcome is unknown.", recoveryEvidence: "Ledger event identifiers, signed requests, availability evidence and a completed reconciliation.", recoveryOwner: "Ledger operations and the transaction owner", outcomes: "Cancel safely and release a reservation, or resume from the last proven event." },
+        sic: { prohibitedRetry: "Do not send a second SIC payment until the first payment status is proven.", recoveryEvidence: "SIC acknowledgements, payment identifiers, account movements and cut-off evidence.", recoveryOwner: "Payments and treasury", outcomes: "Cancel before settlement, keep a bounded pending state, or enter controlled repair after settlement." },
+        receiver: { prohibitedRetry: "Do not create a second incoming claim or reverse a final leg without the scheme’s return rule.", recoveryEvidence: "Receiving decision, settlement evidence, beneficiary record and return or repair instruction.", recoveryOwner: "Receiving-institution operations with the sending payment owner", outcomes: "Reject before settlement, return under the scheme, or complete the missing credit under controlled repair." },
+        reconciliation: { prohibitedRetry: "Do not force balances to match with an unexplained mint, burn or accounting entry.", recoveryEvidence: "Authoritative balances, signed events, posting references and dual-control approval.", recoveryOwner: "Finance and operations incident command", outcomes: "Correct the supporting record, record an approved authoritative event, or keep the affected scope paused." },
+        key: { prohibitedRetry: "Do not use an unverified replacement key or bypass the paused contract.", recoveryEvidence: "Key revocation, replacement authority, contract state, event history and reconciled balances.", recoveryOwner: "Security and contract governance", outcomes: "Restore scoped authority, migrate through an approved event, or keep the affected function paused." },
+        condition: { prohibitedRetry: "Do not treat late or conflicting evidence as a successful condition.", recoveryEvidence: "The agreed deadline, verifier result, lock record and refund or dispute instruction.", recoveryOwner: "The conditional-workflow owner", outcomes: "Release the lock back to Alice, extend only under an agreed rule, or enter the defined dispute process." }
+      };
+
+      const authorityConsequences = {
+        instruction: "The core-account record remains authoritative for the deposit, and its last accepted balance or reservation remains in force because the instruction cannot create, transfer or extinguish the claim by itself.",
+        mirrored: "The CBS liability record remains authoritative, and its last accepted balance or reservation remains in force while the DLT mirror waits for deterministic repair.",
+        native: "The last confirmed DLT holder record remains authoritative, and supporting bank accounting or reporting copies cannot replace it during recovery.",
+        stablecoin: "The last confirmed issuer-ledger holder record remains authoritative for the issuer claim, while reserve, guarantee, entitlement and accounting records remain supporting evidence."
+      };
+
+      const failureRule = (trigger, target, description, stateBefore, changedRecords, overrides = {}) => ({ trigger, target, description, stateBefore, changedRecords, ...overrides });
+      const failureRules = {
+        mint: {
+          aml: failureRule(1, "issuer", "The eligibility check rejects this conversion request before funding is reserved or a digital object is created.", "Alice’s source funds remain in their prior usable state.", "Only the request and control result exist."),
+          dlt: failureRule(3, "ledger", "The authorized ledger cannot create or confirm the digital object after the funding position has been reserved.", "The funding position is reserved and no usable digital object exists.", "The request, checks and reservation may already be recorded."),
+          reconciliation: failureRule(4, "ledger", "The newly created object does not reconcile to the funding, supply or control records at the alignment step.", "The object may exist but has not been released for use.", "Issuance and reservation records may already have changed."),
+          key: failureRule(3, "ledger", "The issuing key or contract is paused when the authorized ledger is asked to create the digital object.", "The funding position is reserved and issuance is pending.", "The request, checks and reservation may already be recorded.")
         },
-        dlt: {
-          name: "DLT unavailable", trigger: 3,
-          summary: "The ledger required to record or coordinate the selected digital object cannot accept or confirm the next event.",
-          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
-          targets: ["ledger", "sourceLedger", "destLedger", "bridge", "wcbdc", "reconcile", "bankA", "condition", "lock", "pvp"],
-          effects: {
-            instruction: "The DLT instruction record is unavailable, so the core deposit remains authoritative and any reservation stays pending.",
-            mirrored: "The mirrored DLT action cannot complete, so the core-banking claim remains reserved until availability and reconciliation are restored.",
-            native: "The authoritative DLT is unavailable, so the last confirmed holder state remains controlling during recovery.",
-            stablecoin: "The issuer’s token ledger is unavailable, so issuance, transfer or redemption pauses at the last accepted issuer state."
-          }
+        redeem: {
+          aml: failureRule(1, "issuer", "The ownership or compliance check rejects this redemption before the position is locked or removed.", "Alice still holds the usable digital position.", "Only the request and control result exist."),
+          dlt: failureRule(3, "ledger", "The authorized ledger cannot remove or confirm removal of the locked digital object.", "The position is locked and no payout is authorized.", "The request, checks and lock may already be recorded."),
+          reconciliation: failureRule(4, "ledger", "Removal evidence does not match the pending redemption or the controlling records.", "The object is disabled or uncertain and the payout remains blocked.", "The lock and a removal event may already exist."),
+          key: failureRule(3, "ledger", "The redemption key or contract is paused before the locked object can be removed.", "The position is locked and no payout has occurred.", "The request, checks and lock may already be recorded.")
         },
-        sic: {
-          name: "SIC unavailable", trigger: 4,
-          summary: "The Swiss interbank settlement rail cannot confirm the required movement of central-bank money between participating banks.",
-          applies: ["interbank", "netting"], targets: ["settlement"],
-          effects: {
-            instruction: "SIC cannot confirm the interbank CHF leg. Bank A keeps the payment pending and Bank B has no settlement evidence for a final customer credit.",
-            mirrored: "SIC cannot move central-bank money, so Bank A’s mirrored claim remains in its defined pending state and Bank B cannot create the final receiving claim.",
-            native: "SIC cannot complete the required institutional settlement leg, so the debtor transformation remains pending.",
-            stablecoin: "This direct issuer-liability flow does not use SIC, so the failure is unavailable for this model."
-          }
+        same: {
+          aml: failureRule(1, "bankA", "The institution rejects the same-perimeter transfer during party and funds checks.", "Alice remains the holder and no value is reserved.", "Only the request and rejection exist."),
+          dlt: failureRule(3, "ledger", "The internal holder record cannot record the move from Alice to Luca after value has been reserved.", "Alice’s position is reserved and Luca has no usable credit.", "The request, checks and reservation may already be recorded."),
+          reconciliation: failureRule(4, "ledger", "The holder change does not match the institution’s customer and control records.", "The transfer event exists but Luca’s value is not released.", "The holder record and some internal postings may already have changed."),
+          key: failureRule(3, "ledger", "The required transfer key or contract is paused before the holder change can be recorded.", "Alice’s position is reserved and Luca has no credit.", "The request, checks and reservation may already be recorded.")
         },
-        receiver: {
-          name: "Receiving bank rejects", trigger: 5,
-          summary: "The receiving institution does not accept the beneficiary, incoming position or associated payment after the sending workflow has begun.",
-          applies: ["interbank", "correspondent", "cbdc"], targets: ["bankB", "settlement", "luca"],
-          effects: {
-            instruction: "The receiving institution rejects the incoming payment before creating Luca’s deposit. The pending position follows the scheme’s return or repair process.",
-            mirrored: "Bank B rejects the incoming transfer before minting or recording Luca’s claim. Any completed settlement leg moves into the defined return or repair process.",
-            native: "Bank B rejects the debtor transformation before creating Luca’s Bank B claim. The scheme applies its controlled return rule.",
-            stablecoin: "The receiving institution rejects the corridor credit before making the issuer claim usable to Luca. The pending leg follows the issuer scheme’s return process."
-          }
+        interbank: {
+          aml: failureRule(1, "bankA", "Bank A rejects the payment during customer, sanctions or destination checks.", "Alice’s claim remains unchanged and no sending value is reserved.", "Only the request and rejection exist."),
+          dlt: failureRule(3, "bankA", "The required outgoing digital record cannot be prepared after Bank A reserves the sending position.", "Alice’s value is reserved and no institutional settlement is final.", "The request, checks and reservation may already be recorded.", { targetByModel: { stablecoin: "settlement" }, descriptionByModel: { stablecoin: "The issuer ledger cannot prepare the direct holder change after Alice’s issuer claim has been reserved." }, stateBeforeByModel: { stablecoin: "Alice’s issuer claim is reserved and Luca has no usable issuer claim." } }),
+          sic: failureRule(4, "settlement", "SIC cannot settle the interbank CHF obligation, so Bank B has no central-bank-money evidence for a final customer credit.", "Bank A has prepared the outgoing leg and the SIC payment is not final.", "The sending reservation and outgoing record may already exist.", { models: ["instruction", "mirrored", "native"] }),
+          receiver: failureRule(5, "bankB", "Bank B rejects the incoming position after the sending workflow has begun.", "The settlement leg may be final but Luca has no customer credit.", "The sending record and institutional settlement may already have changed.", { models: ["instruction", "mirrored", "native"] }),
+          reconciliation: failureRule(6, "settlement", "The completed settlement evidence and the sending, receiving or customer records do not agree.", "The external leg may be final and the customer outcome remains under repair.", "Settlement and one or more participant records may already have changed.", { descriptionByModel: { stablecoin: "The issuer-ledger holder change and the sending or receiving wallet records do not agree." }, stateBeforeByModel: { stablecoin: "The issuer-ledger transfer may be final while Luca’s wallet outcome remains under repair." } }),
+          key: failureRule(3, "bankA", "A required signing key or contract is paused before the outgoing record can be prepared.", "Alice’s value is reserved and no institutional settlement is final.", "The request, checks and reservation may already be recorded.", { targetByModel: { stablecoin: "settlement" }, descriptionByModel: { stablecoin: "The issuer’s transfer key or contract is paused before the direct holder change can be recorded." }, stateBeforeByModel: { stablecoin: "Alice’s issuer claim is reserved and Luca has no usable issuer claim." } })
         },
-        reconciliation: {
-          name: "Reconciliation mismatch", trigger: 2,
-          summary: "Two records that should describe the same claim, supply or settlement position no longer agree.",
-          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
-          targets: ["reconcile", "ledger", "sourceLedger", "wcbdc", "settlement", "condition", "pvp"],
-          effects: {
-            instruction: "The instruction status and core-account posting disagree. Processing pauses while operations establish and restore the authoritative state.",
-            mirrored: "Token supply, the customer mirror subledger and the general-ledger control balance disagree. Movement remains held until dual-control repair restores agreement.",
-            native: "The DLT master record and bank reporting records disagree. The last confirmed authoritative DLT state remains controlling during investigation.",
-            stablecoin: "Issuer supply, reserve or guarantee records and customer entitlements disagree. Transfers and redemptions pause until the issuer restores a provable match."
-          }
+        conditional: {
+          aml: failureRule(1, "bankA", "The institution rejects the parties or conditional workflow before any value is locked.", "Alice keeps her available value and Luca has no pending credit.", "Only the terms, request and rejection exist."),
+          dlt: failureRule(5, "condition", "The condition contract or ledger cannot record the authorized release to Luca.", "The condition is verified but Alice’s value remains locked.", "The terms, lock and verification may already be recorded."),
+          reconciliation: failureRule(6, "condition", "The condition, release and holder records do not agree after the attempted payment.", "The release outcome is uncertain and the affected value remains contained.", "The lock, verification and some release records may already have changed."),
+          key: failureRule(5, "condition", "The release key or condition contract is paused when the verified payment should move to Luca.", "The condition is verified but Alice’s value remains locked.", "The terms, lock and verification may already be recorded."),
+          condition: failureRule(4, "condition", "The agreed condition expires or returns an accepted negative result, so the workflow cannot authorize payment to Luca.", "Alice’s CHF 100 remains locked and Luca has no credit.", "The terms, checks and lock are recorded, but no release event exists.")
         },
-        key: {
-          name: "Key / contract pause", trigger: 3,
-          summary: "A required signing key or contract is paused, unavailable or no longer authorized for the next state transition.",
-          applies: ["mint", "redeem", "same", "interbank", "conditional", "correspondent", "pvp", "cbdc", "bridge", "mismatch"],
-          targets: ["ledger", "condition", "lock", "pvp", "bridge", "wcbdc", "reconcile", "bankA", "settlement"],
-          effects: {
-            instruction: "The instruction contract or signing key is paused. The core-account claim remains at the last valid state while the bank verifies authority and audit evidence.",
-            mirrored: "The token contract is paused. The core-banking claim remains held while key governance and reconciliation checks are completed.",
-            native: "The authoritative contract is paused. The last confirmed DLT holder remains recorded until the formally approved recovery process succeeds.",
-            stablecoin: "The issuer contract is paused. The existing issuer claim remains recorded while minting, transfer and redemption wait for controlled key recovery."
-          }
+        netting: {
+          sic: failureRule(4, "settlement", "SIC cannot settle the calculated CHF 40 net obligation at the agreed settlement point.", "Both gross obligations and the CHF 40 net position are recorded, but settlement is not final.", "The queue and netting-cycle records have changed.", { models: ["instruction", "mirrored", "native"] }),
+          reconciliation: failureRule(6, "netting", "The gross obligations, net settlement evidence and participant postings do not reconcile at cycle completion.", "The net settlement may be final, but the participant records do not yet prove one consistent outcome.", "The queue, netting, settlement and one or more participant records have changed.")
+        },
+        correspondent: {
+          aml: failureRule(2, "validation", "A participating institution rejects the route during private validation before balances are locked.", "The payee and candidate route are known, but no lock exists.", "Payee confirmation and path discovery may already be recorded."),
+          dlt: failureRule(3, "lock", "The platform cannot record the required locks or delegated authority after every participant validates.", "The route is validated and no settlement authority is effective.", "Payee, route and validation endorsements are recorded."),
+          receiver: failureRule(0, "confirmation", "The receiving institution cannot confirm Luca as the intended payee, so path discovery does not begin.", "No route, lock or settlement state exists.", "Only the attempted payee confirmation and rejection exist.", { targetLabel: "the receiving institution’s confirmation of Luca" }),
+          reconciliation: failureRule(4, "settlement", "The coordinated settlement outcome does not match the locked legs or participant records.", "The settlement trigger may have fired and the legal effect requires the applicable rules.", "Locks, delegation and some ledger updates may already exist."),
+          key: failureRule(3, "lock", "A required key or contract is paused before locks and delegated authority can become effective.", "The route is validated and no settlement authority is effective.", "Payee, route and validation endorsements are recorded.")
+        },
+        pvp: {
+          aml: failureRule(1, "bankA", "A participating institution rejects a party or currency leg before either leg is locked.", "Neither currency leg is locked or settled.", "The trade terms and rejection exist."),
+          dlt: failureRule(4, "pvp", "A connected ledger cannot execute or confirm both authorized currency legs as one outcome.", "Both legs are locked and release is authorized.", "Trade, checks, locks and release authority are recorded."),
+          reconciliation: failureRule(6, "pvp", "The two currency-leg results and connected holder records do not agree.", "One or both technical updates may exist, so the outcome remains contained.", "The locks, authorization and some settlement records may already have changed."),
+          key: failureRule(4, "pvp", "A required settlement key or contract is paused before both currency legs can execute.", "Both legs are locked and neither should complete alone.", "Trade, checks, locks and release authority are recorded.")
+        },
+        cbdc: {
+          dlt: failureRule(3, "wcbdc", "The wholesale-CBDC ledger cannot transfer or confirm the institutional central-bank-money leg.", "Bank A has reserved institutional liquidity and Luca has no customer credit.", "The payment package, eligibility checks and wCBDC reservation may exist.", { stateBeforeByModel: { stablecoin: "Settlement bank A has reserved institutional liquidity and Luca has no issuer claim." } }),
+          receiver: failureRule(5, "bankB", "Bank B rejects the customer-facing credit after the institutional wCBDC leg has settled.", "Bank B holds the institutional settlement asset and Luca has no customer credit.", "The wCBDC settlement and reconciliation evidence already exist.", { targetByModel: { stablecoin: "issuer" }, descriptionByModel: { stablecoin: "The stablecoin issuer or receiving service rejects Luca’s issuer-claim credit after the institutional wCBDC leg has settled." }, stateBeforeByModel: { stablecoin: "Settlement bank B holds the institutional asset and Luca has no stablecoin issuer claim." } }),
+          reconciliation: failureRule(4, "wcbdc", "The wCBDC settlement evidence does not match the banks’ customer, accounting or control records.", "The institutional leg is recorded and the customer leg remains blocked.", "The wCBDC ledger and some bank records have changed."),
+          key: failureRule(3, "wcbdc", "A required wholesale-CBDC key or contract is paused before the institutional leg can settle.", "Bank A has reserved institutional liquidity and Luca has no customer credit.", "The payment package, eligibility checks and wCBDC reservation may exist.")
+        },
+        bridge: {
+          aml: failureRule(1, "bridge", "The bridge rejects the wallet, source position, destination or contract version before locking source value.", "The source position remains usable and no proof or wrapped representation exists.", "Only the request and rejection exist."),
+          dlt: failureRule(4, "destLedger", "The destination ledger cannot create or confirm the wrapped representation after source proof is relayed.", "The source position is locked and the destination has no usable representation.", "The source lock and relayed proof already exist."),
+          reconciliation: failureRule(6, "bridge", "The source lock, bridge proof and destination representation do not agree.", "The source may be locked and a destination representation may exist, so movement stays paused.", "Both ledger and bridge records may already have changed."),
+          key: failureRule(4, "destLedger", "A destination key or contract is paused before the wrapped representation can be created.", "The source position is locked and the destination has no usable representation.", "The source lock and relayed proof already exist.")
+        },
+        mismatch: {
+          dlt: failureRule(5, "ledgerRecord", "The digital record needed for the approved repair is unavailable.", "The discrepancy is contained and the last valid authoritative state remains in force.", "The mismatch, pause and investigation evidence are recorded.", { models: ["instruction", "mirrored"] }),
+          reconciliation: failureRule(2, "reconcile", "The reconciliation control confirms a CHF 10 disagreement between the model-specific authority and supporting record.", "The records have diverged and no repair has been authorized.", "Both conflicting positions and their event histories exist."),
+          key: failureRule(5, "ledgerRecord", "The signing key or contract required for the approved digital-record repair is paused.", "The discrepancy is contained and the last valid authoritative state remains in force.", "The mismatch, pause and investigation evidence are recorded.", { models: ["instruction", "mirrored"] })
         }
       };
+
+      function failureCaseFor(modelId, scenarioId, failureId) {
+        const rule = failureRules[scenarioId]?.[failureId];
+        if (!rule || (rule.models && !rule.models.includes(modelId))) return null;
+        return {
+          modelId, scenarioId, failureId,
+          name: failures[failureId].name,
+          summary: failures[failureId].summary,
+          trigger: rule.trigger,
+          target: rule.targetByModel?.[modelId] || rule.target,
+          targetLabel: rule.targetLabelByModel?.[modelId] || rule.targetLabel || null,
+          description: rule.descriptionByModel?.[modelId] || rule.description,
+          stateBefore: rule.stateBeforeByModel?.[modelId] || rule.stateBefore,
+          changedRecords: rule.changedRecordsByModel?.[modelId] || rule.changedRecords,
+          modelConsequence: authorityConsequences[modelId],
+          ...failurePolicies[failureId]
+        };
+      }
+
+      function applicableFailureEntries(modelId, scenarioId) {
+        return Object.keys(failures).map((failureId) => [failureId, failureCaseFor(modelId, scenarioId, failureId)]).filter(([, failureCase]) => failureCase);
+      }
+
+      function failureDisplayFor(modelId, scenarioId, failureId) {
+        const failureCase = failureCaseFor(modelId, scenarioId, failureId);
+        if (!failureCase) return null;
+        const triggerStep = scenarioFor(modelId, scenarioId).steps[failureCase.trigger];
+        return {
+          title: failureCase.name,
+          stateLabel: "Blocked · " + failureCase.name,
+          currentRecord: failureCase.stateBefore,
+          explanation: failureCase.description + " " + failureCase.modelConsequence,
+          announcement: scenarioFor(modelId, scenarioId).name + ", step " + (failureCase.trigger + 1) + ": " + triggerStep.label + ", stopped by " + failureCase.name + "."
+        };
+      }
 
       const state = {
         model: null,
@@ -2958,37 +3277,115 @@
         if (actorVisuals[role]) return actorVisuals[role];
         const visualByRole = {
           bank: iconVisual("landmark"),
+          issuer: iconVisual("coins", "workflow"),
           sic: iconVisual("landmark", "coins"),
-          wallet: modelVisuals[state.model],
-          account: iconVisual("receipt-text", "banknote-arrow-down"),
-          ledger: state.model === "instruction" ? iconVisual("receipt-text") : state.model === "mirrored" ? iconVisual("database", "refresh-cw") : state.model === "stablecoin" ? iconVisual("coins", "wallet-cards") : iconVisual("network", "badge-check"),
+          wallet: iconVisual("wallet-cards"),
+          sourceWallet: iconVisual("wallet-cards", "arrow-right-left"),
+          destinationWallet: iconVisual("wallet-cards", "badge-check"),
+          account: iconVisual("landmark", "receipt-text"),
+          ledger: iconVisual("database", "badge-check"),
+          sourceLedger: iconVisual("database", "lock-keyhole"),
+          destinationLedger: iconVisual("network", "badge-check"),
           condition: iconVisual("lock-keyhole", "badge-check"),
+          participant: iconVisual("building-2", "workflow"),
+          queue: iconVisual("workflow", "arrow-right-left"),
           netting: iconVisual("scale", "arrow-right-left"),
           route: iconVisual("route", "workflow"),
-          validation: iconVisual("shield-alert", "badge-check"),
+          validation: iconVisual("badge-check", "building-2"),
           settlement: iconVisual("workflow", "coins"),
           pvp: iconVisual("repeat-2", "coins"),
           bridge: iconVisual("waypoints", "blocks"),
-          reconciliation: iconVisual("git-compare-arrows", "triangle-alert"),
-          operations: iconVisual("scan-line", "git-compare-arrows")
+          reconciliation: iconVisual("git-compare-arrows", "badge-check"),
+          operations: iconVisual("workflow", "refresh-cw")
         };
         return visualByRole[role] || modelVisuals[state.model];
       }
 
-      function resolvedLayout() {
-        return sceneLayouts[state.scenario].map((node) => {
-          if (state.model === "stablecoin" && state.scenario === "interbank" && node.id === "settlement") {
+      const mismatchLayouts = {
+        instruction: {
+          bankRecord: { title: "Core-account record", note: "Authoritative deposit position" },
+          ledgerRecord: { title: "Instruction record", note: "Digital payment request" }
+        },
+        mirrored: {
+          bankRecord: { title: "CBS liability record", note: "Authoritative deposit position" },
+          ledgerRecord: { title: "DLT token mirror", note: "Synchronized representation" }
+        },
+        native: {
+          bankRecord: { title: "Bank control record", note: "Accounting and reporting copy" },
+          ledgerRecord: { title: "DLT holder record", note: "Authoritative claim position" }
+        },
+        stablecoin: {
+          bankRecord: { title: "Backing records", note: "Reserve and guarantee support" },
+          ledgerRecord: { title: "Issuer token ledger", note: "Authoritative issuer claim" }
+        }
+      };
+
+      function layoutFor(modelId, scenarioId) {
+        const layout = sceneLayouts[scenarioId].map((node) => {
+          if (scenarioId === "mismatch" && mismatchLayouts[modelId][node.id]) return { ...node, ...mismatchLayouts[modelId][node.id] };
+          if (scenarioId === "same" && node.id === "ledger") {
+            const sameBankRecords = {
+              instruction: { role: "account", title: "Instruction + core posting", note: "Request evidence and authoritative accounts" },
+              mirrored: { role: "ledger", title: "DLT token mirror", note: "Synchronized holder representation" },
+              native: { role: "ledger", title: "DLT holder record", note: "Authoritative deposit claim" },
+              stablecoin: { role: "ledger", title: "Issuer ledger", note: "Authoritative issuer claim" }
+            };
+            return { id: node.id, ...sameBankRecords[modelId] };
+          }
+          if (modelId === "stablecoin" && scenarioId === "interbank" && node.id === "bankA") {
+            return { id: node.id, role: "issuer", title: "Stablecoin issuer", note: "Separate issuer claim" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "interbank" && node.id === "bankB") {
+            return { id: node.id, role: "wallet", title: "Receiving service", note: "Makes issuer claim usable" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "interbank" && node.id === "settlement") {
             return { id: node.id, role: "ledger", title: "Issuer ledger", note: "Same issuer claim" };
           }
-          if (state.model === "stablecoin" && state.scenario === "netting" && node.id === "settlement") {
+          if (modelId === "stablecoin" && scenarioId === "interbank" && node.id === "alice") {
+            return { ...node, note: "Issuer-claim holder" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "interbank" && node.id === "luca") {
+            return { ...node, note: "Receiving issuer-claim holder" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "netting" && ["bankA", "bankB"].includes(node.id)) {
+            return { id: node.id, role: "participant", title: node.id === "bankA" ? "Scheme participant A" : "Scheme participant B", note: node.id === "bankA" ? "CHF 100 obligation" : "CHF 60 obligation" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "netting" && node.id === "settlement") {
             return { id: node.id, role: "ledger", title: "Scheme settlement", note: "Issuer arrangement" };
           }
-          if (state.model === "stablecoin" && node.role === "bank" && ["mint", "redeem", "conditional", "same"].includes(state.scenario)) {
-            return { id: node.id, role: "bank", title: "Stablecoin issuer", note: "Reserve and issuance controls" };
+          if (modelId === "stablecoin" && scenarioId === "cbdc" && node.id === "bankA") {
+            return { id: node.id, role: "bank", title: "Settlement bank A", note: "Eligible wCBDC holder" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "cbdc" && node.id === "bankB") {
+            return { id: node.id, role: "bank", title: "Settlement bank B", note: "Institutional recipient" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "cbdc" && node.id === "alice") {
+            return { ...node, note: "Stablecoin issuer-claim holder" };
+          }
+          if (modelId === "stablecoin" && scenarioId === "cbdc" && node.id === "luca") {
+            return { ...node, note: "Stablecoin issuer-claim holder" };
+          }
+          if (modelId === "instruction" && scenarioId === "bridge" && node.id === "sourceLedger") {
+            return { id: node.id, role: "account", title: "Core account + instruction", note: "Deposit authority and request status" };
+          }
+          if (modelId === "instruction" && scenarioId === "bridge" && node.id === "destLedger") {
+            return { id: node.id, role: "destinationLedger", title: "Destination reference ledger", note: "Not the deposit claim" };
+          }
+          if (modelId === "instruction" && scenarioId === "bridge" && node.id === "destWallet") {
+            return { id: node.id, role: "destinationWallet", title: "Destination reference wallet", note: "Holds instruction evidence" };
+          }
+          if (modelId === "stablecoin" && node.role === "bank" && ["mint", "redeem", "conditional", "same"].includes(scenarioId)) {
+            return { id: node.id, role: "issuer", title: "Stablecoin issuer", note: "Reserve and issuance controls" };
           }
           return node;
         });
+        if (modelId === "stablecoin" && scenarioId === "cbdc") {
+          layout.splice(4, 0, { id: "issuer", role: "issuer", title: "Stablecoin issuer", note: "Records Luca’s issuer claim" });
+        }
+        return layout;
       }
+
+      function resolvedLayout() { return layoutFor(state.model, state.scenario); }
 
       const $ = (selector) => document.querySelector(selector);
       const elements = {
@@ -3025,21 +3422,11 @@
         return button;
       }
 
-      function currentScenario() { return scenarios[state.scenario]; }
+      function currentScenario() { return scenarioFor(state.model, state.scenario); }
       function currentStep() { return currentScenario().steps[state.step]; }
-      function triggerFor(failureId) {
-        if (state.scenario === "correspondent" && ["aml", "receiver"].includes(failureId)) return 2;
-        return failures[failureId].trigger;
-      }
-      function applicableFailureEntries(model = state.model, scenarioId = state.scenario) {
-        return Object.entries(failures).filter(([id, failure]) => {
-          if (!failure.applies.includes(scenarioId)) return false;
-          if (model === "stablecoin" && id === "sic") return false;
-          if (model === "stablecoin" && scenarioId === "interbank" && id === "receiver") return false;
-          return true;
-        });
-      }
-      function isBlocked() { return Boolean(state.failure && state.step >= Math.min(triggerFor(state.failure), currentScenario().steps.length - 1)); }
+      function currentFailureCase() { return state.failure ? failureCaseFor(state.model, state.scenario, state.failure) : null; }
+      function isBlocked() { const failureCase = currentFailureCase(); return Boolean(failureCase && state.step >= failureCase.trigger); }
+      function maxReachableStep() { return currentFailureCase()?.trigger ?? currentScenario().steps.length - 1; }
 
       function validateDemoData() {
         let explanationCount = 0;
@@ -3073,22 +3460,63 @@
             });
           });
           modelIds.forEach((modelId) => {
+            const resolvedScenario = scenarioFor(modelId, scenarioId);
+            if (!resolvedScenario.description || !resolvedScenario.treatment) throw new Error("Missing resolved scenario introduction for " + modelId + "/" + scenarioId);
             const applicable = applicableFailureEntries(modelId, scenarioId);
-            applicable.forEach(([failureId, failure]) => {
-              if (!failure.summary) throw new Error("Missing failure summary for " + failureId);
-              if (!failure.effects[modelId]) throw new Error("Missing failure explanation for " + modelId + "/" + scenarioId + "/" + failureId);
-              if (!failure.targets.some((targetId) => nodeIds.has(targetId))) throw new Error("Missing failure scene target for " + scenarioId + "/" + failureId);
-              if (Math.min(failure.trigger, scenarioData.steps.length - 1) < 0) throw new Error("Invalid failure trigger for " + scenarioId + "/" + failureId);
+            const resolvedNodeIds = new Set(layoutFor(modelId, scenarioId).map((node) => node.id));
+            resolvedScenario.steps.forEach((stepData, index) => {
+              if (!stepData.scene.focus.length || stepData.scene.focus.some((id) => !resolvedNodeIds.has(id))) throw new Error("Invalid resolved scene focus for " + modelId + "/" + scenarioId + "/" + index);
+              stepData.scene.moves.forEach((move) => {
+                if (!resolvedNodeIds.has(move.from) || !resolvedNodeIds.has(move.to) || !move.label) throw new Error("Invalid resolved movement for " + modelId + "/" + scenarioId + "/" + index);
+              });
+            });
+            applicable.forEach(([failureId, failureCase]) => {
+              if (!failureCase.summary || !failureCase.description || !failureCase.modelConsequence) throw new Error("Missing failure copy for " + modelId + "/" + scenarioId + "/" + failureId);
+              if (!resolvedNodeIds.has(failureCase.target)) throw new Error("Missing failure scene target for " + modelId + "/" + scenarioId + "/" + failureId);
+              if (!Number.isInteger(failureCase.trigger) || failureCase.trigger < 0 || failureCase.trigger >= scenarioData.steps.length) throw new Error("Invalid failure trigger for " + modelId + "/" + scenarioId + "/" + failureId);
+              ["stateBefore", "changedRecords", "prohibitedRetry", "recoveryEvidence", "recoveryOwner", "outcomes"].forEach((field) => {
+                if (!failureCase[field]) throw new Error("Missing " + field + " for " + modelId + "/" + scenarioId + "/" + failureId);
+              });
             });
             failureCombinationCount += applicable.length;
           });
         });
         const totalSteps = Object.values(scenarios).reduce((sum, scenarioData) => sum + scenarioData.steps.length, 0);
         if (totalSteps !== 75 || explanationCount !== 300) throw new Error("Expected 75 steps and 300 explanations");
-        return { totalSteps, explanationCount, failureCombinationCount };
+        const normalReachableStates = modelIds.length * totalSteps;
+        const failureReachableStates = modelIds.reduce((sum, modelId) => sum + Object.keys(scenarios).reduce((scenarioSum, scenarioId) => scenarioSum + applicableFailureEntries(modelId, scenarioId).reduce((failureSum, [, failureCase]) => failureSum + failureCase.trigger + 1, 0), 0), 0);
+        return { totalSteps, explanationCount, failureCombinationCount, reachableStateCount: normalReachableStates + failureReachableStates };
       }
 
       const validationStats = validateDemoData();
+
+      function buildAuditInventory() {
+        const resolvedSteps = [];
+        const resolvedFailures = [];
+        modelIds.forEach((modelId) => Object.keys(scenarios).forEach((scenarioId) => {
+          const scenarioData = scenarioFor(modelId, scenarioId);
+          scenarioData.steps.forEach((stepData, stepIndex) => resolvedSteps.push({ modelId, scenarioId, stepIndex, name: scenarioData.name, treatment: scenarioData.treatment, description: scenarioData.description, settlement: scenarioData.settlement, ...stepData }));
+          applicableFailureEntries(modelId, scenarioId).forEach(([, failureCase]) => resolvedFailures.push(failureCase));
+        }));
+        return Object.freeze({
+          models: modelIds.map((modelId) => ({ id: modelId, ...models[modelId] })),
+          scenarios: Object.entries(scenarios).map(([id, scenarioData]) => ({ id, category: scenarioData.category, stepCount: scenarioData.steps.length })),
+          resolvedSteps,
+          resolvedFailures,
+          counts: Object.freeze({
+            moneyModels: modelIds.length,
+            scenarios: Object.keys(scenarios).length,
+            modelScenarioCombinations: modelIds.length * Object.keys(scenarios).length,
+            scenarioSteps: validationStats.totalSteps,
+            resolvedStepDescriptions: validationStats.explanationCount,
+            failureModes: Object.keys(failures).length,
+            applicableFailureCombinations: validationStats.failureCombinationCount,
+            reachableSimulatorStates: validationStats.reachableStateCount
+          })
+        });
+      }
+
+      const auditInventory = buildAuditInventory();
 
       function scenarioGroupsFor(ids) {
         const selectedIds = new Set(ids);
@@ -3124,7 +3552,7 @@
       }
 
       function scenarioButton(id, { modelId, markRecommended }) {
-        const scenarioData = scenarios[id];
+        const scenarioData = scenarioFor(modelId, id);
         const recommended = markRecommended && models[modelId].recommended.includes(id);
         const button = makeButton("scenario-option" + (recommended ? " is-recommended" : ""), "", {
           "data-scenario": id,
@@ -3172,7 +3600,7 @@
       }
 
       function renderRunMode() {
-        const options = [{ id: "normal", label: "Normal run" }].concat(applicableFailureEntries().map(([id, failure]) => ({ id, label: "Failure · " + failure.name })));
+        const options = [{ id: "normal", label: "Normal run" }].concat(applicableFailureEntries(state.model, state.scenario).map(([id, failureCase]) => ({ id, label: "Failure · " + failureCase.name })));
         elements.runModeSelect.replaceChildren(...options.map(({ id, label }) => {
           const option = document.createElement("option"); option.value = id; option.textContent = label; return option;
         }));
@@ -3188,6 +3616,7 @@
           });
           button.classList.toggle("is-complete", index < state.step);
           button.classList.toggle("is-blocked", index === state.step && isBlocked());
+          button.disabled = index > maxReachableStep();
           if (index === state.step) button.setAttribute("aria-current", "step");
           item.append(button); return item;
         }));
@@ -3195,9 +3624,8 @@
       }
 
       function failureTarget(layout) {
-        if (!state.failure) return null;
-        const preferred = failures[state.failure].targets;
-        return preferred.map((id) => layout.find((node) => node.id === id)).find(Boolean) || layout[layout.length - 1];
+        const failureCase = currentFailureCase();
+        return failureCase ? layout.find((node) => node.id === failureCase.target) : null;
       }
 
       function journeyTokenPlan(stepIndex) {
@@ -3308,7 +3736,7 @@
 
           if (blocked && target && target.id === node.id) {
             const marker = document.createElement("div"); marker.className = "scene-failure-marker is-triggered"; marker.setAttribute("aria-hidden", "true");
-            marker.innerHTML = failureVisuals[state.failure] + "<span>" + failures[state.failure].name + "</span>";
+            marker.innerHTML = failureVisuals[state.failure] + "<span>" + currentFailureCase().name + "</span>";
             nodeElement.append(marker);
           }
           children.push(nodeElement);
@@ -3333,7 +3761,9 @@
         elements.journey.querySelectorAll(":scope > .journey-node, :scope > .journey-arrow").forEach((element) => element.remove());
         elements.journey.prepend(...children);
         elements.journey.dataset.model = state.model;
-        elements.journey.setAttribute("aria-label", models[state.model].name + ", " + currentScenario().name + ", " + stepData.label + ". " + stepData.explanations[state.model]);
+        elements.journey.dataset.nodeCount = String(layout.length);
+        const journeyExplanation = blocked ? currentFailureCase().description + " " + currentFailureCase().modelConsequence : stepData.explanations[state.model];
+        elements.journey.setAttribute("aria-label", models[state.model].name + ", " + currentScenario().name + ", " + (blocked ? currentFailureCase().name + " at " : "") + stepData.label + ". " + journeyExplanation);
         placeJourneyTokens(blocked, identityChanged);
         renderedJourneyIdentity = identity;
       }
@@ -3343,34 +3773,35 @@
         const scenarioData = currentScenario();
         const stepData = currentStep();
         const blocked = isBlocked();
-        const failure = state.failure ? failures[state.failure] : null;
+        const failure = currentFailureCase();
+        const failureDisplay = blocked ? failureDisplayFor(state.model, state.scenario, state.failure) : null;
 
         elements.contextModel.textContent = models[state.model].name;
         elements.contextScenario.textContent = scenarioData.name;
-        elements.scenarioCategory.textContent = categories[scenarioData.category];
+        elements.scenarioCategory.textContent = categories[scenarioData.category] + " · " + scenarioData.treatment;
         elements.scenarioTitle.textContent = scenarioData.name;
         elements.scenarioDescription.textContent = scenarioData.description;
         elements.stageCaption.textContent = scenarioData.name + " · " + stepData.actor;
-        elements.stageObjectState.textContent = stepData.scene.stateLabel;
+        elements.stageObjectState.textContent = blocked ? failureDisplay.stateLabel : stepData.scene.stateLabel;
         elements.scenarioHeading.classList.toggle("has-failure", Boolean(failure));
         elements.failureSummary.hidden = !failure;
         if (failure) {
-          const triggerStep = scenarioData.steps[Math.min(triggerFor(state.failure), scenarioData.steps.length - 1)];
+          const triggerStep = scenarioData.steps[failure.trigger];
           const target = failureTarget(resolvedLayout());
           elements.failureSummaryStatus.textContent = blocked ? "Failure mode · Triggered" : "Failure mode · Armed";
           elements.failureSummaryTitle.textContent = failure.name;
-          elements.failureSummaryCopy.textContent = failure.summary + " In this " + scenarioData.name + " flow, it affects " + (target?.title || "the selected workflow") + " during “" + triggerStep.label + "”; the transaction remains at its last confirmed state until the required evidence and recovery action are complete.";
+          elements.failureSummaryCopy.textContent = failure.summary + " It triggers at “" + triggerStep.label + "” on " + (failure.targetLabel || target.title) + ".";
           elements.failureSummary.classList.toggle("is-triggered", blocked);
         }
 
         elements.inspectorKicker.textContent = blocked ? "Flow stopped · step " + (state.step + 1) + " of " + scenarioData.steps.length : "What happens now · step " + (state.step + 1) + " of " + scenarioData.steps.length;
-        elements.inspectorTitle.textContent = stepData.label;
-        elements.inspectorCopy.textContent = blocked ? failure.effects[state.model] : stepData.explanations[state.model];
+        elements.inspectorTitle.textContent = blocked ? failureDisplay.title : stepData.label;
+        elements.inspectorCopy.textContent = blocked ? failureDisplay.explanation : stepData.explanations[state.model];
 
         elements.detailClaim.textContent = models[state.model].claim;
         elements.detailAuthority.textContent = models[state.model].authority;
         elements.detailSettlement.textContent = scenarioData.settlement;
-        elements.detailRecord.textContent = stepData.result;
+        elements.detailRecord.textContent = blocked ? failureDisplay.currentRecord : stepData.result;
 
         elements.previous.disabled = state.step === 0;
         elements.next.disabled = blocked;
@@ -3379,7 +3810,7 @@
         renderRunMode();
         renderStepList();
         renderJourney();
-        if (announce) elements.announcement.textContent = scenarioData.name + ", step " + (state.step + 1) + ": " + stepData.label + (blocked ? ", stopped by " + failure.name : "") + ".";
+        if (announce) elements.announcement.textContent = blocked ? failureDisplay.announcement : scenarioData.name + ", step " + (state.step + 1) + ": " + stepData.label + ".";
       }
 
       function stopPlayback() {
@@ -3391,7 +3822,7 @@
 
       function setStep(nextStep, announce = true) {
         stopPlayback();
-        state.step = Math.max(0, Math.min(nextStep, currentScenario().steps.length - 1));
+        state.step = Math.max(0, Math.min(nextStep, maxReachableStep()));
         renderWorkspace(announce);
       }
 
@@ -3513,7 +3944,8 @@
       });
 
       window.TokenizedDepositDemo = Object.freeze({
-        models, modelGroups, scenarios, failures, validationStats,
+        models, modelGroups, scenarios, scenarioVariants, failures, failureRules, mismatchLayouts, auditInventory, validationStats,
+        scenarioFor, layoutFor, failureCaseFor, failureDisplayFor, applicableFailureEntries, scenarioGroupsFor,
         getState: () => ({ ...state, landing: { ...state.landing }, timer: Boolean(state.timer) }),
         getCurrentStep: () => ({ ...currentStep(), model: state.model, scenario: state.scenario, blocked: isBlocked() })
       });
